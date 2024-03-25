@@ -1,0 +1,215 @@
+<%-include("../layouts/header")%>
+<section class="banner-area organic-breadcrumb">
+    <div class="container">
+        <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+            <div class="col-first">
+                <h1>Confirmation</h1>
+                <nav class="d-flex align-items-center">
+                    <a href="index.html">Home<span class="lnr lnr-arrow-right"></span></a>
+                    <a href="category.html">Confirmation</a>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- End Banner Area -->
+
+<!--================Order Details Area =================-->
+<section class="order_details section_gap">
+    <div class="container">
+       
+        <div class="row order_d_inner">
+            <div class="col-lg-4">
+                <div class="details_item">
+                    <h4>Order Info</h4>
+                    <ul class="list">
+                        <li><a href="#"><span>Order number</span> : <%=orderData.orderId%></a></li>
+                        <li><a href="#"><span>Date</span> : <%=orderData.createdAt%></a></li>
+                        <li><a href="#"><span>Total</span> : Rs <%=orderData.totalPrice%></a></li>
+                        <li><a href="#"><span>Payment method</span> :  <%=orderData.paymentIntent.type%></a></li>
+                        <%if(orderData.paymentIntent.type=== 'Online payment'){%>
+                            <li><a href="#"><span>Payment Id</span> :  <%=orderData.paymentIntent.paymentId%></a></li>
+                            <%}%>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="details_item">
+                    <h4>Billing Address</h4>
+                    <ul class="list">
+                        <li><a href="#"><span>Street</span> : <%=orderData.address.address%></a></li>
+                        <li><a href="#"><span>City</span> : <%=orderData.address.city%></a></li>
+                        <li><a href="#"><span>Country</span> : <%=orderData.address.state%></a></li>
+                        <li><a href="#"><span>Postcode </span> : <%=orderData.address.pin%></a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="details_item">
+                    <h4>Shipping Address</h4>
+                    <ul class="list">
+                        <li><a href="#"><span>Street</span> : <%=orderData.address.address%></a></li>
+                        <li><a href="#"><span>City</span> : <%=orderData.address.city%></a></li>
+                        <li><a href="#"><span>Country</span> : <%=orderData.address.state%></a></li>
+                        <li><a href="#"><span>Postcode </span> : <%=orderData.address.pin%></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h4 class="text-success" id="order-status">Your order is <%=orderData.orderStatus%></h4>
+        </div>
+        <div class="order_details_table">
+            <h2>Order Details</h2>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Product</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <%orderData.products.forEach((product, index) => {%> 
+                        <tr>
+                            <td>
+                                <p><%=product.productId.productName%></p>
+                            </td>
+                            <td>
+                                <h5><%=product.quantity%></h5>
+                            </td>
+                            <td>
+                                <p><%=product.price%></p>
+                            </td>
+                        </tr>
+                        <%})%>
+                       
+                            <td>
+                                <h4>Subtotal</h4>
+                            </td>
+                            <td>
+                                <h5></h5>
+                            </td>
+                            <td>
+                                <p> <%=orderData.totalPrice-50%></p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h4>Shipping</h4>
+                            </td>
+                            <td>
+                                <h5></h5>
+                            </td>
+                            <td>
+                                <p>Flat rate: Rs 50.00</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h4>Total</h4>
+                            </td>
+                            <td>
+                                <h5></h5>
+                            </td>
+                            <td>
+                                <p><%=orderData.totalPrice%></p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="container" style="text-align: center;" id="button">
+        <% if (orderData.orderStatus==="Delivered") { %>
+            <a href="#" onclick="returnOrder('<%=orderData.orderId%>')" class="btn btn-primary m-4 px-5 py-2">Return</a>
+        <% } else if (orderData.orderStatus==="Cancelled"||orderData.orderStatus==="Return request"||orderData.orderStatus==="Returned") { %>
+
+        <% } else{%>
+         
+            <a href="#" onclick="cancelOrder('<%=orderData.orderId%>')" class="btn btn-primary m-4 px-5 py-2">Cancel order</a>
+        <%}%>
+    </div>
+    
+</section>
+<!--================End Order Details Area =================-->
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+
+
+<script>
+    function cancelOrder(orderId){
+        event.preventDefault();
+        swal({
+            title: "Are you sure?",
+            text: "Once canceled, you cannot undo this action!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willCancel) => {
+            if (willCancel) {
+                
+                fetch(`/cancelOrder/${orderId}`)
+                .then(response => {
+                  if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                   }
+                   return response.json();
+                 })
+                 .then(data => {
+                   $('#button').load(location.href + ' #button')
+                   console.log('Success:', data);
+                 }).then(data => {
+                   $('#order-status').load(location.href + ' #order-status')
+                 })
+                 .catch(error => {
+                   console.error('Error:', error);
+                 });
+                console.log("Order canceled!");
+            } else {
+                console.log("Order not canceled.");
+            }
+        });
+
+    
+    }
+
+    function returnOrder(orderId){
+        event.preventDefault();
+        swal({
+            title: "Are you sure?",
+            text: "Once canceled, you cannot undo this action!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willCancel) => {
+            if (willCancel) {
+        fetch(`/returnOrder/${orderId}`)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
+  .then(data => {
+    $('#button').load(location.href + ' #button')
+
+    console.log('Success:', data);
+  }).then(data => {
+    $('#order-status').load(location.href + ' #order-status')
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+    }
+ else {
+                    // User clicked the "Don't Return" button or closed the SweetAlert dialog
+                    console.log("Order not returned.");
+    }})}
+</script>
+<%-include("../layouts/footer")%>

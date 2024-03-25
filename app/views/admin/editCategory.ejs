@@ -1,0 +1,86 @@
+<%-include("../layoutAdmin/header.ejs")%>
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Categories</h2>
+            <p>Add, edit or delete a category</p>
+        </div>
+        <div>
+            <input type="text" placeholder="Search Categories" class="form-control bg-white" />
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <form action="/admin/editCategory/<%=category._id%>" method="post" onsubmit="return validateForm()">
+                        <div class="mb-4">
+                            <label for="product_name" class="form-label">Name</label>
+                            <input type="text" placeholder="<%=category.name%>" class="form-control" id="product_name" name="categoryName"  value="<%=category.name%>"/>
+                            <p id="nameError" style="color: red;"></p>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Description</label>
+                            <textarea placeholder="<%=category.description%>" class="form-control" name="description" id="description" value="<%=category.description%>"></textarea>
+                            <p id="descriptionError" style="color: red;"></p>
+                        </div>
+                        <div class="d-grid">
+                            <button class="btn btn-primary" type="submit">Edit category</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- .row // -->
+        </div>
+        <!-- card body .// -->
+    </div>
+    <!-- card .// -->
+</section>
+
+
+<script>
+
+    function validateForm() {
+                const categoryName = document.getElementById('product_name').value;
+                const nameError = document.getElementById('nameError');
+    
+                const descriptionInput = document.getElementById('description').value;
+                const descriptionError = document.getElementById('descriptionError');
+    
+    
+                // Reset previous error message
+                nameError.textContent = '';
+                descriptionError.textContent = '';
+    
+                // Basic validation for category name
+                if (!categoryName) {
+                    nameError.textContent = 'Category name is required.';
+                    return false;
+                }
+    
+                if (categoryName.length < 3 || categoryName.length > 50) {
+                    nameError.textContent = 'Category name must be between 3 and 50 characters.';
+                    return false;
+                }
+    
+                if (!/^[a-zA-Z]+(?: [a-zA-Z]+)?$/.test(categoryName)) {
+                    nameError.textContent = 'Invalid format for category name. Only one space between words is allowed.';
+                    return false;
+                }
+                if (descriptionInput.length < 10) {
+                    descriptionError.textContent = 'Description must be at least 10 characters long.';
+                    return false;
+                }
+    
+                if (/^\s*$/.test(descriptionInput)) {
+                    descriptionError.textContent = 'Description cannot consist only of spaces.';
+                    return false;
+                }
+    
+                // Continue with form submission if validation passes
+                return true;
+            }
+    </script>
+
+
+<%-include("../layoutAdmin/footer.ejs")%>

@@ -1,0 +1,270 @@
+<%-include("../layouts/header")%>
+
+<link rel="stylesheet" href="/css/cart-id.css">
+
+<section class="banner-area organic-breadcrumb">
+    <div class="container">
+        <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+            <div class="col-first">
+                <h1>Shopping Cart</h1>
+                <nav class="d-flex align-items-center">
+                    <a href="index.html">Home<span class="lnr lnr-arrow-right"></span></a>
+                    <a href="category.html">Cart</a>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container">
+    <div class="container py-5">
+      <div class="row d-flex justify-content-center my-4">
+        <div class="col-md-8">
+          <div class="card mb-4">
+            <div class="card-header py-3">
+              <h5 class="mb-0"><%=cartData.products.length%></h5>
+            </div>
+            <div class="card-body" id="cart_list">
+              <!-- Single item -->
+
+              <%if(cartData){%>
+                <%if (!cartData.products || cartData.products.length === 0){ %>
+                  <h2 class="text-danger">Cart is empty</h2>
+                  <% } else{%>
+              <%cartData.products.forEach((product, index) => {%> 
+              <div class="row">
+                <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
+                  <!-- Image -->
+                  <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+                    <img src="<%=product.productId.file[0]%>"
+                      class="w-100" alt="Blue Jeans Jacket" />
+                    <a href="#!">
+                      <div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
+                    </a>
+                  </div>
+                  <!-- Image -->
+                </div>
+  
+                <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
+                  <!-- Data -->
+                  <p><strong><%=product.productId.productName%></strong></p>
+                  <p>Color:<%=product.productId.colour%></p>
+                  <p>Size:<%=product.productId.size%></p>
+                  <button type="button" class="btn btn-primary btn-sm me-1 mb-2" data-mdb-toggle="tooltip"
+                    title="Remove item">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                  <button type="button" class="btn btn-danger btn-sm mb-2" data-mdb-toggle="tooltip"
+                    title="Move to the wish list">
+                    <i class="fas fa-heart"></i>
+                  </button>
+                  <!-- Data -->
+                </div>
+  
+                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                  <!-- Quantity -->
+                  <div class="d-flex mb-4 col-3" style="max-width: 200px">
+                    <button class="btn btn-primary px-3 me-2" onclick="changeQuantity('<%=product.productId._id%>','<%=product.id%>','<%=product.productId.offer%>','<%=product.productId.quantity%>',-1)">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <div class="form-outline">
+                        <input id="form_<%=product.id%>" min="1" name="quantity" value="<%=product.quantity%>" type="text" class="form-control input-sm" readonly />
+                    </div>
+                    <button class="btn btn-primary px-3 ms-2" onclick="changeQuantity('<%=product.productId._id%>','<%=product.id%>','<%=product.productId.offer%>','<%=product.productId.quantity%>', 1)">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                
+                
+                  <!-- Quantity -->
+  
+                  <!-- Price -->
+                  <p class="text-start text-md-center">
+                    <strong><%=product.productId.offer%></strong>
+                  </p>
+                  <p class="text-start text-md-center" id="cart_rate<%= product.id %>">
+                    <strong><%=product.price%></strong>
+                  </p>
+
+                  <!-- Price -->
+                  <a href="#" onclick="deleteCart('<%=product.id%>')" class="btn btn-info btn-warning float-right" role="button">remove</a>
+                  <!-- <button class="float-right" on>remove</button> -->
+                </div>
+              </div>
+              <!-- Single item -->
+  
+              <hr class="my-4" />
+  
+              <%})} }%>
+            </div>
+          </div>
+          
+          <div class="card mb-4 mb-lg-0">
+            <div class="card-body">
+              <p><strong>We accept</strong></p>
+              <img class="me-2" width="45px"
+                src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/visa.svg"
+                alt="Visa" />
+              <img class="me-2" width="45px"
+                src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/amex.svg"
+                alt="American Express" />
+              <img class="me-2" width="45px"
+                src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/mastercard.svg"
+                alt="Mastercard" />
+              <img class="me-2" width="45px"
+                src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce/includes/gateways/paypal/assets/images/paypal.webp"
+                alt="PayPal acceptance mark" />
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4" >
+          <% if (cartData.products && cartData.products.length > 0){ %>
+          <div class="card mb-4" id="cart_data">
+            <div class="card-header py-3">
+              <h5 class="mb-0">Summary</h5>
+            </div>
+            <div class="card-body">
+              <ul class="list-group list-group-flush">
+                <% let totalPrice=0 %>
+                <%if(cartData){%>
+                
+                <%cartData.products.forEach((product, index) => {%> 
+                  <%  totalPrice=totalPrice+ product.price%>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                  <%=product.productId.productName%>
+                  <span><%=product.price%></span>
+                </li>
+                <%})}%>
+                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                  Shipping
+                  <span>Gratis</span>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
+                  <div>
+                    <strong>Total amount</strong>
+                    <strong>
+                      <p class="mb-0">(including VAT)</p>
+                    </strong>
+                  </div>
+                  <span><strong><%=totalPrice%></strong></span>
+                </li>
+              </ul>
+  
+              <button type="button" onclick="loadCheckout()" class="btn btn-warning btn-lg btn-block">
+                Go to checkout
+              </button>
+            </div>
+          </div>
+          <% }%>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  <script>
+
+function changeQuantity(productId,id,price,count, change ) {
+  console.log(productId);
+  // const id=productId
+    var input = document.getElementById('form_' + id);
+    var currentValue = parseInt(input.value);
+    var newValue = currentValue + change;
+
+    // Ensure quantity does not go below 0
+    if (newValue < 1) {
+        newValue = 1;
+    }
+    if (newValue > count) {
+        newValue = count;
+    }
+    console.log("hai");
+
+    // Update input field value
+    input.value = newValue;
+    const total=newValue*price
+    console.log(total);
+    // Send AJAX request to server
+    const formData = {
+        productId:productId,
+        quantity:newValue,
+        total:total,
+        id:id
+    }
+    
+    console.log(formData);
+
+    fetch('/updateQuantity', {
+        method: 'POST',
+        headers: {
+                'Content-Type': 'application/json'
+            },
+        body: JSON.stringify(formData)
+    })
+    .then(response => {
+        if (!response) {
+            throw new Error('Failed to update quantity');
+        }
+        return response.json()
+        console.log(response)
+      })
+        .then(data => {
+        $(`#cart_rate${id}`).load(location.href + ` #cart_rate${id}`)
+
+
+        console.log('Quantity updated successfully');
+    })
+    .then(data => {
+        $('#cart_data').load(location.href + ' #cart_data')
+    })
+    .catch(error => {
+        console.error('Error updating quantity:', error);
+    });
+}
+
+function loadCheckout(){
+  
+  window.location.href = "/checkout";
+}
+
+</script>
+<script> 
+  function deleteCart(id){
+      event.preventDefault();
+      console.log(id);
+      const body={
+          id:id
+      }
+      fetch('/deleteCart', {
+  method: 'DELETE',
+  headers: {
+      'Content-Type': 'application/json' 
+  },
+  body: JSON.stringify(body)
+})
+.then(response => {
+  if (!response.ok) {
+      throw new Error('Network response was not ok');
+  }
+  return response.json(); // Assuming response is JSON
+})
+.then(data => { 
+  console.log('Form submitted successfully:', data);
+  $('#cart_list').load(location.href + ' #cart_list')
+  //  window.location.reload();  
+
+  // Handle success response    
+}).then(data => {
+        $('#cart_data').load(location.href + ' #cart_data')
+    })
+.catch(error => {
+  console.error('There was a problem with the form submission:', error);
+  // Handle error
+});
+
+  }
+</script>
+
+  <%-include("../layouts/footer")%>

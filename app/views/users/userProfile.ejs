@@ -1,0 +1,689 @@
+
+<!--Website: wwww.codingdung.com-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shoevibe</title>
+    <link rel="stylesheet" href="/style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<style>
+
+    .modal1 {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0; /* Set top to 0 to align with the top of the page */
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  overflow: auto;
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: 0 auto; /* Center horizontally */
+  margin-top: 50px; /* Adjust this value to create space from the top */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 600px;
+  width: 80%;
+}
+
+
+      .close {
+          color: #aaa;
+          float: right;
+          font-size: 28px;
+          font-weight: bold;
+      }
+
+      .close:hover,
+      .close:focus {
+          color: black;
+          text-decoration: none;
+          cursor: pointer;
+      }
+
+      /* Form styles */
+      .form-group {
+          margin-bottom: 15px;
+      }
+
+      .form-row {
+          margin-top: 15px;
+      }
+
+      .form-group label {
+          font-weight: bold;
+      }
+
+      .form-control {
+          width: 100%;
+          padding: 8px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+      }
+
+      .btn-primary {
+          background-color: #007bff;
+          color: #fff;
+          border: none;
+          padding: 8px 16px;
+          border-radius: 4px;
+          cursor: pointer;
+      }
+
+      .btn-primary:hover {
+          background-color: #0056b3;
+      }
+  </style>
+
+
+</head>
+
+<body>
+    <div class="container light-style flex-grow-1 container-p-y">
+        <h4 class="font-weight-bold py-3 mb-4">
+            Account settings
+        </h4>
+        <div class="card overflow-hidden">
+            <div class="row no-gutters row-bordered row-border-light">
+                <div class="col-md-3 pt-0">
+                    <div class="list-group list-group-flush account-settings-links">
+                        <a class="list-group-item list-group-item-action active" data-toggle="list"
+                            href="#account-general">General</a>
+                        <a class="list-group-item list-group-item-action" data-toggle="list"
+                            href="#account-change-password">Change password</a>
+                        <!-- <a class="list-group-item list-group-item-action" data-toggle="list"
+                            href="#account-info">Info</a> -->
+                        <a class="list-group-item list-group-item-action" data-toggle="list"
+                            href="#account-notifications">Notifications</a>
+                        <a class="list-group-item list-group-item-action" 
+                            href="#" data-toggle="modal" data-target="#myModal">Add address</a>
+                            <a class="list-group-item list-group-item-action" data-toggle="list"
+                            href="#addressload">address</a>
+                            <a class="list-group-item list-group-item-action" 
+                            href="/orderList">My orders</a>
+                            <a class="list-group-item list-group-item-action" 
+                            href="/loadWallet">My wallet</a>
+                            <a href="/logout" class="btn btn-danger">Logout</a>  
+                    </div>
+                    
+                </div>
+                <div class="col-md-9">
+                    <div class="tab-content">
+                        
+                        <div class="tab-pane fade active show" id="account-general">
+                            <div class="card-body media align-items-center">
+                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt
+                                    class="d-block ui-w-80">
+                                <div class="media-body ml-4">
+                                    <label class="btn btn-outline-primary">
+                                        Upload new photo
+                                        <input type="file" class="account-settings-fileinput">
+                                    </label> &nbsp;
+                                    <button type="button" class="btn btn-default md-btn-flat">Reset</button>
+                                    <div class="text-light small mt-1">Allowed JPG, GIF or PNG. Max size of 800K</div>
+                                </div>
+                            </div>
+                            <hr class="border-light m-0">
+                            <form action="/userUpdate" method="post">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label class="form-label">Username</label>
+                                    <input type="text" class="form-control mb-1" value="<%=userData.name%>">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Name</label>
+                                    <input type="text" class="form-control" value="<%=userData.name%>" name="name">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">mobile</label>
+                                    <input type="text" class="form-control" value="<%=userData.mobile%>" name="mobile">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">E-mail</label>
+                                    <input type="text" class="form-control mb-1" value="<%=userData.email%>" name="email">
+                                    <div class="alert alert-warning mt-3">
+                                        Your email is not confirmed. Please check your inbox.<br>
+                                        <a href="javascript:void(0)">Resend confirmation</a>
+                                    </div>
+                                </div>
+                            
+                            </div>
+                            <div class="text-right mt-3">
+                                <button type="submit" class="btn btn-primary">Save changes</button>;
+                                <button type="button" class="btn btn-default">Cancel</button>
+                            </div> 
+                        </form>
+                        </div>
+                        <div class="tab-pane fade" id="account-change-password">
+                            <form action="/changePassword" method="post" onsubmit="return validateForm()">
+                            <div class="card-body pb-2">
+                                <div class="form-group">
+                                    <label class="form-label">Current password</label>
+                                    <input type="password" name="currentPassword" class="form-control" id="currentPassword">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">New password</label>
+                                    <input type="password" name="newPassword" class="form-control" id="newPassword">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Repeat new password</label>
+                                    <input type="password" name="repeatNewPassword" class="form-control" id="repeatNewPassword">
+                                </div>
+                                <div id="">
+                                    <p id="passwordError" style="color: red;"></p>
+                                    <!-- Data will be displayed here -->
+                                  </div>
+                            </div>
+                            <div class="text-right mt-3">
+                                <button type="submit" class="btn btn-primary" id="submitButton">Save changes</button>
+                                <button type="button" class="btn btn-default">Cancel</button>
+                            </div>
+                        </form>
+                        </div>
+                        <!-- <div class="tab-pane fade" id="account-info">
+                            <div class="card-body pb-2">
+                                <div class="form-group">
+                                    <label class="form-label">Bio</label>
+                                    <textarea class="form-control"
+                                        rows="5">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris nunc arcu, dignissim sit amet sollicitudin iaculis, vehicula id urna. Sed luctus urna nunc. Donec fermentum, magna sit amet rutrum pretium, turpis dolor molestie diam, ut lacinia diam risus eleifend sapien. Curabitur ac nibh nulla. Maecenas nec augue placerat, viverra tellus non, pulvinar risus.</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Birthday</label>
+                                    <input type="text" class="form-control" value="May 3, 1995">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Country</label>
+                                    <select class="custom-select">
+                                        <option>USA</option>
+                                        <option selected>Canada</option>
+                                        <option>UK</option>
+                                        <option>Germany</option>
+                                        <option>France</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <hr class="border-light m-0">
+                            <div class="card-body pb-2">
+                                <h6 class="mb-4">Contacts</h6>
+                                <div class="form-group">
+                                    <label class="form-label">Phone</label>
+                                    <input type="text" class="form-control" value="+0 (123) 456 7891">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Website</label>
+                                    <input type="text" class="form-control" value>
+                                </div>
+                            </div>
+                            <div class="text-right mt-3">
+                                <button type="submit" class="btn btn-primary">Save changes</button>&nbsp;
+                                <button type="button" class="btn btn-default">Cancel</button>
+                            </div>
+                        </div> -->
+                        <div class="tab-pane fade" id="account-notifications">
+                            <div class="card-body pb-2">
+                                <h6 class="mb-4">Activity</h6>
+                                <div class="form-group">
+                                    <label class="switcher">
+                                        <input type="checkbox" class="switcher-input" checked>
+                                        <span class="switcher-indicator">
+                                            <span class="switcher-yes"></span>
+                                            <span class="switcher-no"></span>
+                                        </span>
+                                        <span class="switcher-label">Email me when someone comments on my article</span>
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="switcher">
+                                        <input type="checkbox" class="switcher-input" checked>
+                                        <span class="switcher-indicator">
+                                            <span class="switcher-yes"></span>
+                                            <span class="switcher-no"></span>
+                                        </span>
+                                        <span class="switcher-label">Email me when someone answers on my forum
+                                            thread</span>
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="switcher">
+                                        <input type="checkbox" class="switcher-input">
+                                        <span class="switcher-indicator">
+                                            <span class="switcher-yes"></span>
+                                            <span class="switcher-no"></span>
+                                        </span>
+                                        <span class="switcher-label">Email me when someone follows me</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <hr class="border-light m-0">
+                            <div class="card-body pb-2">
+                                <h6 class="mb-4">Application</h6>
+                                <div class="form-group">
+                                    <label class="switcher">
+                                        <input type="checkbox" class="switcher-input" checked>
+                                        <span class="switcher-indicator">
+                                            <span class="switcher-yes"></span>
+                                            <span class="switcher-no"></span>
+                                        </span>
+                                        <span class="switcher-label">News and announcements</span>
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="switcher">
+                                        <input type="checkbox" class="switcher-input">
+                                        <span class="switcher-indicator">
+                                            <span class="switcher-yes"></span>
+                                            <span class="switcher-no"></span>
+                                        </span>
+                                        <span class="switcher-label">Weekly product updates</span>
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="switcher">
+                                        <input type="checkbox" class="switcher-input" checked>
+                                        <span class="switcher-indicator">
+                                            <span class="switcher-yes"></span>
+                                            <span class="switcher-no"></span>
+                                        </span>
+                                        <span class="switcher-label">Weekly blog digest</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="text-right mt-3">
+                                <button type="button" class="btn btn-warning">Save changes</button>&nbsp;
+                                <button type="button" class="btn btn-default">Cancel</button>
+                            </div>
+                        </div>
+                        <div id="addressload" class="row tab-pane fade" style="display: flex;">
+                            <%addressData.forEach(address=>{%>
+                            <div class=" col-md-6 ">
+                                <div class="card card-product-grid">
+                                    <div class="card-body">
+                                      <h5 class="card-title">Address</h5>
+                                      
+                                      <p class="card-text" style="line-height: .2em;"  ><%=address.firstName%> <%=address.lastName%></p>
+                                      <p class="card-text" style="line-height: .2em;"  ><%= address.address %></p>
+                                      <p class="card-text" style="line-height: .2em;"  ><%= address.landMark %></p>
+                                      <p class="card-text" style="line-height: .2em;"  ><%= address.city %></p>
+                                      <p class="card-text" style="line-height: .2em;"  ><%= address.state %></p>
+                                      <p class="card-text" style="line-height: .2em;"  > pin :  <%= address.pin %></p>
+                                     
+                                      <% if (address.status) { %>
+                                        <a href="/setDefault/<%=address._id%>" class="btn btn-info" style="background-color: rgb(0, 155, 39);" role="button">default</a>
+                                      <% }else{ %>
+                                      <a href="/setDefault/<%=address._id%>" class="btn btn-info" style="background-color: darkslategray;" role="button">set default</a>
+                                      <%}%>
+                                      <!-- <a href="#" class="btn btn-info ml-5" role="button" data-toggle="modal" data-target="#myModal-2">edit</a> -->
+                                      <a href="#" class="edit-address btn btn-info" data-address-id="<%= address._id %>">Edit</a>
+
+                                      <a href="/deleteAddress/<%=address._id%>" class="btn btn-info ml-5 bg-danger" role="button">delete</a>
+                                      
+                                    </div>
+                                  </div>
+                            </div>
+                            <%})%>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="text-right mt-3">
+            <button type="button" class="btn btn-primary">Save changes</button>&nbsp;
+            <button type="button" class="btn btn-default">Cancel</button>
+        </div> -->
+    </div>
+
+<!-- Bootstrap Modal -->
+<div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Add address</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <div class="m-3">
+                    <form class="row g-3" id="myForm">
+                        <div class="col-md-6">
+                            <label for="firstName" class="form-label">First Name</label>
+                            <input type="text" class="form-control" name="firstName" id="firstName" onkeypress="checkEnter(event, 'lastName')">
+                            <p id="firstNameError" style="color: red;"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="lastName" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" name="lastName" id="lastName" onkeypress="checkEnter(event, 'inputAddress')">
+                            <p id="lastNameError" style="color: red;"></p>
+                        </div>
+                        <div class="col-12">
+                            <label for="inputAdress" class="form-label">Address</label>
+                            <input type="text" class="form-control" name="address" id="inputAddress" placeholder="1234 Main St" onkeypress="checkEnter(event, 'landmark')">
+                            <p id="addressError" style="color: red;"></p>
+                        </div>
+                        <div class="col-12">
+                            <label for="landmark" class="form-label">Landmark</label>
+                            <input type="text" class="form-control" name="landmark" id="landmark" placeholder="Apartment, studio, or floor" onkeypress="checkEnter(event, 'inputCity')">
+                            <p id="landmarkError" style="color: red;"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="inputCity" class="form-label">City</label>
+                            <input type="text" class="form-control" name="city" id="inputCity" onkeypress="checkEnter(event, 'inputState')">
+                            <p id="cityError" style="color: red;"></p>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="inputState" class="form-label">State</label>
+                            <input type="text" class="form-control" name="state" id="inputState" onkeypress="checkEnter(event, 'pin')">
+                            <p id="stateError" style="color: red;"></p>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="pin" class="form-label">Zip</label>
+                            <input type="text" class="form-control" name="pin" id="pin" onkeypress="checkEnter(event, 'lastName')">
+                            <p id="pinError" style="color: red;"></p>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="gridCheck" >
+                                <label class="form-check-label" for="gridCheck">
+                                    Check me out
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <button type="button" class="btn btn-primary" onclick="submitForm()">Submit</button>
+                        </div>
+                    </form>
+                    
+                  </div>
+            </div>
+            <div id="result"></div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<% addressData.forEach(address => { %>
+    <div id="editAddressModal-<%= address._id %>" class="modal1 modal-md">
+        
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Edit Address</h2>
+            <form action="/addressEdit/<%= address._id %>" method="post" id="addressModal-<%= address._id %>">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text"  name="firstname" class="form-control" required value="<%= address.firstName %>">
+                </div>
+                <div class="form-group">
+                    <label for="mobile">Lastname</label>
+                    <input type="text"  name="lastname" class="form-control" value="<%address.lastName%>">
+                </div>
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <input type="text"  name="addres" class="form-control" required value="<%= address.address %>">
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="pinCode">Landmark</label>
+                        <input type="text"  name="landMark" class="form-control" required value="<%= address.landMark %>">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="street">Street</label>
+                        <input type="text"  name="pincode" class="form-control" required value="<%= address.pin %>">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="city">City</label>
+                        <input type="text"  name="inputcity" class="form-control" required value="<%= address.city %>">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="state">State</label>
+                        <input type="text"  name="inputstate" class="form-control" required value="<%= address.state %>">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Address</button>
+            </form>
+        </div>
+    </div>
+<% }) %>
+
+
+
+<!-- Bootstrap JS (popper.js and jquery are required dependencies) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
+
+<script> 
+const modal = document.getElementById('addressModal');
+
+const btn = document.getElementById('openModalBtn');
+
+const span = document.getElementsByClassName('close')[0];
+
+btn.onclick = function() {
+modal.style.display = 'block';
+}
+
+span.onclick = function() {
+modal.style.display = 'none';
+}
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = 'none';
+  }
+}
+</script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    const editLinks = document.querySelectorAll('.edit-address');
+
+    editLinks.forEach(function(link) {
+        link.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            const addressId = link.getAttribute('data-address-id');
+            const modal = document.getElementById('editAddressModal-' + addressId);
+
+            modal.style.display = 'block';
+        });
+    });
+
+    const spans = document.querySelectorAll(".modal-content .close");
+
+    spans.forEach(function(span) {
+        span.addEventListener('click', function() {
+            const modal = span.closest('.modal');
+            modal.style.display = 'none';
+        });
+    });
+});
+
+
+</script>
+
+
+
+    <script>
+
+function validateForm() {
+        // Get form data
+        const currentPassword = document.getElementById("currentPassword").value;
+        const newPassword = document.getElementById("newPassword").value;
+        const repeatNewPassword = document.getElementById("repeatNewPassword").value;
+
+        // Validate the form data
+        // if (currentPassword === "" || newPassword === "" || repeatNewPassword === "") {
+        //     alert("Please fill in all fields.");
+        //     return false;
+        // }
+
+        var passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+        if (!passwordRegex.test(newPassword)||!passwordRegex.test(currentPassword)||!passwordRegex.test(repeatNewPassword)) {
+            
+            document.getElementById("passwordError").innerText = "Password must be at least 8 characters long and include at least one letter and one number.";
+            return false; 
+        }
+
+        if (newPassword !== repeatNewPassword) {
+            document.getElementById("passwordError").innerText = "Passwords do not match.";
+            return false;
+        } 
+            else {
+            document.getElementById("passwordError").innerText = "";
+            return true;
+        }
+    };
+
+    </script>
+
+
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript"></script>
+
+    <script>
+       function submitForm() {
+    // Get form data
+    var formData = new FormData(document.getElementById('myForm'));
+
+    // Convert FormData to a plain JavaScript object
+    var formObject = {};
+    formData.forEach((value, key) => {
+        formObject[key] = value;
+    });
+    
+   if( validateAddress()){
+
+    // Make a POST request using Axios
+    axios.post('/addAddress', formObject)
+        .then(response => {
+            console.log(response.data);
+            $('#myModal').modal('hide');
+            // window.location.reload()
+            console.log('Before load function');
+            $('#addressload').load(location.href + ' #addressload', function() {
+    console.log('After load function');
+});
+
+
+        })
+        .catch(error => {
+            // Handle the error response
+            console.error(error);
+        });
+    } else {
+            // If validation fails, do not proceed with form submission
+            console.log('Form validation failed. Please correct the errors.');
+        }
+}
+       
+
+
+
+
+    function checkEnter(event, nextInputId) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            validateAddress();
+            const nextInput = document.getElementById(nextInputId);
+            if (nextInput) {
+                nextInput.focus();
+            }
+        }
+    }
+
+
+     // Function to validate the form
+     function validateAddress() {
+        // Reset previous error messages
+        document.getElementById('firstNameError').textContent = '';
+        document.getElementById('lastNameError').textContent = '';
+        document.getElementById('addressError').textContent = '';
+        document.getElementById('landmarkError').textContent = '';
+        document.getElementById('cityError').textContent = '';
+        document.getElementById('stateError').textContent = '';
+        document.getElementById('pinError').textContent = '';
+
+        // Get form input values
+        const firstName = document.getElementById('firstName').value.trim();
+        const lastName = document.getElementById('lastName').value.trim();
+        const address = document.getElementById('inputAddress').value.trim();
+        const landmark = document.getElementById('landmark').value.trim();
+        const city = document.getElementById('inputCity').value.trim();
+        const state = document.getElementById('inputState').value.trim();
+        const pin = document.getElementById('pin').value.trim();
+
+        // Validate each input field
+        if (!validateInput(firstName, 'First Name', 'firstNameError')) return false;
+        if (!validateInput(lastName, 'Last Name', 'lastNameError')) return false;
+        if (!validateInput(address, 'Address', 'addressError')) return false;
+        if (!validateInput(landmark, 'Landmark', 'landmarkError')) return false;
+        if (!validateInput(city, 'City', 'cityError')) return false;
+        if (!validateInput(state, 'State', 'stateError')) return false;
+        if (!validatePin(pin)) return false;
+
+        // Additional validation logic can be added as needed
+
+        // If all validations pass, return true
+        return true;
+    }
+
+    // Function to validate individual input fields
+    function validateInput(value, fieldName, errorId) {
+        if (!value) {
+            document.getElementById(errorId).textContent = `${fieldName} is required.`;
+            return false;
+        }
+        return true;
+    }
+
+    function validatePin(pin) {
+        if (!pin) {
+            document.getElementById('pinError').textContent = 'PIN is required.';
+            return false;
+        }
+        if (!/^\d{6}$/.test(pin)) {
+            document.getElementById('pinError').textContent = 'PIN must be a 6-digit number.';
+            return false;
+        }
+        return true;
+    }
+
+
+    </script>
+    
+
+</body>
+
+</html>

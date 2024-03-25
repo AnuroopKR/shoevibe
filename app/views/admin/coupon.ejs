@@ -1,0 +1,194 @@
+<%-include("../layoutAdmin/header.ejs")%>
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Coupen List</h2>
+            <p>Add, edit or delete a coupen</p>
+        </div>
+        <div>
+            <input type="text" placeholder="Search Coupen" class="form-control bg-white" />
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <form id="coupon">
+                        <div class="mb-4">
+                            <label for="product_name" class="form-label">Name</label>
+                            <input type="text" placeholder="Type here" class="form-control" id="product_name" name="couponName" />
+                        </div>
+                        <div class="mb-4">
+                            <label for="product_slug" class="form-label">Discount</label>
+                            <input type="text" placeholder="Type here" class="form-control" id="product_slug" name="discount"/>
+                        </div>
+                        <div class="mb-4">
+                            <label for="product_slug" class="form-label">Minimum rate</label>
+                            <input type="text" placeholder="Type here" class="form-control" id="product_slug" name="minimumRate"/>
+                        </div>
+                        <div class="mb-4">
+                            <label for="product_slug" class="form-label">expiry date</label>
+                            <input type="date" placeholder="Type here" class="form-control" id="product_slug" name="expiry"/>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Description</label>
+                            <textarea placeholder="Type here" class="form-control" name="description"></textarea>
+                        </div>
+                        <div class="d-grid">
+                            <button class="btn btn-primary" onclick="couponSubmit(event)">Create coupen</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-9">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" />
+                                        </div>
+                                    </th>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>expiry</th>
+                                    <!-- <th>Order</th> -->
+                                    <th class="text-end">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+
+                               <%couponData.forEach(coupon=>{  %> 
+                                <% const dateString = coupon.expiry;
+                                const date = new Date(dateString);
+                                
+                                const year = date.getFullYear();
+                                const month = date.getMonth() + 1; 
+                                const day = date.getDate(); %>
+                                <% const formattedDate =  day+ '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') +year ; %>
+
+
+                                <tr>
+                                    <td class="text-center">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" />
+                                        </div>
+                                    </td>
+                                    <td><%= coupon.couponCode %></td>
+                                    <td><b><%= coupon.name %></b></td>
+                                    <td><%= coupon.description %></td>
+                                    <td><%= formattedDate%></td>
+                                    
+                                    <td class="text-end">
+                                        <div class="dropdown">
+                                            <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item" href="#">View detail</a>
+                                                <!-- <a class="dropdown-item" href="#">Edit info</a> -->
+                                                <a class="dropdown-item text-danger" onclick="deleteCoupon('<%= coupon._id %>')" href="#">Delete</a>
+                                            </div>
+                                        </div>
+                                        <!-- dropdown //end -->
+                                    </td>
+                                </tr>
+                               <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- .col// -->
+            </div>
+            <!-- .row // -->
+        </div>
+        <!-- card body .// -->
+    </div>
+    <!-- card .// -->
+</section>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function couponSubmit(event){
+        event.preventDefault(); // Prevent form submission
+
+        // Retrieve form data
+        const formData = new FormData(document.getElementById('coupon'));
+
+        // Convert form data to JSON
+        const jsonData = {};
+        formData.forEach((value, key) => {
+            jsonData[key] = value;
+        });
+
+        // Make a fetch request
+        fetch('/admin/createCoupon', {
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData) // Convert JSON data to a string before sending
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json(); 
+        })
+        .then(data => {
+            console.log('Form submitted successfully:', data);
+            window.location.reload(true)
+        })
+        .catch(error => {
+            console.error('There was a problem with the form submission:', error);
+        });
+    }
+
+    
+
+    async function deleteCoupon(id){
+
+        const result = await Swal.fire({
+            title: 'Are you sure to List?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Delete !'
+        });
+
+        
+        if (result.isConfirmed){
+
+        const jsonData={
+            couponId:id
+        }
+
+        fetch('/admin/deleteCoupon', {
+            method: 'DELETE', 
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData) // Convert JSON data to a string before sending
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json(); 
+        })
+        .then(data => {
+            console.log('Form submitted successfully:', data);
+            window.location.reload(true)
+        })
+        .catch(error => {
+            console.error('There was a problem with the form submission:', error);
+        });
+    }
+    }
+    
+</script>
+
+
+<%-include("../layoutAdmin/footer.ejs")%>
+<!-- fetch('/admin/createCoupon', -->

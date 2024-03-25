@@ -1,0 +1,115 @@
+<%-include("../layoutAdmin/header.ejs")%>
+<section class="content-main">
+    <div class="content-header">
+        <h2 class="content-title">User list</h2>
+        <div>
+            <a href="#" class="btn btn-primary"><i class="material-icons md-plus"></i> Create new</a>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <header class="card-header">
+            <div class="row gx-3">
+                <div class="col-lg-4 col-md-6 me-auto">
+                    <input type="text" placeholder="Search..." class="form-control" />
+                </div>
+                <div class="col-lg-2 col-md-3 col-6">
+                    <select class="form-select">
+                        <option>Status</option>
+                        <option>Active</option>
+                        <option>Disabled</option>
+                        <option>Show all</option>
+                    </select>
+                </div>
+                <div class="col-lg-2 col-md-3 col-6">
+                    <select class="form-select">
+                        <option>Show 20</option>
+                        <option>Show 30</option>
+                        <option>Show 40</option>
+                    </select>
+                </div>
+            </div>
+        </header>
+        <!-- card-header end// -->
+<div class="card-body">
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Seller</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Registered</th>
+                    <th class="text-end">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% userData.forEach(user => { %>
+                 
+              
+                <tr>
+                    <td width="40%">
+                        <a href="#" class="itemside">
+                            <div class="left">
+                                <img src="/assets/imgs/people/user.jpg" class="img-sm img-avatar" alt="Userpic" />
+                            </div>
+                            <div class="info pl-3">
+                                <h6 class="mb-0 title"><%=user.name%></h6>
+                                <small class="text-muted">ID:<%=user._id%></small>
+                            </div>
+                        </a>
+                    </td>
+                    <td><%=user.email%></td>
+                    <td><span class="badge rounded-pill alert-success"><%=user.isBlocked%></span></td>
+                    <td><%=user.date%></td>
+                    <td class="text-end">
+                        <% if(user.isBlocked===true ) { %>
+                            <a href="#"class="btn btn-sm btn-success rounded text-white font-sm mt-15 mr-5" onclick="showUnblockAlert('<%= user._id %>')">Unblock</a>
+                        <% } else { %>
+                                <a href="#" class="btn btn-sm btn-danger rounded font-sm fw-5 mt-15 mr-5"onclick="showBlockAlert('<%= user._id %>')">Block</a>
+                            <% } %>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+        <!-- table-responsive.// -->
+    </div>
+</div>
+<!-- card-body end// -->
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    async function showUnblockAlert(userId) {
+        const result = await Swal.fire({
+            title: 'Are you sure to List?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Unblock !'
+        });
+
+        if (result.isConfirmed) {
+            // Handle the unblocking logic, e.g., make an AJAX request
+            window.location.href = "/admin/unblockUser/" + userId;
+        }
+    }
+
+    async function showBlockAlert(userId) {
+        const result = await Swal.fire({
+            title: 'Are you sure to Unlisting?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, block!'
+        });
+
+        if (result.isConfirmed) {
+            // Handle the blocking logic, e.g., make an AJAX request
+            window.location.href = "/admin/blockUser/" + userId;
+        }
+    }
+    </script>
+
+<%-include("../layoutAdmin/footer.ejs")%>

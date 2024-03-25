@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP verification UI using bootstrap</title>
+
+    <!-- bootstrap 5 stylesheet -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/css/bootstrap.min.css" integrity="sha512-Ez0cGzNzHR1tYAv56860NLspgUGuQw16GiOOp/I2LuTmpSK9xDXlgJz3XN4cnpXWDmkNBKXR/VDMTCnAaEooxA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- fontawesome 6 stylesheet -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+    <style>
+        body{
+            background-color: #ebecf0;
+        }
+        .otp-letter-input{
+            max-width: 100%;
+            height: 90px;
+            border: 1px solid #198754;
+            border-radius:10px;
+            color: #198754;
+            font-size: 60px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .btn{
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container p-5">
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-5 mt-5">
+                <div class="bg-white p-5 rounded-3 shadow-sm border">
+                    <div>
+                        <p class="text-center text-success" style="font-size: 5.5rem;"><i class="fa-solid fa-envelope-circle-check" style="color: orange"></i></p>
+                        <p class="text-center text-center h5 ">Please check your email</p>
+                        <p class="text-muted text-center">We've sent a code to contact@curfcode.com</p>
+                        <form class="row login_form" action="/otp" method="post" id="contactForm" novalidate="novalidate">
+                        <div class="row pt-4 pb-2">
+                            <div class="col-3">
+                                <input class="otp-letter-input" type="password" maxlength="1" name="a" oninput="moveToNext(this, 'otp2')">
+                            </div>
+                            <div class="col-3">
+                                <input class="otp-letter-input" type="password" maxlength="1" name="b" id="otp2" oninput="moveToNext(this, 'otp3')">
+                            </div>
+                            <div class="col-3">
+                                <input class="otp-letter-input" type="password" maxlength="1" name="c" id="otp3" oninput="moveToNext(this, 'otp4')">
+                            </div>
+                            <div class="col-3">
+                                <input class="otp-letter-input" type="password" maxlength="1" name="d" id="otp4">
+                            </div>
+                        </div>
+                         <div class="row pt-3">
+                            
+                            <div >
+                                <button class="btn btn-success w-100 btn-warning">Verify</button>
+                            </div>
+                        </div>
+                    </form>
+                    <!-- <label style="position: static; color: red; font-size: small"> </label> -->
+                    <p><div class="time" id="timer">0:06 </div></p>
+                    <p class="text-muted text-center pt-2">Didn't get the code? <a href="/resendOtp" id="resendLink" class="text-success" style="display: none;" >Click to resend.</a></p>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let timerem=10;
+startTimer();
+
+function startTimer() {
+  if(timerem<0){
+    doTimeout();
+    return
+  }
+  document.getElementById('timer').innerHTML = convertToMinSec(timerem)
+  timerem--; 
+  
+  setTimeout(startTimer, 1000);
+}
+
+function convertToMinSec(time) {
+  const min = Math.floor(time/60)
+  const sec = time - min*60;
+  
+  return `0${min}:${sec === sec%10 ? '0' : ''}${sec}`
+}
+
+
+// function resendOTP() {
+//     // window.location.href='/resendOtp'
+//     // Add logic to resend the OTP here
+//     // This could include generating a new OTP, sending it, and resetting the timer
+//     clearTimeout(timerId); // Clear the existing timer
+//     timerem = 30; // Reset the timer to 30 seconds
+//     startTimer(); // Restart the timer
+//     disableResendLink(); // Disable the "Resend" link
+//     alert('OTP resent!'); // You can replace this with your actual resend logic
+//   }
+
+  function disableResendLink() {
+    document.getElementById('resendLink').classList.remove('text-success');
+    document.getElementById('resendLink').classList.add('text-muted');
+    document.getElementById('resendLink').style.pointerEvents = 'none'; // Disable the "Resend" link
+  }
+
+  function doTimeout() {
+    document.getElementById('resendLink').style.display="block";
+    document.getElementById('timer').style.display="none";
+    // document.getElementById('resendLink').style.pointerEvents = 'auto'; // Enable the "Resend" link
+  }
+
+  
+
+        function moveToNext(currentInput, nextInputId) {
+            var nextInput = document.getElementById(nextInputId);
+            if (currentInput.value.length === currentInput.maxLength) {
+                nextInput.focus();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,287 @@
+<%-include("../layoutAdmin/header.ejs")%>
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Offers</h2>
+            <p></p>
+        </div>
+        <div>
+            <input type="text" placeholder="Search Categories" class="form-control bg-white" />
+        </div>
+    </div >
+    <div class="card" id="offer-load">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <form id="submit-form">
+                        <div class="mb-4">
+                            <label for="offer_name" class="form-label">Name</label>
+                            <input type="text" placeholder="Type here" class="form-control" id="offer_name" name="offerName"  />
+                            <p id="nameError" style="color: red;"></p>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Description</label>
+                            <textarea placeholder="Type here" class="form-control" name="description" id="description"></textarea>
+                            <p id="descriptionError" style="color: red;"></p>
+                        </div>
+                        <div class="mb-4">
+                            <label for="product_name" class="form-label">Offer percentage</label>
+                            <input type="text" placeholder="Type here" class="form-control" id="percentage" name="percentage" />
+                            <p id="percentageError" style="color: red;"></p>
+                        </div>
+                        <div class="mb-4">
+                            <label for="date" class="form-label">Starting date</label>
+                            <input type="date" placeholder="Type here" class="form-control" id="starting-date" name="startingDate"/>
+                            <p id="startDateError" style="color: red;"></p>
+                        </div>
+                        <div class="mb-4">
+                            <label for="date" class="form-label">Ending date</label>
+                            <input type="date" placeholder="Type here" class="form-control" id="ending-date" name="expiryDate"/>
+                            <p id="endDateError" style="color: red;"></p>
+                            
+                        </div>
+                        <div class="d-grid">
+                            <button class="btn btn-primary" type="button" onclick="submitOffer('event')">Create offer</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-9">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" />
+                                        </div>
+                                    </th>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Discount</th>
+                                    <th class="text-end">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                               <%offerData.forEach((offer,index)=>{%>
+                                <tr>
+                                    <td class="text-center">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" />
+                                        </div>
+                                    </td>
+                                    <td><%=index+1%></td>
+                                    <td><b><%=offer.title%></b></td>
+                                    <td><%=offer.description%></td>
+                                    <td><%=offer.discount%> %</td>
+                                    <td class="text-end">
+                                        <div class="dropdown">
+                                            <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
+                                            <div class="dropdown-menu">
+                                                <!-- <a class="dropdown-item" href="#">View detail</a> -->
+                                                <a class="dropdown-item" href="/admin/editCategory/<%=offer._id%>">Edit</a>
+                                                <a class="dropdown-item text-danger" onclick=" deleteOffer('<%=offer._id%>')">Delete</a>
+                                            </div>
+                                        </div>
+                                        <!-- dropdown //end -->
+                                    </td>
+                                </tr>
+                                <%})%>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- .col// -->
+            </div>
+            <!-- .row // -->
+        </div>
+        <!-- card body .// -->
+    </div>
+    <!-- card .// -->
+</section>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    // function validateForm() {
+    //     var offerName = document.getElementById("offer_name").value.trim();
+    //     var description = document.getElementById("description").value;
+    //     var percentage = document.getElementById("percentage").value;
+
+    //     // Check if offerName contains only one space between words and each word has a minimum of three letters
+    //     var words = offerName.split(/\s+/);
+    //     for (var i = 0; i < words.length; i++) {
+    //         if (words[i].length < 3) {
+    //             document.getElementById("nameError").innerText = "Please enter words with a minimum of three letters";
+    //             return false;
+    //         }
+    //     }
+    //     if (words.length > 1) {
+    //         document.getElementById("nameError").innerText = "Please enter only one space between words";
+    //         return false;
+    //     }
+
+    //     if (description.trim() == "") {
+    //         document.getElementById("descriptionError").innerText = "Please enter a description";
+    //         return false;
+    //     }
+
+    //     if (percentage.trim() == "" || isNaN(percentage)) {
+    //         document.getElementById("percentageError").innerText = "Please enter a valid offer percentage";
+    //         return false;
+    //     }
+
+    //     return true;
+    // }
+
+    function submitOffer(event) {
+        if(validateForm()){
+        
+        console.log("aaaaaa");
+        
+            var formData = new FormData(document.getElementById("submit-form"));
+            const jsonData = {};
+        formData.forEach((value, key) => {
+            jsonData[key] = value;
+        });
+            console.log(jsonData)
+
+            fetch('/admin/addOffer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(jsonData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Handle success response
+                console.log(data);
+                $('#offer-load').load(location.href + ' #offer-load')
+            })
+            .catch(error => {
+                // Handle error
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        
+        }else{
+            console.log("error");
+        }
+    }
+
+
+    async function deleteOffer(id){
+
+const result = await Swal.fire({
+    title: 'Are you sure to delete?',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#28a745',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, Delete !'
+});
+
+
+if (result.isConfirmed){
+
+const jsonData={
+    offerId:id
+}
+
+fetch('/admin/deleteOffer', {
+    method: 'DELETE', 
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(jsonData) 
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+    return response.json(); 
+})
+.then(data => {
+    console.log('Form submitted successfully:', data);
+    $('#offer-load').load(location.href + ' #offer-load')
+})
+.catch(error => {
+    console.error('There was a problem with the form submission:', error);
+});
+}
+}
+
+
+
+
+        
+    function validateForm() {
+        var offerName = document.getElementById("offer_name").value.trim();
+        var description = document.getElementById("description").value.trim();
+        var percentage = document.getElementById("percentage").value.trim();
+        var startDate = document.getElementById("starting-date").value.trim();
+        var endDate = document.getElementById("ending-date").value.trim();
+        console.log(offerName,description);
+        // Reset error messages
+        document.getElementById("nameError").textContent = "";
+        document.getElementById("descriptionError").textContent = "";
+        document.getElementById("percentageError").textContent = "";
+        document.getElementById("startDateError").textContent = "";
+        document.getElementById("endDateError").textContent = "";
+
+        // Flag to track if validation passed
+        var isValid = true;
+
+        // Name validation
+        if (!offerName.match(/^[A-Za-z]+(?: [A-Za-z]+)*$/)) {
+            document.getElementById("nameError").textContent = "Name must contain at least 3 alphabetical characters";
+            isValid = false;
+        }
+
+        // Description validation
+        if (description === "") {
+            document.getElementById("descriptionError").textContent = "Description is required";
+            isValid = false;
+        }
+
+        // Percentage validation
+        if (percentage === "" || isNaN(percentage) || parseFloat(percentage) < 0 || parseFloat(percentage) > 100) {
+            document.getElementById("percentageError").textContent = "Please enter a valid offer percentage between 0 and 100";
+            isValid = false;
+        }
+        if (startDate === "") {
+            document.getElementById("startDateError").textContent = "Starting date is required";
+            isValid = false;
+        }
+
+        // End date validation
+        if (endDate === "") {
+            document.getElementById("endDateError").textContent = "Ending date is required";
+            isValid = false;
+        } else if (startDate > endDate) {
+            document.getElementById("endDateError").textContent = "Ending date must be after the starting date";
+            isValid = false;
+        }
+
+
+        // You can add more validation rules for dates if needed
+
+        return isValid;
+    }
+
+   
+
+
+    
+</script>
+
+
+
+<%-include("../layoutAdmin/footer.ejs")%>

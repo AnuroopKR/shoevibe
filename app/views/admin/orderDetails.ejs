@@ -1,0 +1,268 @@
+<%-include("../layoutAdmin/header.ejs")%>
+
+<style>
+    .return-button {
+    background-color: #ff4444;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    /* Add more styles as needed */
+}
+
+</style>
+    <section class="content-main">
+        <div class="content-header">
+            <div id="orderDetail">
+                <h2 class="content-title card-title">Order detail</h2>
+                <p>Details for Order ID: <%=orderData.orderId%></p>
+            </div>
+        </div>
+        <div class="card">
+            <header class="card-header">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 col-md-6 mb-lg-0 mb-15">
+                        <span> <i class="material-icons md-calendar_today"></i> <b><%=orderData.createdAt%></b> </span> <br />
+                        <small class="text-muted">Order ID: 3453012</small>
+                    </div>
+                    <div class="col-lg-6 col-md-6 ms-auto text-md-end">
+                        <!-- <select id="orderStatusSelect" class="form-select d-inline-block mb-lg-0 mr-5 mw-200">
+                            <option>Change status</option>
+                            <option>Awaiting payment</option>
+                            <option>Confirmed</option>
+                            <option>Shipped</option>
+                            <option>Delivered</option>
+                        </select> -->
+                        <select id="orderStatusSelect" class="form-select d-inline-block mb-lg-0 mr-5 mw-200">
+                            
+                            <option value="Not Processed" <% if(orderData.orderStatus === 'Not Processed') { %>selected<% } %>>Not Processed</option>
+                            <option value="Processing " <% if(orderData.orderStatus === 'Processing') { %>selected<% } %>>Processing</option>
+                            <option value="Dispatched" <% if(orderData.orderStatus === 'Dispatched') { %>selected<% } %>>Dispatched</option>
+                            <option value="Cancelled " <% if(orderData.orderStatus === 'Cancelled') { %>selected<% } %>>Cancelled</option>
+                            <option value="Returned" <% if(orderData.orderStatus === 'Returned') { %>selected<% } %>>Returned</option>
+                            <option value="Delivered" <% if(orderData.orderStatus === 'delivered') { %>selected<% } %>>Delivered</option>
+                        </select>
+                        
+
+                        <a id="saveButton" class="btn btn-primary" href="#">Save</a>
+                        <a class="btn btn-secondary print ms-2" href="#"><i class="icon material-icons md-print"></i></a>
+                    </div>
+                </div>
+            </header>
+            <!-- card-header end// -->
+            <div class="card-body">
+                <div class="row mb-50 mt-20 order-info-wrap">
+                    <div class="col-md-4">
+                        <article class="icontext align-items-start">
+                            <span class="icon icon-sm rounded-circle bg-primary-light">
+                                <i class="text-primary material-icons md-person"></i>
+                            </span>
+                            <div class="text">
+                                <h6 class="mb-1">Customer</h6>
+                                <p class="mb-1">
+                                    <%=orderData.userId.name%> <br />
+                                    <%=orderData.userId.email%> <br />
+                                    <%=orderData.userId.mobile%>
+                                </p>
+                                <!-- <a href="#">View profile</a> -->
+                            </div>
+                        </article>
+                    </div>
+                    <!-- col// -->
+                    <div class="col-md-4">
+                        <article class="icontext align-items-start">
+                            <span class="icon icon-sm rounded-circle bg-primary-light">
+                                <i class="text-primary material-icons md-local_shipping"></i>
+                            </span>
+                            <div class="text">
+                                <h6 class="mb-1">Order info</h6>
+                                <p class="mb-1">
+                                    Shipping: Fargo express <br />
+                                    Pay method: <%=orderData.paymentIntent.type%> <br />
+                                    Status: <%=orderData.orderStatus%>
+                                </p>
+                                <!-- <a href="#">Download info</a> -->
+                            </div>
+                        </article>
+                    </div>
+                    <!-- col// -->
+                    <div class="col-md-4">
+                        <article class="icontext align-items-start">
+                            <span class="icon icon-sm rounded-circle bg-primary-light">
+                                <i class="text-primary material-icons md-place"></i>
+                            </span>
+                            <div class="text">
+                                <h6 class="mb-1">Deliver to</h6>
+                                <p class="mb-1">
+                                    City: <%=orderData.address.city%>, <%=orderData.address.state%> <br /><%=orderData.address.address%><br />
+                                    Po Box <%=orderData.address.pin%>
+                                </p>
+                                <!-- <a href="#">View profile</a> -->
+                            </div>
+                        </article>
+                    </div>
+                    <!-- col// -->
+                </div>
+                <!-- row // -->
+                <div class="row">
+                    <div class="col-lg-7">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th width="40%">Product</th>
+                                        <th width="20%">Unit Price</th>
+                                        <th width="20%">Quantity</th>
+                                        <th width="20%" class="text-end">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <%orderData.products.forEach(product=>{%>
+                                    <tr>
+                                        <td>
+                                            <a class="itemside" href="#">
+                                                <div class="left">
+                                                    <img src="<%=product.productId.file[0]%>" width="40" height="40" class="img-xs" alt="Item" />
+                                                </div>
+                                                <div class="info">Haagen-Dazs Caramel Cone Ice</div>
+                                            </a>
+                                        </td>
+                                        <td>Rs  <%=product.productId.price%></td>
+                                        <td><%=product.quantity%></td>
+                                        <td class="text-end">Rs <%=product.price%></td>
+                                    </tr>
+                                   <%})%>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- table-responsive// -->
+                    </div>
+                    <!-- col// -->
+                    <div class="col-lg-1"></div>
+                    <div class="col-lg-4">
+                        <div class="box shadow-sm bg-light">
+                            <h6 class="mb-15">Payment info</h6>
+                            <p>
+                                 <%=orderData.paymentIntent.type%> <br>
+                                 <%=orderData.paymentIntent.paymentId%>
+                            </p>
+                        </div>
+                        <div class="h-25 pt-4" id="return-order">
+                            <%if(orderData.orderStatus=="Return request"){%>
+                            <div class="mb-3">
+                                <label>Accept return request</label> <br>
+                                <button class="return-button m-3" onclick="returnOrder('<%=orderData.orderId%>')">Accept Return</button>
+                                <!-- <textarea class="form-control" name="notes" id="notes" placeholder="Type some note"></textarea> -->
+                            </div>
+                            <!-- <button class="btn btn-primary">Save note</button> -->
+                            <%}%> 
+
+                        </div>
+                    </div>
+                    <!-- col// -->
+                </div>
+            </div>
+            <!-- card-body end// -->
+        </div>
+        <!-- card end// -->
+    </section>
+    <!-- content-main end// -->
+    <footer class="main-footer font-xs">
+        <div class="row pb-30 pt-15">
+            <div class="col-sm-6">
+                <script>
+                    document.write(new Date().getFullYear());
+                </script>
+                &copy; Nest - HTML Ecommerce Template .
+            </div>
+            <div class="col-sm-6">
+                <div class="text-sm-end">All rights reserved</div>
+            </div>
+        </div>
+    </footer>
+</main>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("saveButton").addEventListener("click", function(event) {
+        event.preventDefault(); 
+
+        const selectedValue = document.getElementById("orderStatusSelect").value; 
+        const orderId = document.getElementById("orderDetail").querySelector("p").textContent.split(":")[1].trim(); 
+        console.log(selectedValue);
+        const requestBody = {
+            orderId: orderId,
+            orderStatus: selectedValue
+        };
+
+       
+        fetch("/admin/changeOrderStatus", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestBody)
+        })
+        .then(response => {
+            if (response) {
+                window.location.reload()
+            console.log("Form submitted successfully");
+                
+            }
+            else{
+                throw new Error("Failed to submit form");
+            }
+           
+        })
+        .catch(error => {
+            console.error("Error submitting form:", error);
+        });
+    });
+});
+
+function returnOrder(orderId){
+    console.log(orderId);
+    swal({
+            title: "Are you sure?",
+            text: "Are you accept the return order",
+            icon: "question",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willCancel) => {
+            if (willCancel) {
+
+
+fetch(`/admin/returnAccept/${orderId}`)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log('Success:', data);
+    $('#return-order').load(location.href + ' #return-order')
+
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+
+
+                console.log("Order canceled!");
+            } else {
+                console.log("Order not canceled.");
+            }
+        });
+}
+</script>
+
+
+<%-include("../layoutAdmin/footer.ejs")%>

@@ -1,0 +1,224 @@
+<%-include("../layouts/header")%>
+
+<style>
+    .balance-container {
+    display: inline-block; /* Ensure the container only takes up as much width as needed */
+}
+
+.balance-rectangle {
+    background-color: lightgray; /* Set the background color of the rectangle */
+    padding: 10px; /* Add padding to create space around the text */
+    border-radius: 5px; /* Add rounded corners to the rectangle */
+}
+
+.green-text {
+    color: green; /* Set the text color to green */
+}
+
+</style>
+
+
+<link href="/assets/css/main.css?v=1.1" rel="stylesheet" type="text/css" />
+
+<section class="banner-area organic-breadcrumb">
+    <div class="container">
+        <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+            <div class="col-first">
+                <h1>Wallet</h1>
+               
+            </div>
+        </div>
+    </div>
+</section>
+<section class="content-main">
+<div class="content-header">
+    <div>
+        <h2 class="content-title card-title">My wallet</h2>
+        
+    </div>
+    <div>
+        <h3>Current Balance</h3>
+    </div>
+    <div class="balance-container">
+        <div class="balance-rectangle" id="wallwt-amount">
+            
+            <h2 class="green-text">Rs <%=walletData.balance %></h2>
+        </div>
+    </div>
+    
+    <div>
+        <a href="" class="btn btn-secondary" onclick="addWalletMoney(event)">Add to wallet</a>
+    </div>
+</div>
+<div class="card mb-4">
+    <!-- card-header end// -->
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#ID</th>
+                        <th scope="col">type</th>
+                        <th scope="col">amount</th>
+                        <th scope="col">status</th>
+                        <th scope="col">date</th>
+                        <!-- <th scope="col" class="text-end">Action</th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (walletData && walletData.transactions) { %>
+                        <% walletData.transactions.forEach((wallet, index) => { %>
+                            <tr><td><%=wallet.transactionId %></td>
+                                <td><%= wallet.type %></td>
+                                <td><%= wallet.amount %></td>
+                                <td><%= wallet.status %></td>
+                                <td><%= wallet.transactionDate %></td>
+                                <!-- Add more columns as needed -->
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="2">No transactions available</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+                
+            </table>
+        </div>
+        <!-- table-responsive //end -->
+    </div>
+    <!-- card-body end// -->
+</div>
+<!-- card end// -->
+<!-- <div class="pagination-area mt-15 mb-50">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-start">
+            <li class="page-item active"><a class="page-link" href="#">01</a></li>
+            <li class="page-item"><a class="page-link" href="#">02</a></li>
+            <li class="page-item"><a class="page-link" href="#">03</a></li>
+            <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+            <li class="page-item"><a class="page-link" href="#">16</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a>
+            </li>
+        </ul>
+    </nav>
+</div> -->
+</section>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+   function addWalletMoney(){
+    event.preventDefault();
+
+    Swal.fire({
+ title: 'Enter The amount',
+ input: 'text',
+ inputPlaceholder: 'Type the amount here',
+ showCancelButton: true,
+ confirmButtonText: 'Submit',
+ inputValidator: (value) => {
+    if (!value) {
+      return 'You need to write something!'
+    }
+    if (!/^\d+$/.test(value)) {
+      return 'You need to enter only numbers!'
+    }
+ }
+}).then((result) => {
+ if (result.isConfirmed) {
+    const formData={
+        amount:result.value
+    }
+    $.ajax({
+            type: 'POST', 
+            url: '/addToWallet',
+            data: formData, 
+            success: function(response) {
+                console.log(response.order);
+                razorpayPayment(response.order)
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+               
+                console.error('Error: ' + textStatus, errorThrown);
+            }
+        });
+   
+    console.log('Hello, ' + result.value + '!');
+    // No automatic refresh here
+ }
+})
+   } 
+
+   function razorpayPayment(order){
+    const price=order.amount
+    console.log(price);
+    var options = {
+    "key": "rzp_test_evaSWL9QWQXINn", // Enter the Key ID generated from the Dashboard
+    "amount":price , // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "currency": "INR",
+    "name": "Shoevibe",
+    "description": "Test Transaction",
+    "image": "https://example.com/your_logo",
+    "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "handler": function (response){
+       
+        verifyPayment(response,order)
+    },
+    "prefill": {
+        "name": "Gaurav Kumar",
+        "email": "gaurav.kumar@example.com",
+        "contact": "9000090000"
+    },
+    "notes": {
+        "address": "Razorpay Corporate Office"
+    },
+    "theme": {
+        "color": "#3399cc"
+    }
+};
+var rzp1 = new Razorpay(options);
+rzp1.open();
+}
+    
+function verifyPayment(payment,order){
+    $.ajax({
+    url: '/verifywallet',
+    data: {
+        payment: payment,
+        order: order
+    },
+    method: 'post',
+    success: function(response) {
+        Swal.fire({
+            icon: 'success',
+            title: `Added ${response.amount} Rupees`,
+            text: `${response.amount} rupees has been successfully added to your wallet.`,
+            confirmButtonText: 'OK',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $('#wallwt-amount').load(location.href + ' #wallwt-amount');
+            }
+        });
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+        console.error('Error: ' + textStatus, errorThrown);
+    }
+});
+
+    }
+
+
+</script>
+
+<script src="assets/js/vendors/jquery-3.6.0.min.js"></script>
+<script src="assets/js/vendors/bootstrap.bundle.min.js"></script>
+<script src="assets/js/vendors/select2.min.js"></script>
+<script src="assets/js/vendors/perfect-scrollbar.js"></script>
+<script src="assets/js/vendors/jquery.fullscreen.min.js"></script>
+<!-- Main Script -->
+<script src="assets/js/main.js?v=1.1" type="text/javascript"></script>
+
+<%-include("../layouts/footer")%>

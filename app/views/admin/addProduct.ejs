@@ -1,0 +1,392 @@
+<%-include("../layoutAdmin/header.ejs")%>
+
+<style>
+    .image-box {
+        margin: 10px;
+        display: inline-block;
+    }
+
+    .img-fluid {
+        max-width: 100px;
+        max-height: 100px;
+    }
+
+    .delete-button {
+        display: block;
+        margin-top: 5px;
+    }
+</style>
+
+<section class="content-main">
+    <div class="row">
+        <div class="col-9">
+            <div class="content-header">
+                <h2 class="content-title">Add New Product</h2>
+                <form action="/admin/addProduct" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+                <div>
+                    <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
+                    <button class="btn btn-md rounded font-sm hover-up" type="submit" id="submit">Publish</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="mb-4">
+                        <label for="product_title" class="form-label">Product title</label>
+                        <input type="text" placeholder="Type here" class="form-control" id="product_title" name="productName" onkeypress="checkEnter(event, 'product_sku')"/>
+                        <p id="productNameError" style="color: red;"></p>
+                    </div>
+                    <div class="row gx-3">
+                        <div class="col-md-4 mb-3">
+                            <label for="product_quantity" class="form-label">Quantity</label>
+                            <input type="text" placeholder="Type here" class="form-control" id="product_quantity" name="quantity"onkeypress="checkEnter(event, 'product_color')"/>
+                            <p id="productQuantityError" style="color: red;"></p>
+                            
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="product_color" class="form-label">Colour</label>
+                            <input type="text" placeholder="Type here" class="form-control" id="product_color" name="colour" onkeypress="checkEnter(event, 'product_size')"/>
+                            <p id="productColorError" style="color: red;"></p>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="product_size" class="form-label">Size</label>
+                            <input type="text" placeholder="Type here" class="form-control" id="product_size" name="size" onkeypress="checkEnter(event, 'product_brand')"/>
+                            <p id="productSizeError" style="color: red;"></p>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="product_brand" class="form-label">Brand</label>
+                        <input type="text" placeholder="Type here" class="form-control" id="product_brand" name="brand"  onkeypress="checkEnter(event, 'description')"/>
+                        <p id="productBrandError" style="color: red;"></p>
+                    </div>
+                </div>
+            </div>
+            <!-- card end// -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div>
+                        <label class="form-label">Description</label>
+                        <textarea placeholder="Type here" class="form-control" rows="4" name="description" id="description" onkeypress="checkEnter(event, 'price')"></textarea>
+                        <p id="discriptionError" style="color: red;"></p>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- card end// -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div>
+                        <label class="form-label">Images</label>
+                        <input class="form-control" type="file"  name="image" id="images" multiple onchange="handleImage()" />
+                    </div>
+                </div>
+            </div>
+            <!-- card end// -->
+        </div>
+        <div class="col-lg-3">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="mb-4">
+                        <label class="form-label">Price</label>
+                        <input type="text" placeholder="Type here" class="form-control" name="price" id="price" onkeypress="checkEnter(event, 'offer')"/>
+                        <p id="priceError" style="color: red;"></p>
+                    </div>
+                   
+                    <div class="mb-4">
+                        <label class="form-label">Status</label>
+                        <select class="form-select">
+                            <option>Listed</option>
+                            <option>Unlisted</option>
+                        </select>
+                    
+                    <h5 class="mb-3">Categories</h5>
+                    <%category.forEach(cat=>{%>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="<%=cat._id%>" id="product-cat" name="category"/>
+                        <label class="form-check-label" for="product-cat"> <%=cat.name%> </label>
+                    </div>
+                    <%})%>
+                </div>
+            </div>
+            <!-- card end// -->
+        </div>
+    </div>
+    <div id="imagePreviewContainer" class="col-3 "></div>
+</form>
+</section>
+<script>
+
+
+
+    
+
+    
+function handleImage() {
+    // Get the input element for file selection
+    var input = document.getElementById('images');
+    
+    // Get the container for real-time image previews
+    var realTimePreviewContainer = document.getElementById('imagePreviewContainer');
+    
+    // An array to store the selected image sources
+    var selectedImages = []; 
+
+    // Loop through each selected file
+    for (var i = 0; i < input.files.length; i++) {
+        // Create a FileReader to read the selected image
+        var reader = new FileReader();
+
+        // Define the onload event for the FileReader
+        reader.onload = (function (index) {
+            return function (e) {
+                // Create a div element for the image preview
+                var div = document.createElement('div');
+                div.className = 'image-box';
+
+                // Create an img element and set its source to the data URL of the selected image
+                var img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'img-fluid';
+                div.appendChild(img);
+                
+                // Add the selected image source to the array
+                selectedImages.push(img.src);
+
+                // Create a delete button for removing the image preview
+                var deleteButton = document.createElement('button');
+                deleteButton.className = 'delete-button';
+                deleteButton.innerHTML = 'Delete';
+                
+                // Define the onclick event for the delete button
+                deleteButton.onclick = function () {
+                    var deletedSrc = img.src;
+                    var index = selectedImages.indexOf(deletedSrc);
+                    
+                    // Remove the deleted image source from the array
+                    if (index !== -1) {
+                        selectedImages.splice(index, 1);
+                    }
+                    
+                    // Remove the image preview div from the container
+                    div.remove(); 
+                };
+
+                // Append the delete button to the image preview div
+                div.appendChild(deleteButton);
+
+                // Append the image preview div to the real-time preview container
+                realTimePreviewContainer.appendChild(div);
+            };
+        })(i);
+
+        // Read the selected file as a data URL
+        reader.readAsDataURL(input.files[i]);
+    }
+
+    // Return the array of selected image sources
+    return selectedImages;
+}
+
+
+
+
+
+
+    function validateForm() {
+        // Reset previous error messages
+        document.getElementById('productNameError').textContent = '';
+        document.getElementById('productQuantityError').textContent = '';
+        document.getElementById('productColorError').textContent = '';
+        document.getElementById('productSizeError').textContent = '';
+        document.getElementById('productBrandError').textContent = '';
+        document.getElementById('discriptionError').textContent = '';
+        document.getElementById('priceError').textContent = '';
+        document.getElementById('offerError').textContent = '';
+
+        // Get form input values
+        const productName = document.getElementById('product_title').value.trim();
+        const productQuantity = document.getElementById('product_quantity').value.trim();
+        const productColor = document.getElementById('product_color').value.trim();
+        const productSize = document.getElementById('product_size').value.trim();
+        const productBrand = document.getElementById('product_brand').value.trim();
+        const description = document.getElementById('description').value.trim();
+        const price = document.getElementById('price').value.trim();
+        const offer = document.getElementById('offer').value.trim();
+
+        // Validate each input field
+        if (!validateInput(productName, 'Product name', 'productNameError', 'product_title')) return false;
+        if (!validateQuantity(productQuantity, 'Product quantyty', 'productQuantityError', 'product_quantity')) return false;
+        if (!validateInput(productColor, 'Color', 'productColorError', 'product_color')) return false;
+        if (!validateProductSize(productSize, 'Product Size', 'productSizeError', 'product_size')) return false;
+        if (!validateInput(productBrand, 'Brand', 'productBrandError', 'product_brand')) return false;
+        if (!validateInput(description, 'Description', 'discriptionError', 'description')) return false;
+        if (!validatePrice(price, 'Price', 'priceError', 'price')) return false;
+        if (!validateOffer(offer,price, 'Offer', 'offerError', 'offer')) return false;
+
+        // Additional validation logic can be added as needed
+
+        // If all validations pass, return true
+        return true;
+    }
+
+    function validateInput(value, fieldName, errorId, inputId) {
+        if (!value) {
+            document.getElementById(errorId).textContent = `${fieldName} is required.`;
+            document.getElementById(inputId).focus();
+            return false;
+        }
+
+        // Validation for not consisting only of spaces
+        if (/^\s+$/.test(value)) {
+            document.getElementById(errorId).textContent = `${fieldName} cannot consist only of spaces.`;
+            document.getElementById(inputId).focus();
+            return false;
+        }
+        if (/\s{2,}/.test(value)) {
+            document.getElementById(errorId).textContent = `Only one space is allowed between words for ${fieldName}.`;
+            document.getElementById(inputId).focus();
+            return false;
+        }
+
+        return true;
+    }
+
+    function validateProductSize(value, fieldName, errorId, inputId) {
+        // Validation for a 1 or 2-digit number
+        const isNonNegativeInteger = /^\d{1,2}$/.test(value) && parseInt(value, 10) >= 0;
+
+        if (!isNonNegativeInteger) {
+            document.getElementById(errorId).textContent = `${fieldName} must be a non-negative 1 or 2-digit number.`;
+            document.getElementById(inputId).focus();
+            return false;
+        }
+        return true;
+    }
+    function validatePrice(value, fieldName, errorId, inputId) {
+        // Validation for a positive number with a maximum of 5 digits
+        const isPositiveNumber = /^\d{1,5}$/.test(value) && parseInt(value, 10) > 0;
+
+        if (!isPositiveNumber) {
+            document.getElementById(errorId).textContent = `${fieldName} must be a positive number with a maximum of 5 digits.`;
+            document.getElementById(inputId).focus();
+            return false;
+        }
+
+        return true;
+    }
+        function validateQuantity(value, fieldName, errorId, inputId) {
+        // Validation for a positive number with a maximum of 5 digits
+        const isPositiveNumber = /^\d{1,3}$/.test(value) && parseInt(value, 10) > 0;
+
+        if (!isPositiveNumber) {
+            document.getElementById(errorId).textContent = `${fieldName} must be a positive number with a maximum of 3 digits.`;
+            document.getElementById(inputId).focus();
+            return false;
+        }
+
+        return true;
+    }
+    function validateOffer(offer, price, fieldName, errorId, inputId) {
+
+        const isPositiveNumber = /^\d{1,5}$/.test(offer) && parseInt(offer, 10) > 0;
+
+if (!isPositiveNumber) {
+    document.getElementById(errorId).textContent = `${fieldName} must be a positive number with a maximum of 5 digits.`;
+    document.getElementById(inputId).focus();
+    return false;
+}
+
+
+    // Validation for offer less than price
+    const offerValue = parseFloat(offer);
+    const priceValue = parseFloat(price);
+
+    if (isNaN(offerValue) || isNaN(priceValue) || offerValue >= priceValue) {
+        document.getElementById(errorId).textContent = `${fieldName} must be a valid positive number and less than the price.`;
+        document.getElementById(inputId).focus();
+        return false;
+    }
+
+    return true;
+}
+
+    function checkEnter(event, nextInputId) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            validateForm();
+            const nextInput = document.getElementById(nextInputId);
+            if (nextInput) {
+                nextInput.focus();
+            }
+        }
+    }
+
+
+
+
+
+
+
+// function validateForm() {
+//             const productName = document.getElementById('product_title').value;
+//             const productNameError = document.getElementById('productNameError');
+
+//             const productSku = document.getElementById('product_sku').value;
+//             const productSkuError = document.getElementById('productSkuError');
+
+//             const productColor = document.getElementById('product_color').value;
+//             const productColorError = document.getElementById('productColorError');
+
+//             const productSize = document.getElementById('product_size').value;
+//             const productSizeError = document.getElementById('productSizeError');
+
+//             const productBrand = document.getElementById('product_brand').value;
+//             const productBrandError = document.getElementById('productBrandError');
+
+//             // Reset previous error message
+//             productNameError.textContent = '';
+//             productSizeError.textContent='';
+
+//             // Basic validation for category name
+//             if (!productName) {
+//                 productNameError.textContent = 'Category name is required.';
+//                 return false;
+//             }
+
+//             if (productName.length < 3 || productName.length > 50) {
+//                 productNameError.textContent = 'Category name must be between 3 and 50 characters.';
+//                 return false;
+//             }
+
+//             if (!/^[a-zA-Z ]+$/.test(productName)) {
+//                 productNameError.textContent = 'Invalid characters in the category name.';
+//                 return false;
+//             }
+//             if (!productSize) {
+//                 productSizeError.textContent = 'Category name is required.';
+//                 return false;
+//             }
+//             if (!/^\d{1,2}$/.test(productSize)) {
+//                 productSizeError.textContent = 'Invalid characters in the category name only numbers.';
+//                 return false;
+//             }
+
+
+//             // Continue with form submission if validation passes
+//             return true;
+//         }
+
+//     function checkEnter(event, nextInputId) {
+//             if (event.key === "Enter") {
+//                 event.preventDefault();
+//                 validateForm();
+//                 const nextInput = document.getElementById(nextInputId);
+//                 if (nextInput) {
+//                     nextInput.focus();
+//                 }
+//             }
+//         }
+</script>
+<%-include("../layoutAdmin/footer.ejs")%>

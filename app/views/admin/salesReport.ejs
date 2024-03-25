@@ -1,0 +1,219 @@
+<%-include("../layoutAdmin/header.ejs")%>
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Sales Report</h2>
+            
+        </div>
+        <div>
+            <input type="text" placeholder="Search order ID" class="form-control bg-white" />
+        </div>
+    </div>
+    <div class="card mb-4">
+        <header class="card-header">
+            <div class="row gx-3">
+               
+                    <div class="col-lg-4 col-6 col-md-3">
+                        <label for="startDate">Start date</label>
+                        <input type="date" id="startDate" name="startDate">
+                    </div>
+                    <div class="col-lg-4 col-6 col-md-3">
+                        <label for="endDate">End date</label>
+                        <input type="date" id="endDate" name="endDate">
+                    </div>
+                    <div class="col-lg-2 col-6 col-md-3">
+                        <button type="submit" onclick="filterByDate('event')">Filter</button>
+                    </div>
+                    <div class="col-lg-2 col-6 col-md-3">
+                        <button onclick="generatePDF()">Generate PDF</button>
+                    </div>
+            </div>
+            
+        </header>
+        <!-- card-header end// -->
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Total</th>
+                            <!-- <th scope="col">Status</th> -->
+                            <th scope="col">Date</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody id="orderTableBody">
+                        
+
+                    </tbody>
+                </table>
+            </div>
+            <!-- table-responsive //end -->
+        </div>
+        <!-- card-body end// -->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+            Offer
+          </button>
+    </div>
+   
+</section>
+
+<div
+      class="modal fade"
+      id="exampleModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Add Offer</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <!-- Your form or content for adding an offer goes here -->
+            <form>
+              <div class="form-group">
+                <label for="offerName">Offer Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="offerName"
+                  placeholder="Enter offer name"
+                />
+              </div>
+              <!-- Other form fields -->
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    const date={
+        startDate:'2023-01-01',
+        endDate:Date.now()
+    }
+    loadSalesReport(date)
+    console.log('DOM content has finished loading');
+});
+
+function filterByDate(event){
+    
+    const startDate=document.getElementById('startDate').value
+    const endDate=document.getElementById('endDate').value
+    console.log(endDate);
+
+    const date={
+        startDate:startDate,
+        endDate:endDate
+    }
+    loadSalesReport(date)
+}
+
+    
+    // Send form data using fetch
+    function loadSalesReport(date) {
+        
+    
+    fetch('/admin/salesReportLoad', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify(date)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Response:', data);
+        const orderData=data.orderData;
+        // Handle response data
+        const tbody = document.getElementById('orderTableBody');
+        let html = '';
+       let total=0
+        orderData.forEach(order => {
+           
+            html += `
+                <tr>
+                    <td>${order.orderId}</td>
+                    <td><b>${order.address.firstName}<br> ${order.address.address}<br> ${order.address.city}<br> ${order.address.state}<br> ${order.address.pin}</b></td>
+                    <td>${order.userId.email}</td>
+                    <td>${order.totalPrice}</td>
+                    <td>${order.createdAt}</td>
+                </tr>`
+                total=total+order.totalPrice
+                        tbody.innerHTML = html;
+        
+    })
+  let tot= ` <tr>
+                    <td ><h4 style="color: black;">Total</h4></td> <td></td><td></td><td></td><td ><h4 style="color: red;">Rs ${total}<h4></td>
+                </tr>`;
+                tbody.innerHTML = html+tot;
+})
+    .catch(error => {
+        // Handle fetch error
+        console.error('Fetch Error:', error);
+    });
+}
+</script>
+
+<script>
+    // Function to generate PDF
+    async function generatePDF() {
+        const divContent = document.querySelector('.card-body').innerHTML;
+        const pdfWindow = window.open('', '_blank');
+        pdfWindow.document.write('<html><head><title>PDF</title></head><body>');
+        pdfWindow.document.write(divContent);
+        pdfWindow.document.write('</body></html>');
+        pdfWindow.document.close();
+        pdfWindow.print();
+    }
+</script>
+
+
+<!-- <script>
+    document.getElementById('generatePDFButton').addEventListener('click', async () => {
+        const response = await fetch('http://localhost:3000/generatePDF');
+        const pdfData = await response.blob();
+        const url = window.URL.createObjectURL(pdfData);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'generatedPDF.pdf';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+    });
+</script> -->
+
+<%-include("../layoutAdmin/footer.ejs")%>

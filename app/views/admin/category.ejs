@@ -1,0 +1,266 @@
+<%-include("../layoutAdmin/header.ejs")%>
+<section class="content-main">
+  <div class="content-header">
+    <div>
+      <h2 class="content-title card-title">Categories</h2>
+      <p>Add, edit or delete a category</p>
+    
+    </div>
+    <div>
+      <input
+        type="text"
+        placeholder="Search Categories"
+        class="form-control bg-white"
+      />
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-3">
+          <form>
+            <div class="mb-4">
+              <label for="product_name" class="form-label">Name</label>
+              <input
+                type="text"
+                placeholder="Type here"
+                class="form-control"
+                id="product_name"
+                name="categoryName"
+              />
+              <p id="nameError" style="color: red"></p>
+            </div>
+            <div class="mb-4">
+              <label class="form-label">Description</label>
+              <textarea
+                placeholder="Type here"
+                class="form-control"
+                name="description"
+                id="description"
+              ></textarea>
+              <p id="descriptionError" style="color: red"></p>
+            </div>
+            <div class="d-grid">
+              <button class="btn btn-primary" type="button" onclick="addCategory()">
+                Create category
+              </button>
+            </div>
+          </form>
+        </div>
+        <div class="col-md-9">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th class="text-center">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        value=""
+                      />
+                    </div>
+                  </th>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Order</th>
+                  <th>offer</th>
+                  <th class="text-end">Action</th>
+                </tr>
+              </thead>
+              <tbody id="category-load">
+                <%category.forEach((cat,index)=>{%>
+                <tr>
+                  <td class="text-center">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        value=""
+                      />
+                    </div>
+                  </td>
+                  <td><%=index+1%></td>
+                  <td><b><%=cat.name%></b></td>
+                  <td><%=cat.description%></td>
+                  <td>1</td>
+                  <td id="apply-offer">
+                  <% if (cat.offerId) {%>
+                    <a onclick="removeOffer('<%=cat._id%>')" class="btn btn-sm font-sm rounded btn-brand add-offer-btn" >
+                            <i class="material-icons md-edit"></i>Remove offer
+                            </a>
+                  <%}else{ %>
+                  <a href="/admin/offerLoadProduct?id=<%=cat._id%>&status=category" class="btn btn-sm font-sm rounded btn-brand add-offer-btn" >
+                    <i class="material-icons md-edit"></i>  Apply offer
+                    </a>
+                  <% } %></td>
+                  <td class="text-end">
+                    
+                    <div class="dropdown">
+                      <a
+                        href="#"
+                        data-bs-toggle="dropdown"
+                        class="btn btn-light rounded btn-sm font-sm"
+                      >
+                        <i class="material-icons md-more_horiz"></i>
+                      </a>
+                      <div class="dropdown-menu">
+                        <!-- <a class="dropdown-item" href="#">View detail</a> -->
+                        <a
+                          class="dropdown-item"
+                          href="/admin/editCategory/<%=cat._id%>"
+                          >Edit</a
+                        >
+                        <a
+                          class="dropdown-item text-danger"
+                          href="/admin/deleteCategory/<%=cat._id%>"
+                          >Delete</a
+                        >
+                      </div>
+                    </div>
+                    <!-- dropdown //end -->
+                  </td>
+                </tr>
+                <%})%>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- .col// -->
+      </div>
+      <!-- .row // -->
+    </div>
+    <!-- card body .// -->
+  </div>
+  <!-- card .// -->
+ 
+</section>
+<!-- Modal -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+
+function addCategory(){
+  
+  if(validateForm()){
+    const categoryName = document.getElementById("product_name").value;
+    const nameError = document.getElementById("nameError");
+
+    const descriptionInput = document.getElementById("description").value;
+    const descriptionError = document.getElementById("descriptionError");
+    const categoryData={
+      categoryName:categoryName,
+      description:descriptionInput
+    }
+
+    fetch('/admin/addCategory', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(categoryData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to add category');
+        }
+        return response.json();
+    })
+    .then(data => {
+      if(data.message){
+        nameError.textContent = data.message;
+      }else{
+        location.reload();
+      }
+      
+        console.log('Category added successfully:', data);
+    })
+    .catch(error => {
+        console.error('Error adding category:', error);
+    });
+  }
+}
+
+function removeOffer(id){
+        
+        
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+            fetch(`/admin/removeOffer?id=${id}&status=category`)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Success:', data);
+        location.reload()
+        // $('#category-load').load(location.href + ' #category-load')
+
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+    
+          }
+                console.log("Removing offer for product ID:", productId);
+            })
+        };
+
+
+  function validateForm() {
+    const categoryName = document.getElementById("product_name").value;
+    const nameError = document.getElementById("nameError");
+
+    const descriptionInput = document.getElementById("description").value;
+    const descriptionError = document.getElementById("descriptionError");
+
+    // Reset previous error message
+    nameError.textContent = "";
+    descriptionError.textContent = "";
+
+    // Basic validation for category name
+    if (!categoryName) {
+      nameError.textContent = "Category name is required.";
+      return false;
+    }
+
+    if (categoryName.length < 3 || categoryName.length > 50) {
+      nameError.textContent =
+        "Category name must be between 3 and 50 characters.";
+      return false;
+    }
+
+    if (!/^[a-zA-Z]+(?: [a-zA-Z]+)?$/.test(categoryName)) {
+      nameError.textContent =
+        "Invalid format for category name. Only one space between words is allowed.";
+      return false;
+    }
+    if (descriptionInput.length < 10) {
+      descriptionError.textContent =
+        "Description must be at least 10 characters long.";
+      return false;
+    }
+
+    if (/^\s*$/.test(descriptionInput)) {
+      descriptionError.textContent =
+        "Description cannot consist only of spaces.";
+      return false;
+    }
+
+    // Continue with form submission if validation passes
+    return true;
+  }
+</script>
+
+<%-include("../layoutAdmin/footer.ejs")%>
