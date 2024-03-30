@@ -170,7 +170,7 @@ function filterByDate(event){
                     <td><b>${order.address.firstName}<br> ${order.address.address}<br> ${order.address.city}<br> ${order.address.state}<br> ${order.address.pin}</b></td>
                     <td>${order.userId.email}</td>
                     <td>${order.totalPrice}</td>
-                    <td>${order.createdAt}</td>
+                    <td>${order.createdAt.toLocaleDateString()}</td>
                 </tr>`
                 total=total+order.totalPrice
                         tbody.innerHTML = html;

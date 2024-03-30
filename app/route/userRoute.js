@@ -43,7 +43,7 @@ route.post('/userUpdate',middleWare.isLoged,userController.profileUpdate)
 route.post('/address',middleWare.isLoged,userController.addAddress)
 route.post('/addAddress',middleWare.isLoged,userController.addAddress)
 route.get('/deleteAddress/:id',middleWare.isLoged,userController.deleteAddress)
-route.get ('/setDefault/:id',middleWare.isLoged,userController.setDefault)
+route.get ('/setDefault/:id',middleWare.isLoged,userController.setDefault) 
 route.post('/addressEdit/:id',middleWare.isLoged,userController.updateAddress)
 // cart
 route.post('/addtoCart',middleWare.isLogedforFetch,cartController.addtoCart)
@@ -61,8 +61,13 @@ route.get('/orderList',middleWare.isLoged,orderController.orderListUser)
 route.get('/orderDetails/:orderId',middleWare.isLoged,orderController.userOrderDetails)
 route.get('/cancelOrder/:orderId',middleWare.isLoged,orderController.cancelOrder)
 route.get('/returnOrder/:orderId',middleWare.isLoged,orderController.returnOrder)
+route.get('/download-invoice/:orderId',middleWare.isLoged,orderController.invoiceDownload)
+
+route.get('/invoice/:orderId',middleWare.isLoged,orderController.invoice)
+
+
 //wishlist
-route.put('/addWishlist',middleWare.isLoged,wishlistController.addToWishlist) 
+route.put('/addWishlist',middleWare.isLogedforFetch,wishlistController.addToWishlist) 
 route.get('/loadWishlist',middleWare.isLoged,wishlistController.loadWishlist)
 route.delete('/deleteWishlist',middleWare.isLoged,wishlistController.deleteWishlist) 
 // wallet

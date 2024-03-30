@@ -31,7 +31,7 @@
             <div class="col-lg-6">
                 <div class="login_form_inner pt-5">
                     <h2 class="text-warning">signup</h2>
-                    <form class="row login_form" action="/signup/" method="POST" id="contactForm" novalidate="novalidate">
+                    <!-- <form class="row login_form" action="/signup/" method="POST" id="contactForm" novalidate="novalidate">
                         <div class="col-md-12 form-group">
                             <input type="text" class="form-control" id="name" name="name" placeholder="Username" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Username'">
                         </div>
@@ -55,11 +55,93 @@
                         <div class="col-md-12 form-group">
                         <label style="position: static; color: red; font-size: small"> <%=message %></label>
                         </div>
+                    </form> -->
+                    <form class="row login_form" action="/signup/" method="POST" id="contactForm" novalidate="novalidate">
+                        <div class="col-md-12 form-group">
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Username" required>
+                            <span class="error-message" id="name-error" style="color: red;"></span>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+                            <span class="error-message" id="email-error"style="color: red;"></span>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <input type="tel" class="form-control" id="phonenumber" name="mobile" placeholder="Mobile Number" required>
+                            <span class="error-message" id="phonenumber-error"style="color: red;"></span>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                            <span class="error-message" id="password-error"style="color: red;"></span>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <button type="submit" class="primary-btn">Submit</button>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <label style="position: static; color: red; font-size: small"> <%=message %></label>
+                            </div>
                     </form>
+                    
                 </div>
             </div>
         </div>
     </div>
 </section>
 <!--================End Login Box Area =================-->
+
+
+<script>
+    document.getElementById('contactForm').addEventListener('submit', function(event) {
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const phoneInput = document.getElementById('phonenumber');
+    const passwordInput = document.getElementById('password');
+
+    const nameError = document.getElementById('name-error');
+    const emailError = document.getElementById('email-error');
+    const phoneError = document.getElementById('phonenumber-error');
+    const passwordError = document.getElementById('password-error');
+
+    let isValid = true;
+
+    // Validate name
+    const nameValue =/^[A-Za-z\s]+$/;
+    if (!nameValue.test(nameInput.value.trim())) {
+        nameError.textContent = 'Name must have at least 3 letters and one space between letters';
+        isValid = false;
+    } else {
+        nameError.textContent = '';
+    }
+
+    // Validate email
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(emailInput.value.trim())) {
+        emailError.textContent = 'Invalid email format';
+        isValid = false;
+    } else {
+        emailError.textContent = '';
+    }
+
+    // Validate phone number
+    const phonePattern = /^\d{10}$/;
+    if (!phonePattern.test(phoneInput.value.trim())) {
+        phoneError.textContent = 'Mobile number must be 10 digits';
+        isValid = false;
+    } else {
+        phoneError.textContent = '';
+    }
+
+    // Validate password
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+={};:?<>,.\/\-]).{8,}$/;
+    if (!passwordPattern.test(passwordInput.value)) {
+        passwordError.textContent = 'Password must have at least one uppercase letter, one lowercase letter, one number, one special character, and be at least 8 characters long';
+        isValid = false;
+    } else {
+        passwordError.textContent = '';
+    }
+    if (!isValid) {
+        event.preventDefault(); // Prevent form submission if validation fails
+    }
+});
+
+</script>
 <%-include("../layouts/footer")%>

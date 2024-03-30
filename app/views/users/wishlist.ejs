@@ -29,12 +29,13 @@
                         <tr>
                             <th scope="col">Product</th>
                             <th scope="col">Price</th>
-                            <th scope="col">Quantity</th>
-                            <th scope="col">Total</th>
-                            <th scope="col">Action</th> <!-- Added a column for the Delete button -->
+                            <th></th><th></th>
+                            <!--   -->
+                            <th scope="col">Action</th> 
                         </tr>
                     </thead>
                     <tbody >
+                        <% if(wishlist){ %>
                         <% wishlist.products.forEach(product => { %>
                             <tr>
                                 <td>
@@ -58,13 +59,14 @@
                                     <a href="#" onclick="deleteWishlist('<%= product._id %>')" class="genric-btn primary circle" style="font-size: 20px;">Delete</a>
                                 </td>
                             </tr>
-                        <% }) %>
+                        <% })} %>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 </section>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!--================End Cart Area =================-->
 <script>
@@ -74,6 +76,17 @@
         const body={
             id:id
         }
+        Swal.fire({
+    title: 'Are you sure?',
+    text: 'You are about to delete this product from your wishlist!',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, delete it!',
+    cancelButtonText: 'Cancel'
+  }).then((result) => {
+    if (result.isConfirmed) {
         fetch('/deleteWishlist', {
     method: 'DELETE',
     headers: {
@@ -85,21 +98,19 @@
     if (!response.ok) {
         throw new Error('Network response was not ok');
     }
-    return response.json(); // Assuming response is JSON
+    return response.json(); 
 })
 .then(data => {
     console.log('Form submitted successfully:', data);
     $('#wish_list').load(location.href + ' #wish_list')
-    //  window.location.reload();  
 
-    // Handle success response
 })
 .catch(error => {
     console.error('There was a problem with the form submission:', error);
-    // Handle error
 });
 
     }
+})}
 </script>
 <script>
 

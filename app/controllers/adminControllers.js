@@ -7,7 +7,7 @@ const bcrypt = require("bcrypt");
 const userOtp = require("../model/userOtp");
 const nodeMailer = require("nodemailer");
 const speakeasy = require("speakeasy");
-const otpController = require("./otpController");
+const otpController = require("./otpController"); 
 const multer=require('multer')
 const storage = multer.memoryStorage()
 const path=require('path');
@@ -22,7 +22,25 @@ const adminControllers = {
       try {
         const orderData = await orderdb.find();
         const price = orderData.reduce((crr, acc) => crr + acc.totalPrice, 0);
-        res.render("admin/adminhome",{orderData,price});
+        
+        const orders = await orderdb.find({}); 
+  
+        const amountData = Array(12).fill(0);
+        const productCountData = Array(12).fill(0);
+    
+        orders.forEach(order => {
+          const { createdAt, products } = order;
+          const month = new Date(createdAt).getMonth();
+    
+          products.forEach(product => { 
+            const { price, quantity } = product;
+            const totalPrice = price * quantity;
+            amountData[month] += totalPrice;
+            productCountData[month] += quantity;
+          });
+        });
+        console.log(amountData,productCountData)
+        res.render("admin/adminhome",{orderData,price,amountData,productCountData});
       } catch (error) {
         console.log(error.message);
       }
@@ -135,7 +153,60 @@ if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
   
     
   
+  // const Order = require('./path/to/your/OrderModel'); // Import your Order model
 
+  async function getMonthlyData() {
+    try {
+      const orders = await orderdb.find({}); 
+  
+      const amountData = Array(12).fill(0);
+      const productCountData = Array(12).fill(0);
+  
+      orders.forEach(order => {
+        const { createdAt, products } = order;
+        const month = new Date(createdAt).getMonth();
+  
+        products.forEach(product => {
+          const { price, quantity } = product;
+          const totalPrice = price * quantity;
+          amountData[month] += totalPrice;
+          productCountData[month] += quantity;
+        });
+      });
+  
+      // Format the data as required for the chart
+      // const monthlyChartData = {
+      //   labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      //   datasets: [
+      //     {
+      //       label: 'Amount',
+      //       tension: 0.3,
+      //       fill: true,
+      //       backgroundColor: 'rgba(44, 120, 220, 0.2)',
+      //       borderColor: 'rgba(44, 120, 220)',
+      //       data: amountData,
+      //     },
+      //     {
+      //       label: 'Product Count',
+      //       tension: 0.3,
+      //       fill: true,
+      //       backgroundColor: 'rgba(4, 209, 130, 0.2)',
+      //       borderColor: 'rgb(4, 209, 130)',
+      //       data: productCountData,
+      //     },
+      //   ],
+      // };
+  
+      return productCountData,amountData;
+    } catch (error) {
+      console.error('Error fetching monthly data:', error);
+      throw error; // Handle the error as needed
+    }
+  }
+  
+  // Example usage:
+  
+  
 
 
   module.exports = adminControllers;

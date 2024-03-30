@@ -40,12 +40,20 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <%orderData.forEach((order,index)=>{%>
+                    <%orderData.forEach((order,index)=>{
+                        const dateString = order.createdAt;
+              const date = new Date(dateString);
+              const year = date.getFullYear();
+              const month = date.getMonth() + 1;
+              const day = date.getDate();
+              const formattedDate = `${day}-${
+                (month < 10 ? "0" : "") + month
+              }-${(day < 10 ? "0" : "") + year}`%>
                     <tr>
                         <td><%=order.orderId%></td>
                         <td><%=order.totalPrice%></td>
                         <td><span class="badge rounded-pill alert-warning"><%=order.orderStatus%></span></td>
-                        <td>03.12.2020</td>
+                        <td><%=formattedDate%></td>
                         <td class="text-end">
                             <a href="/orderDetails/<%=order.orderId%>" class="btn btn-md rounded font-sm">Detail</a>
                             <!-- dropdown //end -->

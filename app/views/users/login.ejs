@@ -1,4 +1,14 @@
 <%-include("../layouts/header")%>
+<style>
+    .toggle-password {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+    }
+  </style>
+  
 <!-- Start Banner Area -->
 <section class="banner-area organic-breadcrumb">
     <div class="container">
@@ -37,6 +47,9 @@
                         </div>
                         <div class="col-md-12 form-group">
                             <input type="password" class="form-control" id="password" name="password" placeholder="Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'">
+                            <span id="togglePassword" class="toggle-password" onclick="togglePasswordVisibility()">
+                                <i id="eyeIcon" class="fas fa-eye"></i>
+                            </span>
                         </div>
                         <div class="col-md-12 form-group">
                             <div class="creat_account">
@@ -63,3 +76,20 @@
 <script>
 
 </script>
+<script>
+    function togglePasswordVisibility() {
+      const passwordField = document.getElementById('password');
+      const eyeIcon = document.getElementById('eyeIcon');
+  
+      if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        eyeIcon.classList.remove('fa-eye');
+        eyeIcon.classList.add('fa-eye-slash');
+      } else {
+        passwordField.type = 'password';
+        eyeIcon.classList.remove('fa-eye-slash');
+        eyeIcon.classList.add('fa-eye');
+      }
+    }
+  </script>
+  

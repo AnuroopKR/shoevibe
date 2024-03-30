@@ -68,7 +68,10 @@
                     <canvas id="myChart" height="120px"></canvas>
                 </article>
             </div>
-            <input type="hidden" value="<%= orderData%>" id="order-data">
+            <% console.log("amountData%",amountData); %>
+            <input type="hidden" value="<%= amountData%>" id="order-data">
+            <input type="hidden" value="<%= productCountData%>" id="order-count">
+
             <div class="row">
                 <div class="col-lg-5">
                     <div class="card mb-4">

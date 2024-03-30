@@ -1,4 +1,5 @@
 <%-include("../layoutAdmin/header.ejs")%>
+<link href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.12/dist/cropper.min.css" rel="stylesheet">
 
 <style>
     .image-box {
@@ -14,15 +15,22 @@
     .delete-button {
         display: block;
         margin-top: 5px;
+        margin-right: 5px;
+        width: 50%;
+        background-color: aqua;
+        border: 0;
+    }
+    .alline-btn{
+        display:flex
     }
 </style>
 
 <section class="content-main">
+    <form action="/admin/addProduct" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
     <div class="row">
         <div class="col-9">
             <div class="content-header">
                 <h2 class="content-title">Add New Product</h2>
-                <form action="/admin/addProduct" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
                 <div>
                     <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
                     <button class="btn btn-md rounded font-sm hover-up" type="submit" id="submit">Publish</button>
@@ -35,7 +43,7 @@
                 <div class="card-body">
                     <div class="mb-4">
                         <label for="product_title" class="form-label">Product title</label>
-                        <input type="text" placeholder="Type here" class="form-control" id="product_title" name="productName" onkeypress="checkEnter(event, 'product_sku')"/>
+                        <input type="text" placeholder="Type here" class="form-control" id="product_title" name="productName" onkeypress="checkEnter(event, 'product_quantity')"/>
                         <p id="productNameError" style="color: red;"></p>
                     </div>
                     <div class="row gx-3">
@@ -116,6 +124,28 @@
     <div id="imagePreviewContainer" class="col-3 "></div>
 </form>
 </section>
+<script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.12/dist/cropper.min.js"></script>
+
+
+<script>
+    // document.getElementById('cropImageBtn').addEventListener('click',function(){
+    // Initialize Cropper.js on your image
+    // var image = document.getElementById('image');
+    // var cropper = new Cropper(image, {
+    //   aspectRatio: 16 / 9, // Set your desired aspect ratio
+    //   crop: function(event) {
+    //     console.log(event.detail.x);
+    //     console.log(event.detail.y);
+    //     console.log(event.detail.width);
+    //     console.log(event.detail.height);
+    //     console.log(event.detail.rotate);
+    //     console.log(event.detail.scaleX);
+    //     console.log(event.detail.scaleY);
+    //   }
+    // })
+    // });
+  </script>
+
 <script>
 
 
@@ -153,11 +183,16 @@ function handleImage() {
                 
                 // Add the selected image source to the array
                 selectedImages.push(img.src);
-
+                var div2=document.createElement('div')
+                div2.className='alline-btn';
+                
                 // Create a delete button for removing the image preview
                 var deleteButton = document.createElement('button');
                 deleteButton.className = 'delete-button';
                 deleteButton.innerHTML = 'Delete';
+                var cropButton = document.createElement('button');
+                cropButton.className = 'delete-button';
+                cropButton.innerHTML = 'crop';
                 
                 // Define the onclick event for the delete button
                 deleteButton.onclick = function () {
@@ -174,7 +209,9 @@ function handleImage() {
                 };
 
                 // Append the delete button to the image preview div
-                div.appendChild(deleteButton);
+                div2.appendChild(deleteButton);
+                div2.appendChild(cropButton);
+                div.appendChild(div2)
 
                 // Append the image preview div to the real-time preview container
                 realTimePreviewContainer.appendChild(div);
@@ -203,7 +240,6 @@ function handleImage() {
         document.getElementById('productBrandError').textContent = '';
         document.getElementById('discriptionError').textContent = '';
         document.getElementById('priceError').textContent = '';
-        document.getElementById('offerError').textContent = '';
 
         // Get form input values
         const productName = document.getElementById('product_title').value.trim();
@@ -213,7 +249,6 @@ function handleImage() {
         const productBrand = document.getElementById('product_brand').value.trim();
         const description = document.getElementById('description').value.trim();
         const price = document.getElementById('price').value.trim();
-        const offer = document.getElementById('offer').value.trim();
 
         // Validate each input field
         if (!validateInput(productName, 'Product name', 'productNameError', 'product_title')) return false;
@@ -223,7 +258,6 @@ function handleImage() {
         if (!validateInput(productBrand, 'Brand', 'productBrandError', 'product_brand')) return false;
         if (!validateInput(description, 'Description', 'discriptionError', 'description')) return false;
         if (!validatePrice(price, 'Price', 'priceError', 'price')) return false;
-        if (!validateOffer(offer,price, 'Offer', 'offerError', 'offer')) return false;
 
         // Additional validation logic can be added as needed
 
@@ -312,16 +346,18 @@ if (!isPositiveNumber) {
     return true;
 }
 
-    function checkEnter(event, nextInputId) {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            validateForm();
-            const nextInput = document.getElementById(nextInputId);
-            if (nextInput) {
-                nextInput.focus();
-            }
+function checkEnter(event, nextInputId) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        validateForm();
+        const nextInput = document.getElementById(nextInputId);
+        if (nextInput) {
+            nextInput.focus();
+        } else {
+            console.error(`Next input with ID ${nextInputId} not found.`);
         }
     }
+}
 
 
 

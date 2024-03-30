@@ -1,15 +1,10 @@
+<%-include("../layouts/header")%>
 
-<!--Website: wwww.codingdung.com-->
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shoevibe</title>
     <link rel="stylesheet" href="/style.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 
 <style>
 
@@ -83,8 +78,19 @@
       .btn-primary:hover {
           background-color: #0056b3;
       }
-  </style>
+      
 
+  </style>
+<style>
+    .toggle-password {
+      position: absolute;
+      right: 100px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+    }
+  </style>
+  
 
 </head>
 
@@ -164,12 +170,16 @@
                             </div> 
                         </form>
                         </div>
+                    
                         <div class="tab-pane fade" id="account-change-password">
                             <form action="/changePassword" method="post" onsubmit="return validateForm()">
                             <div class="card-body pb-2">
                                 <div class="form-group">
-                                    <label class="form-label">Current password</label>
+                                    <label class="form-label" for="password">Current password</label>
                                     <input type="password" name="currentPassword" class="form-control" id="currentPassword">
+                                    <!-- <span id="togglePassword" class="toggle-password" onclick="togglePasswordVisibility()">
+                                        <i id="eyeIcon" class="fas fa-eye"></i>
+                                      </span> -->
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">New password</label>
@@ -303,7 +313,8 @@
                                 <button type="button" class="btn btn-default">Cancel</button>
                             </div>
                         </div>
-                        <div id="addressload" class="row tab-pane fade" style="display: flex;">
+                        <div id="addressload" class="tab-pane fade" >
+                            <div class="row d-flex" >
                             <%addressData.forEach(address=>{%>
                             <div class=" col-md-6 ">
                                 <div class="card card-product-grid">
@@ -317,20 +328,33 @@
                                       <p class="card-text" style="line-height: .2em;"  ><%= address.state %></p>
                                       <p class="card-text" style="line-height: .2em;"  > pin :  <%= address.pin %></p>
                                      
-                                      <% if (address.status) { %>
+                                      <!-- <% if (address.status) { %>
                                         <a href="/setDefault/<%=address._id%>" class="btn btn-info" style="background-color: rgb(0, 155, 39);" role="button">default</a>
                                       <% }else{ %>
                                       <a href="/setDefault/<%=address._id%>" class="btn btn-info" style="background-color: darkslategray;" role="button">set default</a>
-                                      <%}%>
+                                      <%}%> -->
                                       <!-- <a href="#" class="btn btn-info ml-5" role="button" data-toggle="modal" data-target="#myModal-2">edit</a> -->
-                                      <a href="#" class="edit-address btn btn-info" data-address-id="<%= address._id %>">Edit</a>
+                                      <!-- <a href="#" class="edit-address btn btn-info" data-address-id="<%= address._id %>">Edit</a>
 
                                       <a href="/deleteAddress/<%=address._id%>" class="btn btn-info ml-5 bg-danger" role="button">delete</a>
+                                       -->
+
+                                       <% if (address.status) { %>
+                                        <a href="/#" onclick="setDefault('<%=address._id%>')" class="btn btn-info" style="background-color: rgb(0, 155, 39);" role="button">default</a>
+                                      <% }else{ %>
+                                      <a href="#" onclick="setDefault('<%=address._id%>')"  class="btn btn-info" style="background-color: darkslategray;" role="button">set default</a>
+                                      <%}%>
+                                      <!-- <a href="#" class="btn btn-info ml-5" role="button" data-toggle="modal" data-target="#myModal-2">edit</a> -->
+                                      <a href="#"  class="edit-address btn btn-info" data-address-id="<%= address._id %>">Edit</a>
+
+                                      <a href="#" onclick="deleteAddress('<%=address._id%>')" class="btn btn-info ml-5 bg-danger" role="button">delete</a>
                                       
+
                                     </div>
                                   </div>
                             </div>
                             <%})%>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -363,6 +387,7 @@
                         <div class="col-md-6">
                             <label for="firstName" class="form-label">First Name</label>
                             <input type="text" class="form-control" name="firstName" id="firstName" onkeypress="checkEnter(event, 'lastName')">
+                            <i class="fa fa-eye" aria-hidden="true"></i>
                             <p id="firstNameError" style="color: red;"></p>
                         </div>
                         <div class="col-md-6">
@@ -474,7 +499,23 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
+<script>
+    const passwordField = document.getElementById("currentPassword");
+const eyeIcon = document.querySelector(".fa-eye");
 
+eyeIcon.addEventListener("click", function() {
+  if (passwordField.type === "password") {
+    passwordField.type = "text";
+    eyeIcon.classList.remove("fa-eye");
+    eyeIcon.classList.add("fa-eye-slash");
+  } else {
+    passwordField.type = "password";
+    eyeIcon.classList.remove("fa-eye-slash");
+    eyeIcon.classList.add("fa-eye");
+  }
+});
+
+</script>
 
 <script> 
 const modal = document.getElementById('addressModal');
@@ -526,7 +567,27 @@ window.onclick = function(event) {
 
 </script>
 
-
+<script>
+    function setDefault(id){
+        fetch(`/setDefault/${id}`)
+  .then(response => {
+    if (response.ok) {
+      return response.json();
+    }
+    throw new Error('Network response was not ok.');
+  })
+//    .then(data => {
+//     window.location.reload();   
+//   })
+  .then(data => {
+    window.location.href = "/userProfile/#addressload";
+    console.log('Data fetched successfully:', data);
+  })
+  .catch(error => {
+    console.error('There was a problem fetching the data:', error);
+  });
+    }
+</script>
 
     <script>
 
@@ -684,6 +745,4 @@ function validateForm() {
     </script>
     
 
-</body>
-
-</html>
+    <%-include("../layouts/footer")%>

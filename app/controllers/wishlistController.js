@@ -29,7 +29,9 @@ const wishlistController={
                 if(existingProductIndex>=0){
                     wishlist.products.splice(existingProductIndex,1)
                     console.log(8888,wishlist)
-                   await wishlist.save()   
+                   await wishlist.save()  
+                   res.status(200).json({result:false})
+ 
                 }
           else{
             await wishlistdb.updateOne( 
@@ -41,6 +43,8 @@ const wishlistController={
                   }
                 }
               );
+              res.status(200).json({result:true})
+
             } 
           }
             else{
@@ -50,9 +54,10 @@ const wishlistController={
                   });
                    
                   await wishlistData.save(); 
+                  res.status(200).json({result:true})
             }
             // res.redirect('/userCatagory')
-            res.status(200).json("success")
+            // res.status(200).json("success")
         }
         catch(error){ 
             console.log(error.message)

@@ -55,7 +55,8 @@
                         <a href=""  data-toggle="modal" data-target="#myModal"><h3>Add an address</h3></a>
                     </div>
                 </div>
-                    <div class="row">
+                <div id="show-address">
+                    <div class="row" >
                      <!-- <form action="" > -->
                             <% addressData.forEach((address, index) => { %>
                                 <div class="card bg-light mb-3 pr-3 col-6">
@@ -74,6 +75,7 @@
                                 </div>
                             <% }) %>
                     </div>
+                </div>
                 </div>
                 <div class="col-lg-4">
                     <div class="order_box">
@@ -520,8 +522,10 @@ function submitForm() {
             // Handle the success response
             console.log(response.data);
             $('#myModal').modal('hide');
-            window.location.reload
-            $('#address').load('/address #address')
+            // window.location.reload
+            // $('#address').load('/address #address')
+            $('#show-address').load(location.href + ' #show-address')
+
         })
         .catch(error => {
             // Handle the error response

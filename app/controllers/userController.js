@@ -57,13 +57,19 @@ const userControllers = {
 
     const isEmail = await userdb.findOne({ email });
     
-    if (!isEmail||isEmail.is_varified==true) {
+
+    if(isEmail){
+    if (isEmail.is_varified==true) {
+      console.log("isEmail,",isEmail)
       req.flash('message', 'Email already exists ');
       return res.redirect("/signup");
     } else {
       if(isEmail.is_varified==false){
         await userdb.deleteOne({ email:email});
+        
       }
+    }
+  }
       // Create a new user
       req.session.email = email;
       const user = new userdb({
@@ -75,19 +81,22 @@ const userControllers = {
       });
       console.log(user);
       await user.save();
-      setTimeout(async () => {
-        const userData=userdb.findOne({email:email})
+    //   setTimeout(async () => {
+    //     const userData=userdb.findOne({email:email}) 
         
-          if (userData && !userData.isVerified){
-            await userdb.deleteOne({ email:email});
-          }
-    }, 180000);
+    //       if (userData && !userData.is_varified){
+    //         console.log('kayari')
+    //         await userdb.deleteOne({ email:email});
+    //       }
+    // }, 180000);
 
-      otpController.sendOtp(email);
+      otpController.sendOtp(email); 
 
       // res.render(`otp?email=${email}`,otpController.sendOtp)
       res.redirect("/otp");
-    } 
+    
+
+  
     
           }else{
             req.flash('message', 'Invalid password.');
@@ -241,7 +250,7 @@ const wishlist=await wishlistdb.findOne({userId:userId})
         const userId=req.session.userId;
         const userData=await userdb.findOne({_id:userId})
         const addressData=await addressdb.find({userId:userId})
-        res.render('users/userProfile',{userData,addressData})
+        res.render('users/userProfile',{userData,addressData,userId})
     }
     else{
       const log="Login"
@@ -249,7 +258,7 @@ const wishlist=await wishlistdb.findOne({userId:userId})
     }
       
     } catch (error) { 
-      console.log(error.message); 
+      console.log(error.message);  
     } 
   },
   changePassword: async (req, res) => {
@@ -356,7 +365,7 @@ const wishlist=await wishlistdb.findOne({userId:userId})
       const userId=req.session.userId;
       const addressData=await addressdb.updateMany({userId:userId,status:true},{$set:{status:false}})
       const result = await addressdb.updateOne({_id:addressId},{$set:{status:true}})
-      res.redirect('/userProfile') 
+      res.status(200).json('success')
        } catch (error){
       console.log(error.message);
     }

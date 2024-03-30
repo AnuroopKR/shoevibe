@@ -49,12 +49,12 @@ authenticateToken:(req, res, next)=>{
              next()
           }else{
             req.session.destroy()
-            res.status(200).json({success:false})  
+            res.status(200).json({error:true})  
           }
           // next()
         }
         else{
-          res.status(200).json({success:false})  
+          res.status(200).json({error:true})    
         }
     } catch (error) {
       console.log(error.message); 

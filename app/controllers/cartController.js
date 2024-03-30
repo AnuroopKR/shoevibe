@@ -134,7 +134,7 @@ const cartController={
           
             const cart = new cartdb({
               products:[{
-              productId:req.params.productId,
+              productId:productId,
               quantity:req.body.quantity,
               price:total}],
               userId:userId,

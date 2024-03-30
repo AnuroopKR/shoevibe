@@ -25,10 +25,10 @@ const productSchema=new mongoose.Schema({
         type:Number,
         require:true
     },
-    // offer:{
-    //     type:Number,
-    //     require:true 
-    // },
+    sold:{
+        type:Number,
+        require:true 
+    },
     file:{
         type:[String],
         require:true

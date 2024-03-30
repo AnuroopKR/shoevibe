@@ -85,14 +85,14 @@ console.log(`userotp:${userOtp}`);
 
 if(!userOtp){
     console.log('tva')
-    return res.json({success: false,message:"User not found"})
+    return res.render('/otp',{message:"Invalid Otp"})
 }
     if(entrOtp===userOtp.otp){
         const result=await userdb.updateOne({email:email},{$set:{is_varified:true}})
         
         const userData=await userdb.findOne({email:email})
         console.log('workes')
-        req.session.isLogged = true;
+        req.session.isLogged = true;  
         req.session.userId=userData._id
         console.log("userId:",userData) 
       const wallet= new walletdb({
@@ -105,7 +105,7 @@ if(!userOtp){
     }
     else{
 console.log('else worked');
-        res.redirect('/otp',{message:"invalied otp"})
+        res.redirect('/otp')
     }
    },
    resendOtp:async (req, res) => {

@@ -35,14 +35,14 @@
 			<div class="col-xl-9 col-lg-8 col-md-7">
 				<!-- Start Filter Bar -->
 				<div class="filter-bar d-flex flex-wrap align-items-center">
-					<div class="sorting">
+					<!-- <div class="sorting">
 						<select id="select-type">
 							<option value="All">All</option>
 							<option value="men">men</option>
 							<option value="ladies">ladies</option>
 							<option value="kids">kids</option>
 						</select>
-					</div>
+					</div> -->
 					<!-- <div class="sorting mr-auto">
 						<select>
 							<option value="1">Show 12</option>
@@ -65,13 +65,13 @@
 				<!-- Start Filter Bar -->
 				<div class="filter-bar d-flex flex-wrap align-items-center">
 					<div class="sorting mr-auto">
-						<select>
+						<!-- <select>
 							<option value="1">Show 12</option>
 							<option value="1">Show 12</option>
 							<option value="1">Show 12</option>
-						</select>
+						</select> -->
 					</div>
-					<div class="pagination">
+					<!-- <div class="pagination">
 						<a href="#" class="prev-arrow"><i class="fa fa-long-arrow-left" aria-hidden="true"></i></a>
 						<a href="#" class="active">1</a>
 						<a href="#">2</a>
@@ -79,7 +79,7 @@
 						<a href="#" class="dot-dot"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></a>
 						<a href="#">6</a>
 						<a href="#" class="next-arrow"><i class="fa fa-long-arrow-right" aria-hidden="true"></i></a>
-					</div>
+					</div> -->
 				</div>
 				<!-- End Filter Bar -->
 			</div>
@@ -178,7 +178,7 @@ function pagination(pageNum){
 				
 				console.log(offer,offerPrice);
                 html += `
-                <div class="col-lg-3 col-md-6">
+                <div class="col-lg-4 col-md-6">
                     <div class="single-product">
                         <a href="/userProduct/${product._id}">
                             <img class="img-fluid" src="${product.file[0]}" alt="">
@@ -225,7 +225,7 @@ function pagination(pageNum){
                 </div>`;
             });
             html += `</div>
-			<input type="text" placeholder="${data.id}" value="${data.id}" id="category-id">`
+			<input type="hidden" placeholder="${data.id}" value="${data.id}" id="category-id">`
 
             html += `</div>`;
 
@@ -259,6 +259,9 @@ function pagination(pageNum){
 
 
 	</script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.2/dist/sweetalert2.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.2/dist/sweetalert2.min.js"></script>
 
 	<script>
 		function addWishlist(id){
@@ -267,6 +270,8 @@ function pagination(pageNum){
 			const body={
 				id:id
 			}
+	
+
 			fetch('/addWishlist', {
         method: 'PUT',
 		headers: {
@@ -278,19 +283,41 @@ function pagination(pageNum){
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
-        return response.json(); // Assuming response is JSON
+        return response.json(); 
     })
     .then(data => {
         console.log('Form submitted successfully:', data);
+		if(data.error){
+			window.location.href = "/login";
+		}else{
+		if(data.result){
+		Swal.fire({
+  icon: 'success',
+  title: 'Added to Wishlist!',
+  text: 'Your item has been added to your wishlist.',
+  showConfirmButton: false,
+  timer: 2000 
+});
+		}else{
+			Swal.fire({
+  icon: 'success',
+  title: 'Removed from Wishlist!',
+  text: 'Your item has been added to your wishlist.',
+  showConfirmButton: false,
+  timer: 2000 
+});
+		}
+	
 		// $(`#wish_icon${id}`).load(location.href + ` #wish_icon${id}`)
-		loadProduct()
+		const categoryId=$('#category-id').val()
+		loadProduct(categoryId,null)
 		// window.location.reload();  
 
-        // Handle success response
+	   }   
     })
     .catch(error => {
         console.error('There was a problem with the form submission:', error);
-        // Handle error
+        
     });
 
 		}

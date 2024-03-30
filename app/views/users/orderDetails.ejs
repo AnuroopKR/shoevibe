@@ -17,7 +17,9 @@
 <!--================Order Details Area =================-->
 <section class="order_details section_gap">
     <div class="container">
-       
+        <div class="p-4 d-flex justify-content-end">
+            <a href="#" class="btn btn-warning" onclick="downloadSalesReport('<%=orderData.orderId%>')">Download invoice</a>
+        </div>
         <div class="row order_d_inner">
             <div class="col-lg-4">
                 <div class="details_item">
@@ -132,7 +134,9 @@
             <a href="#" onclick="cancelOrder('<%=orderData.orderId%>')" class="btn btn-primary m-4 px-5 py-2">Cancel order</a>
         <%}%>
     </div>
-    
+    <div>
+       <a href="/invoice/<%=orderData.orderId%>" class="btn btn-danger">invoice</a>
+    </div>
 </section>
 <!--================End Order Details Area =================-->
 
@@ -212,4 +216,24 @@
                     console.log("Order not returned.");
     }})}
 </script>
+<script>
+
+    function downloadSalesReport(orderId) {
+        console.log("sdvfdv");
+        fetch(`/download-invoice/${orderId}`)
+          .then(response => response.blob())
+          .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'report.pdf';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+          })
+          .catch(error => console.error('Error downloading orders:', error));
+    }
+    
+    </script>
 <%-include("../layouts/footer")%>

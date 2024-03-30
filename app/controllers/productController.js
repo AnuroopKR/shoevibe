@@ -216,7 +216,7 @@ updateProduct: async (req, res) => {
     const productId=req.params.productId; 
     
     const { productName, quantity, colour, size, brand, description, category, price, offer } = req.body;
-    
+    console.log(description)
    const productData={
       productName:productName,
       quantity:quantity,

@@ -9,6 +9,9 @@ const coupondb=require('../model/couponModel');
 const Razorpay = require('razorpay'); 
 const mongoose = require('mongoose');
 const crypto=require('crypto')
+const ejs = require('ejs');
+const path = require('path');
+const puppeteer = require('puppeteer');
 
 var instance = new Razorpay({
   key_id: process.env.Razorpay_key_id,
@@ -214,7 +217,7 @@ const orderController={
         orderListUser: async (req, res) => {
           try {
             const userId=req.session.userId
-            const orderData=await orderdb.find({userId:userId})
+            const orderData=await orderdb.find({userId:userId}).sort({createdAt:-1})
             if(orderData){
               res.render("users/orderList",{orderData,userId:userId});
             }
@@ -360,8 +363,62 @@ const orderController={
                         console.log(error.message);
                       }
                       } ,
-
-
+                      invoice: async (req,res)=>{
+                        try{
+                          const orderId=req.params.orderId 
+                          const order=await orderdb.findOne({orderId:orderId}).populate('products.productId')
+                          res.render ('users/invoice',{order})
+                       }catch (error) {
+                        console.log(error.message);
+                      }
+                      },
+                      
+                      invoiceDownload: async (req,res)=>{
+                        
+                          try {
+                            const orderId=req.params.orderId
+                              const order = await orderdb.findOne({orderId:orderId})
+                                  .populate("products.productId")
+                                  
+                              console.log(order, "asdfghjkl");  
+                      
+                              const templatePath = path.join(__dirname, '../views/users/invoice.ejs');
+                      
+                      
+                              const renderTemplate = async () => {
+                                  try {
+                                      return await ejs.renderFile(templatePath, {order});
+                                  } catch (err) {
+                                      console.error('Error rendering EJS template:', err);
+                                      res.status(500).send('Error rendering sales report');
+                                  }
+                              };
+                      
+                              const htmlContent = await renderTemplate();
+                      
+                              if (!htmlContent) {
+                                  return;
+                              }
+                      
+                              const browser = await puppeteer.launch();
+                              const page = await browser.newPage();
+                              await page.setViewport({ width: 1280, height: 800 });
+                              await page.setContent(htmlContent);
+                              const pdfBuffer = await page.pdf({ format: "A4" });
+                      
+                              res.set({
+                                  "Content-Type": "application/pdf",
+                                  "Content-Length": pdfBuffer.length,
+                              });
+                              res.send(pdfBuffer); 
+                      
+                              await browser.close();
+                          } catch (error) {
+                              console.error('Error generating sales report:', error);
+                              res.status(500).send('Error generating sales report');
+                          }
+                     
+                      },
                     // returnOrder: async (req, res) => {
                     //   try {
                     //       const orderId=req.params.orderId
@@ -444,7 +501,7 @@ const orderController={
                         try {
                          const orderId=req.body.orderId;
                          const status=req.body.orderStatus
-                  
+                          const order=await orderdb.findOne({orderId:orderId})
                   
                          orderdb.findOneAndUpdate(
                           { orderId: orderId },
@@ -454,7 +511,15 @@ const orderController={
                           .then(updatedOrder => {
                             if (updatedOrder) {
                               console.log("Order status updated successfully:");
-                              
+                              if(status=="Delivered"){
+                                order.products.map(async (item) => {
+                                  const product = await productdb.findById(item.productId).exec();
+                                  if (product) {
+                                    product.sold += item.quantity;
+                                    await product.save();
+                                  }
+                                })
+                              }
                             } else {
                               console.log("Order not found");
                               
