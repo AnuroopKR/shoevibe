@@ -8,8 +8,8 @@
     }
 
     .img-fluid {
-        max-width: 100px;
-        max-height: 100px;
+        max-width: 100%;
+        max-height:auto;
     }
 
     .delete-button {
@@ -26,14 +26,14 @@
 </style>
 
 <section class="content-main">
-    <form action="/admin/addProduct" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+    <form action=""  enctype="multipart/form-data" onsubmit="return validateForm()">
     <div class="row">
         <div class="col-9">
             <div class="content-header">
                 <h2 class="content-title">Add New Product</h2>
                 <div>
                     <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
-                    <button class="btn btn-md rounded font-sm hover-up" type="submit" id="submit">Publish</button>
+                    <button class="btn btn-md rounded font-sm hover-up" type="button" onclick="addProduct()" id="submit">Publish</button>
                 </div>
             </div>
         </div>
@@ -153,82 +153,176 @@
     
 
     
+// Function to handle image selection, preview, and deletion
 function handleImage() {
-    // Get the input element for file selection
     var input = document.getElementById('images');
-    
-    // Get the container for real-time image previews
     var realTimePreviewContainer = document.getElementById('imagePreviewContainer');
-    
-    // An array to store the selected image sources
     var selectedImages = []; 
 
-    // Loop through each selected file
     for (var i = 0; i < input.files.length; i++) {
-        // Create a FileReader to read the selected image
         var reader = new FileReader();
 
-        // Define the onload event for the FileReader
         reader.onload = (function (index) {
             return function (e) {
-                // Create a div element for the image preview
                 var div = document.createElement('div');
                 div.className = 'image-box';
 
-                // Create an img element and set its source to the data URL of the selected image
                 var img = document.createElement('img');
                 img.src = e.target.result;
                 img.className = 'img-fluid';
                 div.appendChild(img);
                 
-                // Add the selected image source to the array
                 selectedImages.push(img.src);
-                var div2=document.createElement('div')
-                div2.className='alline-btn';
                 
-                // Create a delete button for removing the image preview
+                var div2 = document.createElement('div');
+                div2.className = 'alline-btn';
+                
                 var deleteButton = document.createElement('button');
                 deleteButton.className = 'delete-button';
                 deleteButton.innerHTML = 'Delete';
+
                 var cropButton = document.createElement('button');
                 cropButton.className = 'delete-button';
-                cropButton.innerHTML = 'crop';
-                
-                // Define the onclick event for the delete button
+                cropButton.innerHTML = 'Crop';
+
                 deleteButton.onclick = function () {
                     var deletedSrc = img.src;
                     var index = selectedImages.indexOf(deletedSrc);
                     
-                    // Remove the deleted image source from the array
                     if (index !== -1) {
                         selectedImages.splice(index, 1);
                     }
                     
-                    // Remove the image preview div from the container
                     div.remove(); 
                 };
 
-                // Append the delete button to the image preview div
-                div2.appendChild(deleteButton);
-                div2.appendChild(cropButton);
-                div.appendChild(div2)
+                    var croppedImages=[]
+                    var imageToCrop = div.querySelector('img'); // Select the image within the div
+                    var cropper = new Cropper(imageToCrop, {
+                        aspectRatio: 1 / 1,
+                        crop: function(event) {
+                            console.log(event.detail.x);
+                            console.log(event.detail.y);
+                            console.log(event.detail.width);
+                            console.log(event.detail.height);
+                            console.log(event.detail.rotate);
+                            console.log(event.detail.scaleX);
+                            console.log(event.detail.scaleY);
+                        }
+                    });
 
-                // Append the image preview div to the real-time preview container
-                realTimePreviewContainer.appendChild(div);
-            };
-        })(i);
 
-        // Read the selected file as a data URL
-        reader.readAsDataURL(input.files[i]);
+
+cropButton.onclick = async function () {
+    var cropedCanvas = cropper.getCroppedCanvas();
+    if (!cropedCanvas) {
+        console.error('Failed to get cropped canvas');
+        return;
     }
 
-    // Return the array of selected image sources
-    return selectedImages;
+    try {
+        let blob = await new Promise((resolve) => {
+            cropedCanvas.toBlob((blob) => {
+                resolve(blob);
+            }, 'image/png');
+        });
+
+        // Get the filename from the blob
+        let filename = generateFilename(blob);
+
+        // Check if the filename is already in the array
+        let index = findIndexByFilename(filename, croppedImages);
+        if (index !== -1) {
+            // Replace the existing blob with the new one
+            croppedImages[index].blob = blob;
+            console.log('Image replaced:', filename);
+        } else {
+            // Add the new image to the array
+            croppedImages.push({ name: filename, blob: blob });
+            console.log('Image added:', filename);
+        }
+    } catch (error) {
+        console.error('Error converting canvas to blob:', error);
+    }
+};
+
+function generateFilename(blob) {
+    let filename = 'cropped_image.png'; // Default filename
+    if (blob instanceof Blob && blob.type.startsWith('image/')) {
+        filename = `${Date.now()}_${Math.random().toString(36).substring(2, 15)}.png`;
+    }
+    return filename;
+}
+
+function findIndexByFilename(filename, array) {
+    for (let i = 0; i < array.length; i++) {
+        if (array[i].name === filename) {
+            return i;
+        }
+    }
+    return -1;
 }
 
 
 
+                div2.appendChild(deleteButton);
+                div2.appendChild(cropButton);
+                div.appendChild(div2)
+                realTimePreviewContainer.appendChild(div);
+            };
+        })(i);
 
+        reader.readAsDataURL(input.files[i]);
+    }
+
+    return selectedImages;
+}
+function addProduct() {
+    event.preventDefault()
+    const form = document.getElementById('myForm');
+    const responseMessage = document.getElementById('responseMessage');
+    const croppedImagesContainer = document.getElementById('croppedImagesContainer');
+
+    // Add event listener for form submission
+    form.addEventListener('submit', async function (event) {
+        event.preventDefault(); // Prevent default form submission
+
+        // Collect form data including files
+        const formData = new FormData(form);
+
+        // Get all cropped images from the container
+        const croppedImages = croppedImagesContainer.querySelectorAll('img');
+        croppedImages.forEach((img, index) => {
+            // Convert each cropped image to Blob and append to FormData
+            img.toBlob((blob) => {
+                formData.append(`croppedImage_${index}`, blob, `cropped_image_${index}.png`);
+            }, 'image/png');
+        });
+        console.log(croppedImages);
+
+        // Send POST request with Fetch API
+        fetch('/admin/addProduct', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Handle successful response
+            console.log(data); // Log response data
+            responseMessage.textContent = 'Form submitted successfully!';
+        })
+        .catch(error => {
+            // Handle error
+            console.error('There was a problem with your fetch operation:', error);
+            responseMessage.textContent = 'Error submitting form. Please try again later.';
+        });
+    });
+};
 
 
     function validateForm() {
@@ -425,4 +519,178 @@ function checkEnter(event, nextInputId) {
 //             }
 //         }
 </script>
+
+
+<!-- ============================================================================= -->
+<!-- <script>document.addEventListener("DOMContentLoaded", async () => {
+
+  
+    let addProducts = document.getElementById('addProductsPage')
+    if(addProducts){
+      let inputImage = document.getElementById("image-input");
+      let previewImageContainer = document.getElementById("image-preview");
+      let cropButton = document.getElementById("crop-button");
+      let croppers = [];
+      let croppedDataArray = [];
+      let croppedImagesContainer = document.getElementById("cropped-images");
+      let submitForm = document.getElementById("submitForm");
+      let productName = document.getElementById("productName");
+      let productDesc = document.getElementById("productDesc");
+      let productPrice = document.getElementById("productPrice");
+      let productQty = document.getElementById("productQty");
+      let productBrand = document.getElementById('productBrand');
+      let productColor = document.getElementById('productColor');
+      let productAgeGap = document.getElementById('productAgeGap');
+
+
+      croppedImagesContainer.innerHTML= ''
+
+      inputImage.addEventListener("change", (event) => {
+        console.log('file selected')
+        const files = event.target.files;
+        if(files.length>4){
+            inputImage.value = ''
+            return alert("You can only select upto 4 images")
+        }
+
+        if (files.length > 0) {
+          let divCount = previewImageContainer.querySelectorAll('.view-image').length;
+         
+          if(files.length + croppers.length >4){
+            previewImageContainer.innerHTML = "";
+            croppers.length = 0;
+          }
+          
+          
+
+          for (let file of files) {
+            let reader = new FileReader();
+
+            reader.onload = (readEvent) => {
+              let image = new Image();
+              image.src = readEvent.target.result;
+
+              let preview = document.createElement("div");
+              preview.classList.add("view-image", "col-md-6");
+              preview.appendChild(image);
+
+              previewImageContainer.appendChild(preview);
+
+              cropButton.disabled = false;
+
+              let cropper = new Cropper(image, {
+                aspectRatio: 285/396,
+                viewMode: 2,
+              });
+
+              croppers.push(cropper);
+            };
+
+            reader.readAsDataURL(file);
+          }
+        }
+      });
+
+      cropButton.addEventListener("click", async () => {
+        croppedImagesContainer.innerHTML=''
+        submitForm.disabled = false;
+        croppedDataArray = [];
+        for (let cropper of croppers) {
+          let croppedCanvas = cropper.getCroppedCanvas();
+
+          let blobPromise = new Promise((resolve) => {
+            croppedCanvas.toBlob((blob) => {
+              resolve(blob);
+            });
+          });
+          let blob = await blobPromise;
+
+          croppedDataArray.push(blob);
+          displayCroppedImage(croppedImagesContainer, blob);
+        }
+        console.log(croppedDataArray);
+
+        inputImage.value = "";
+      });
+
+      function displayCroppedImage(targetDiv, blob) {
+        console.log("display crop image");
+        let img = document.createElement("img");
+        img.src = URL.createObjectURL(blob);
+
+        let previewCroppedImage = document.createElement("div");
+        previewCroppedImage.classList.add("col-lg-6");
+        previewCroppedImage.appendChild(img);
+
+        targetDiv.appendChild(previewCroppedImage);
+      }
+
+      submitForm.addEventListener("click", async (ev) => {
+       
+        let form = document.getElementById("productForm");
+        ev.preventDefault();
+        let formData = new FormData();
+        formData.append("productName",document.getElementById("productName").value);
+        formData.append("productDesc",document.getElementById("productDesc").value);
+        formData.append("productPrice",document.getElementById("productPrice").value);
+        formData.append("productQty", document.getElementById("productQty").value);
+        formData.append("productCat", document.getElementById("productCat").value);
+        formData.append("productSubCat",document.getElementById("productSubCat").value);
+        formData.append("productBrand",productBrand.value)
+        formData.append('productColor',productColor.value)
+        formData.append('productAgeGap',productAgeGap.value)
+
+        if (!productName || !productDesc || !productPrice || !productQty || !productBrand || !productColor || !productAgeGap) {
+            alert('Please fill all fields');
+            return; 
+        }
+
+        for (let i = 0; i < croppedDataArray.length; i++) {
+          console.log(croppedDataArray[i]);
+          formData.append(croppedImages,croppedDataArray[i],croppedImage_${i}.png);
+        }
+
+        console.log(formData);
+        fetch("/admin/add-products", {
+          method: "POST",
+          body: formData,
+        })
+        .then((response) => {
+          // Check if the response is a redirect
+          if (response.redirected) {
+            // Manually redirect to the specified location
+            window.location.href = response.url;
+          }
+        })
+        .catch((error) => console.log(error));
+      
+      });
+
+      productPrice.addEventListener('input',()=>{
+        console.log('enter num')
+        let value = productPrice.value;
+        value = value.replace(/^0+/, '');
+
+        if (value.includes("-")) {
+            value = value.replace('-', '');
+        }
+        productPrice.value = value;
+
+      })
+      
+      productQty.addEventListener('input',()=>{
+        
+        let value = productQty.value;
+        value = value.replace(/^0+/, '');
+
+        if (value.includes("-")) {
+            value = value.replace('-', '');3
+        }
+        productQty.value = value;
+
+      })
+    }else{
+      console.log("Not in add products")
+    }
+  });</script> -->
 <%-include("../layoutAdmin/footer.ejs")%>

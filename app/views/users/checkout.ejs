@@ -436,7 +436,7 @@ function coupenApply(id){
             
             order=data.order
             console.log(order);
-            razorpayPayment(order)
+            razorpayPayment(order,data.data)
             //  window.location.href = '/orderPlaced/'+orderId;
         } else {
             const orderId=data.data.id
@@ -450,22 +450,30 @@ function coupenApply(id){
 }
 
 
-function razorpayPayment(order){
-    const price=order.amount*100
+function razorpayPayment(order,data){
+    const price=order.amount
     console.log(price);
     var options = {
     "key": "rzp_test_evaSWL9QWQXINn", // Enter the Key ID generated from the Dashboard
-    "amount": "3000", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "amount": price, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
     "currency": "INR",
     "name": "Shoevibe",
     "description": "Test Transaction",
     "image": "https://example.com/your_logo",
     "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
     "handler": function (response){
-        alert(response.razorpay_payment_id);
-        alert(response.razorpay_order_id);
-        alert(response.razorpay_signature)
+        if(response){
+        // alert(response.razorpay_payment_id);
+        // alert(response.razorpay_order_id);
+        // alert(response.razorpay_signature)
         verifyPayment(response,order)
+        }else{
+            Swal.fire({
+            icon: 'error',
+            title: 'Payment failed',
+            text: response.error.description || 'Payment failed. Please try again later.',
+            }) 
+        }
     },
     "prefill": {
         "name": "Gaurav Kumar",
@@ -480,22 +488,38 @@ function razorpayPayment(order){
     }
 };
 var rzp1 = new Razorpay(options);
+rzp1.on('payment.failed', function (response) {
+       
+            console.log(response);
+            // const orderId = order.receipt;
+            verifyPayment(response,order,data)
+            // window.location = '/orderDetails/' + orderId;
+        });
 rzp1.open();
 }
     
 
-function verifyPayment(payment,order){
+function verifyPayment(payment,order,data){
 $.ajax({
     url:'/verifyPayment',
     data:{
-        payment,order
+        payment,order,data
     },
     method:'post',
     success: function(response) {
+        if(response.success){
         console.log('Payment verification successful:', response);
         const orderId=response.data
         window.location.href = '/orderPlaced/'+orderId;
-
+        }else{
+            Swal.fire({
+            icon: 'error',
+            title: 'Payment failed',
+            text: response.error.description || 'Payment failed. Please try again later.',
+        }).then(() => {
+            window.location.href = '/orderPlaced/'+orderId;
+        })
+        }
     },
     error: function(xhr, status, error) {
         console.error('Error verifying payment:', error);

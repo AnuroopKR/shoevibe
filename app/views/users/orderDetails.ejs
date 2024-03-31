@@ -3,10 +3,10 @@
     <div class="container">
         <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
             <div class="col-first">
-                <h1>Confirmation</h1>
+                <h1>Order details</h1>
                 <nav class="d-flex align-items-center">
                     <a href="index.html">Home<span class="lnr lnr-arrow-right"></span></a>
-                    <a href="category.html">Confirmation</a>
+                    <a href="category.html">Order details</a>
                 </nav>
             </div>
         </div>
@@ -31,6 +31,7 @@
                         <li><a href="#"><span>Payment method</span> :  <%=orderData.paymentIntent.type%></a></li>
                         <%if(orderData.paymentIntent.type=== 'Online payment'){%>
                             <li><a href="#"><span>Payment Id</span> :  <%=orderData.paymentIntent.paymentId%></a></li>
+                            <li><a href="#"><span>status</span> :  <%=orderData.paymentIntent.status%></a></li>
                             <%}%>
                     </ul>
                 </div>
@@ -60,6 +61,14 @@
         </div>
         <div>
             <h4 class="text-success" id="order-status">Your order is <%=orderData.orderStatus%></h4>
+        </div>
+        <div class="p-4 d-flex justify-content-end">
+            <% if(orderData.paymentIntent.type=== 'Online payment'&&orderData.paymentIntent.status=== 'failed '){ %>
+                <a href="#" class="btn btn-warning" onclick="retryPayment('<%=orderData.orderId%>')">Retry payment</a>
+                <% }else if(orderData.paymentIntent.type=== 'cash on delivery') {%>
+                   <% if(orderData.orderStatus==="Not Processed"||orderData.orderStatus==="Placed"||orderData.orderStatus==="Processing"||orderData.orderStatus=="Dispatched"){%>
+                <a href="#" class="btn btn-warning" onclick="retryPayment('<%=orderData.orderId%>')">Pay online</a>
+                <%}}%>
         </div>
         <div class="order_details_table">
             <h2>Order Details</h2>

@@ -30,9 +30,7 @@ const orderController={
           const cartData=await cartdb.findOne({ userId: userId }).populate('products.productId')
           const wallet=await walletdb.findOne({userId:userId})
           const coupon=await coupondb.find({usersUsed:{$nin:id}})
-          // console.log(coupon)
-
-        //  console.log(wallet) 
+          
          if (!cartData.products || cartData.products.length === 0) {
           res.redirect('/cart');
       } 
@@ -66,6 +64,10 @@ const orderController={
           if(paymentMethod==='cash_on_delivery'){
             const method="cash on delivery"
             let id=await saveOrder(productData,method,userId,cart,couponId)
+            const orderData=new orderdb(id)
+            await orderData.save()
+            cart.products = []; 
+            await cart.save();
             res.status(200).json({ message:'hiii',data:id,status:false});
 
             
@@ -77,9 +79,13 @@ const orderController={
               var randomNumber = Math.floor(Math.random() * Math.pow(10, 12));
               var walletId = randomNumber.toString().padStart(12, '0');
               let id=await saveOrder(productData,method,userId,cart,couponId)
+              const orderData=new orderdb(id)
+            await orderData.save()
+            cart.products = []; 
+            await cart.save();
               wallet.balance= wallet.balance-(productData.totalPrice+50)
               wallet.transactions.push({
-                type:'Debit',
+                type:'Debit', 
                 amount:productData.totalPrice+50,
                 transactionId:walletId, 
                 transactionDate:new Date(),
@@ -87,10 +93,9 @@ const orderController={
               })
               await wallet.save()
               res.status(200).json({ message:'hiii',data:id,status:false});
-
             }
 
-            // razorpay 
+            // razorpay  
           }else{
             const method="Online payment"
             let id=await saveOrder(productData,method,userId,cart,couponId)
@@ -103,9 +108,9 @@ const orderController={
         function generateRazorpay(id) {
           return new Promise((resolve, reject) => {
             var options = {
-              amount: id.price*100,  
+              amount: id.totalPrice*100,   
               currency: "INR",
-              receipt: id.id 
+              receipt: id.orderId 
             };
         
             instance.orders.create(options, function(err, order) {
@@ -138,7 +143,7 @@ const orderController={
             coupon.usersUsed.push(userId)
             await coupon.save()
           }
-            const order = new orderdb({
+            const orders ={
               products:productData.products,
               orderId:id,
               paymentIntent:{
@@ -147,8 +152,7 @@ const orderController={
               totalPrice:totalPrice,
               address:address,
               userId: userId
-              });
-              await order.save();
+              };
               const cartItems=cart.products;
             await Promise.all(
               cartItems.map(async (cartItem) => {
@@ -159,14 +163,10 @@ const orderController={
                 }
               })
             );
-            cart.products = []; 
-          await cart.save();
+          //   cart.products = []; 
+          // await cart.save();
           console.log('All products deleted successfully',id);
-          data={
-            id:id,
-            price:totalPrice
-          } 
-          return data
+          return orders
         }
 
 
@@ -226,7 +226,7 @@ const orderController={
             }
             
           } catch (error) {
-            console.log(error.message);
+            console.log(error.message); 
           }
           }, 
           userOrderDetails: async (req, res) => {
@@ -290,19 +290,18 @@ const orderController={
                   console.log(error.message);
                 }
                 } ,
-                verifyPayment: async (req, res) => {
-                  
+             verifyPayment: async (req, res) => {
                     try {
                       const id=req.body.order.receipt
                       const payment=req.body.payment
-                      const orderData=await orderdb.findOne({orderId:req.body.order.receipt})
+                      const data=req.body.data
                       const userId=req.session.userId;
                      const addressId=req.body.selectedAddressId
                      let hmac=crypto.createHmac('sha256','7npRH8K1zAV8b3jk7WBf9Dtb')
                      hmac.update(payment.razorpay_order_id+'|'+payment.razorpay_payment_id)
                      hmac=hmac.digest('hex')
                      if(hmac==payment.razorpay_signature){
-                      
+                      const orderData=new orderdb(data)
                       orderData.paymentIntent={
                        type: 'Online payment',
                        status:'success',
@@ -311,12 +310,15 @@ const orderController={
                       orderData.orderStatus="Placed"
                       await orderData.save()
                       res.status(200).json({ message:'hiii',data:id,success:true});
-
+ 
                      }else{
+                      const orderData=new orderdb(data)
                       orderData.paymentIntent={
                         type: 'Online payment',
-                        status:'failed'
+                        status:'failed '
                        }
+                       await orderData.save()
+                       console.log("failed")
                        res.status(200).json({ message:'hiii',data:id,success:false});
 
                      }
