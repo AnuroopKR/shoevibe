@@ -63,7 +63,7 @@
             <h4 class="text-success" id="order-status">Your order is <%=orderData.orderStatus%></h4>
         </div>
         <div class="p-4 d-flex justify-content-end">
-            <% if(orderData.paymentIntent.type=== 'Online payment'&&orderData.paymentIntent.status=== 'failed '){ %>
+            <% if(orderData.paymentIntent.type=== 'Online payment'&&orderData.paymentIntent.status=== 'failed  '){ %>
                 <a href="#" class="btn btn-warning" onclick="retryPayment('<%=orderData.orderId%>')">Retry payment</a>
                 <% }else if(orderData.paymentIntent.type=== 'cash on delivery') {%>
                    <% if(orderData.orderStatus==="Not Processed"||orderData.orderStatus==="Placed"||orderData.orderStatus==="Processing"||orderData.orderStatus=="Dispatched"){%>

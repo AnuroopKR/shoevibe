@@ -11,7 +11,7 @@ const mongoose = require('mongoose');
 const crypto=require('crypto')
 const ejs = require('ejs');
 const path = require('path');
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer'); 
 
 var instance = new Razorpay({
   key_id: process.env.Razorpay_key_id,
@@ -489,6 +489,36 @@ const orderController={
                           console.log(error.message);
                         }
                       },
+                      orderLoadFetch:  async (req, res) => {
+                        try { 
+                          const searchQuery=req.query.search 
+                          const statusFilter=req.query.status
+                          const pageNum=req.query.pageNum 
+                          
+                          const perPage=20 
+
+                          console.log(searchQuery,statusFilter,pageNum)
+                          const orderList=await orderdb.find().populate('products.productId').populate('userId').sort({ createdAt: -1 })
+                          // console.log("orderlist",orderList)
+                          const orderFilterData =orderList.filter((order) => {
+                            // Match order ID with search query (case-insensitive)
+                            const orderIdMatch = order.orderId.includes(searchQuery);
+                             
+                            // Match order status with status filter
+                            const statusMatch = statusFilter === "all" || order.orderStatus === statusFilter;
+                            return orderIdMatch && statusMatch;
+                          });
+                          const count=orderFilterData.length
+                          const startIndex = (pageNum - 1) * perPage;
+                          const endIndex = startIndex + perPage;
+                          const orderData=orderFilterData.slice(startIndex, endIndex);
+                          const pages=Math.ceil(count/perPage)
+                          console.log(count,"aaaa")  
+                          res.status(200).json({orderData,pages,pageNum});  
+                        } catch (error) {
+                          console.log(error.message);
+                        }
+                      },
                       orderDetails: async (req, res) => {
                         try {
                           const orderId=req.params.orderId
@@ -498,7 +528,7 @@ const orderController={
                         } catch (error) {
                           console.log(error.message);  
                         } 
-                      },
+                      }, 
                       changeOrderStatus: async (req, res) => {
                         try {
                          const orderId=req.body.orderId;

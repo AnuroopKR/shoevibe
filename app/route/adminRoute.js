@@ -55,11 +55,12 @@ adminRoute.get('/orderList',middleWare.isadminLogged,orderController.orderList)
 adminRoute.get('/orderDetails/:orderId',middleWare.isadminLogged,orderController.orderDetails) 
 adminRoute.post('/changeOrderStatus',middleWare.isadminLogged,orderController.changeOrderStatus)
 adminRoute.get('/returnAccept/:orderId',middleWare.isadminLogged,orderController.returnAccept)
+adminRoute.get('/orderListLoadFetch',middleWare.isadminLogged,orderController.orderLoadFetch)
 
 
 // coupen
 adminRoute.get('/couponList',middleWare.isadminLogged,couponController.couponList)
-adminRoute.post('/createCoupon',middleWare.isadminLogged,couponController.createCoupon) 
+adminRoute.post('/createCoupon',middleWare.isadminLogged,couponController.createCoupon)  
 adminRoute.delete('/deleteCoupon',middleWare.isadminLogged,couponController.deleteCoupon)
 // sales report
 adminRoute.get('/salesReport',middleWare.isadminLogged,adminController.salesReport)  

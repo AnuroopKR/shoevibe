@@ -30,54 +30,54 @@ userCatagory: async (req, res) => {
 },
 userProductList: async (req,res)=>{
   try{
-    const id=req.query.id;  
+    const category=req.query.id=="undefined" ? {$exists:true}:req.query.id  ;  
     const userId=req.session.userId
-
-    const pageNum=req.query.pageNum
-    const perPage=2;
+    const price1=req.query.price1 ? req.query.price1:0
+    const price2=req.query.price2 ?req.query.price2:100000 
+    const status=req.query.status 
+    const search=req.query.search 
+    const pageNum=req.query.pageNum 
+console.log(price1,price2) 
+    const perPage=3;
     // const count=await productdb.find().count()
-    
    
-let count
-const wishlist=await wishlistdb.findOne({userId:userId})
-let productData
-if (id!="null") {
-  count=await productdb.find({ status: "listed", category: id }).count()
-  productData = await productdb.find({ status: "listed", category: id }).skip((pageNum-1)*perPage).populate('offerId').populate({
-    path: 'category',
-    populate: {
-        path: 'offerId',
-        model: 'Offer'  // Replace 'Offer' with the actual model name for the 'offerId' reference
-    }
-})
-  .limit(perPage)
-} else {
-  count=await productdb.find({ status: "listed" }).count()
-  productData = await productdb.find({ status: "listed" }).skip((pageNum-1)*perPage).populate('offerId').populate({
-    path: 'category',
-    populate: {
-        path: 'offerId',
-        model: 'Offer'  // Replace 'Offer' with the actual model name for the 'offerId' reference
-    }
-})
-  .limit(perPage)
-}
-// console.log(productData)
-    // const count=  productData.length
-    const pages=Math.ceil(count/perPage)   
-  
 
-// console.log(count)
+const wishlist=await wishlistdb.findOne({userId:userId})
+let sort
+if(status==="descending"){
+  sort=-1
+}else{
+  sort=1
+} 
+  
+let filterOptions ={
+  category: category, 
+  productName: { $regex: search, $options: "i" }, 
+  price: { $gte: price1, $lte: price2 } 
+};
+
+  const productList=await productdb.find(filterOptions)   
+const productData=await productdb.find(filterOptions).sort({ price: sort }).skip((pageNum-1)*perPage).populate('offerId').populate({
+      path: 'category',
+      populate: {
+          path: 'offerId',
+          model: 'Offer'  
+      }
+  })
+    .limit(perPage)
+const count=productList.length
+        const pages=Math.ceil(count/perPage)     
+        const id=req.query.id
+
  res.status(200).json({productData,wishlist,pages,pageNum,id}) 
   }catch(error){
-    console.log(error)
+    console.log(error) 
   }  
   
 },
 loadProduct: async (req, res) => { 
   try {
     const productId=req.params.productId;
-    // console.log(productId)
         // const userId="65ca2c92dd3a7e82dea485b2"
     const userId=req.session.userId 
     const wishlist=await wishlistdb.findOne({userId:userId})
@@ -130,7 +130,8 @@ productListLoad: async (req, res) => {
     }else{
     productlist=await productdb.find({status:status})
     }
-    res.status(200).json({productlist,category})  
+    const pages=3
+    res.status(200).json({productlist,category,pages})  
   } catch (error) { 
     console.log(error.message);
   }

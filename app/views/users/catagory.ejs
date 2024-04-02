@@ -1,4 +1,38 @@
 <%-include("../layouts/header.ejs")%>
+
+<style>
+	/* Loader Styles */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(77, 73, 73, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Adjust z-index as needed */
+}
+
+.spinner {
+  border: 4px solid rgba(255, 0, 0, 0.1);
+  border-left-color: #ffffff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+</style>
+<div id="loader" class="overlay">
+	<div class="spinner"></div>
+  </div>
 	<!-- Start Banner Area -->
 	<section class="banner-area organic-breadcrumb" >
 		<div class="container">
@@ -22,7 +56,7 @@
 					<div class="head">Browse Categories</div>
 					<ul class="main-categories">
 						<%category.forEach(cat=>{%>
-						<li class="main-nav-list"><a href="#" onclick="loadProduct('<%=cat._id%>')" ><%=cat.name%><span class="number"></span></a></li>
+						<li class="main-nav-list"><a href="#" onclick="loadProduct(1,'<%=cat._id%>')" ><%=cat.name%><span class="number"></span></a></li>
 						<%})%>
 					</ul>
 				</div>
@@ -34,7 +68,7 @@
 			</div>
 			<div class="col-xl-9 col-lg-8 col-md-7">
 				<!-- Start Filter Bar -->
-				<div class="filter-bar d-flex flex-wrap align-items-center">
+				<div class="filter-bar d-flex flex-wrap align-items-center " style="justify-content: space-between ;">
 					<!-- <div class="sorting">
 						<select id="select-type">
 							<option value="All">All</option>
@@ -50,8 +84,29 @@
 							<option value="1">Show 12</option>
 						</select>
 					</div> -->
-					<div class="pagination" id="page-number">
+					
+					<div>
+						<input class="mt-2" type="text" id="searchInput" placeholder="Search by order ID" style="height: 45px;">
 					</div>
+					<div class="mt-2">
+						<label for="price" class="color-whight">Rs   :</label>
+						<input  type="number" placeholder="Lower price" style="width: 100px;" id="lower-price">
+						<input type="number" placeholder="Higher price" style="width: 100Px;" id="higher-price">
+						
+						
+						<button class="btn btn-sm" onclick="priceFilter()">sort</button>
+						
+					</div>
+					<div class="pt-2">
+						<select name="sort" id="sort_order" >
+							<option value="ascending">Ascending</option>
+							<option value="descending">Descending</option>
+						</select>
+					</div>
+					<!-- <div class="pagination" id="page-number">
+					</div> -->
+				
+					
 				</div>
 				<!-- End Filter Bar -->
 				<!-- Start Best Seller -->
@@ -62,30 +117,20 @@
 					
 				</section>
 				<!-- End Best Seller -->
-				<!-- Start Filter Bar -->
 				<div class="filter-bar d-flex flex-wrap align-items-center">
 					<div class="sorting mr-auto">
-						<!-- <select>
-							<option value="1">Show 12</option>
-							<option value="1">Show 12</option>
-							<option value="1">Show 12</option>
-						</select> -->
+						
 					</div>
-					<!-- <div class="pagination">
-						<a href="#" class="prev-arrow"><i class="fa fa-long-arrow-left" aria-hidden="true"></i></a>
-						<a href="#" class="active">1</a>
-						<a href="#">2</a>
-						<a href="#">3</a>
-						<a href="#" class="dot-dot"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></a>
-						<a href="#">6</a>
-						<a href="#" class="next-arrow"><i class="fa fa-long-arrow-right" aria-hidden="true"></i></a>
-					</div> -->
+					<div class="pagination" id="page-number">
+					</div>
+					
 				</div>
 				<!-- End Filter Bar -->
 			</div>
 		</div>
 	</div>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	
 
 	<script>
 		// if select the genter
@@ -99,55 +144,63 @@
 	</script>
 	<script>
 		document.addEventListener('DOMContentLoaded', function() {
-			loadProduct("null");
+			loadProduct(1);
 
 		 });
 
+		 const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', function() {
+		const searchQuery = searchInput.value.trim();
+		const categoryId=$('#category-id').val()
 
-// 		 $(document).ready(function() {
-//   $('#page-number').on('click', '.active', function(event) {
-//     event.preventDefault();
+        
+        if (searchQuery) {
+            console.log(searchQuery);
+            loadProduct(1,categoryId);
+        } })
+		searchInput.addEventListener('keydown', function(event) {
+    const searchQuery = searchInput.value.trim();
+    const key = event.key;
 
-//     // Get the value (text content) of the clicked <a> tag with class .active
-//     var data = $(this).text();
-//     console.log('Clicked data:', data);
+    if (key === 'Backspace' && !searchQuery) {
+		const categoryId=$('#category-id').val()
 
-//     // Get the value of the category ID input
-//     const categoryId = $('#category-id').val();
-    
-//     // Call the loadProduct function with categoryId and data
-//     loadProduct(categoryId, data);
-//   });
-// });
+        console.log('Backspace pressed with empty input');
+		loadProduct(1,categoryId);
+    }
+});
 
 
-		//  if select page
-// 		 $(document).ready(function() {
-//   $('#page-number').click(function(event) {
-//     event.preventDefault();
-// 	const categoryId=$('#category-id').val()
-//     var data = $(this).text();
-//     console.log('Clicked data:', data);
-// 	loadProduct(categoryId,data)
-    
-//   });
-// });
+		function priceFilter(){
+			const search=document.getElementById("searchInput").value;
+	const price1=document.getElementById("lower-price").value;
+	const price2=document.getElementById("higher-price").value;
+	const status=document.getElementById("sort_order").value;
+	const categoryId=$('#category-id').val()
+	
+	loadProduct(1,categoryId)
+		}
+
+
+
 
 function pagination(pageNum){
 	event.preventDefault();
 	const categoryId=$('#category-id').val()
-	console.log('Clicked data:', pageNum);
-	loadProduct(categoryId,pageNum)
+
+	console.log('Clicked data:', pageNum,categoryId);
+	loadProduct(pageNum,categoryId)
 }
 
 	 
 
-		 function loadProduct(cat,value) {
-			// var value = $('#current-page').text();
-			// console.log(value);
-    // let status = document.getElementById("statusSelect").value;
-    // var category = document.getElementById("category-select").value;
-	fetch(`/categoryLoad?id=${cat}&pageNum=${value}`)
+		 function loadProduct(pageNum,categoryId) {
+			const searchQuery = document.getElementById('searchInput').value;
+	const price1=document.getElementById("lower-price").value;
+	const price2=document.getElementById("higher-price").value;
+	const status=document.getElementById("sort_order").value;
+
+	fetch(`/categoryLoad?id=${categoryId}&pageNum=${pageNum}&search=${searchQuery}&price1=${price1}&price2=${price2}&status=${status}`)
 	        .then((response) => {
             if (!response.ok) {
                 throw new Error("Network response was not ok");
@@ -323,26 +376,15 @@ function pagination(pageNum){
 		}
 	</script>
 
-	<!-- <script>
-		function category(id){
-			fetch('/categoryFilter', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ categoryId:id}) 
-        })
-        .then(response => { 
-            if (response.ok) {
-                console.log('Quantity updated successfully');
-                // Optionally, you can update the quantity displayed on the page after successful update
-            } else {
-                console.error('Failed to update quantity');
-            }
-        })
-        .catch(error => console.error('Error updating quantity:', error));
-    
-		}
-	</script> -->
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+	  const loader = document.getElementById('loader');
+	  loader.style.display = 'flex'; // Show the loader initially
+  
+	  window.addEventListener('load', function() {
+		loader.style.display = 'none'; // Hide the loader when page is fully loaded
+	  });
+	});
+  </script>
 
     <%-include("../layouts/footer.ejs")%>
