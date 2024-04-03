@@ -77,15 +77,68 @@ const adminControllers = {
         console.log(err);
       }
     },
-    userManage: async (req, res) => {
+    userManage:async (req,res) => {
+      try{
+        res.render("admin/userManage");
+      }catch(error){
+        res.status(500)
+      }
+    },
+    userLoad: async (req, res) => {
       try {
-        const userData=await userdb.find();
-        
-        res.render("admin/userManage",{userData});
+        const status=req.query.status?req.query.status:"all";
+        const search=req.query.search?req.query.search:"";
+        const pageNum=req.query.pageNum
+        const perPage=10
+        console.log(status,search)
+        let filterOptions
+        // const userData=await userdb.find();
+        if(status==='all'){
+          filterOptions ={
+            name: { $regex: search, $options: "i" }
+          }; 
+        }else{
+        filterOptions ={
+          isBlocked: status, 
+          name: { $regex: search, $options: "i" }
+        };
+      }
+      const userList=await userdb.find(filterOptions);
+      const count=userList.length
+      const pageCount=Math.ceil(count/perPage)
+      console.log(count,pageCount)
+      const userData=await userdb.find(filterOptions).skip((pageNum-1)*perPage).limit(perPage);
+
+        res.status(200).json({userData,pageCount});
       } catch (error) {
+        console.log(error.message);
+      } 
+    },
+    userBlock: async (req, res,next) => {
+      try {
+        const userId=req.params.userId;
+        await userdb.updateOne(
+          { _id:userId},
+          { $set: { isBlocked: false } } 
+        );
+        res.status(200).json({success:true})
+      } catch (error) {
+        console.log(error.message);
+      } 
+    },
+    userunBlock: async (req, res,next) => {
+      try {
+        const userId=req.params.userId; 
+        await userdb.updateOne(
+          { _id:userId},
+          { $set: { isBlocked: true } } 
+        );
+        res.status(200).json({success:true})
+      } catch (error) { 
         console.log(error.message);
       }
     },
+   
     // Other functions...
   
     // post for admin page home

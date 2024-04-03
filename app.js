@@ -1,6 +1,6 @@
 const mongoose=require("mongoose");
 // const dotenv=require('dotenv')
-mongoose.connect("mongodb://localhost:27017/shoevibe",{serverSelectionTimeoutMS:10000});
+mongoose.connect("mongodb://localhost:27017/shoevibe",{serverSelectionTimeoutMS:20000});
 const express=require("express");
 const app=express();
 const path=require("path");

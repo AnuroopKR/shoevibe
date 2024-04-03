@@ -30,10 +30,12 @@ adminRoute.get('/home',middleWare.isadminLogged,adminController.adminHome);
 adminRoute.get('/',middleWare.isadminLogged,adminController.adminHome)
 adminRoute.post('/login',adminController.adminLoginhome);     
 adminRoute.get('/user',middleWare.isadminLogged,adminController.userManage); 
+adminRoute.get('/userLoad',middleWare.isadminLogged,adminController.userLoad); 
+
 
 adminRoute.get('/logout',adminController.adminLogout)
-adminRoute.get('/unblockUser/:userId',middleWare.userBlock,adminController.userManage)
-adminRoute.get('/blockUser/:userId',middleWare.userunBlock,adminController.userManage)
+adminRoute.get('/unblockUser/:userId',middleWare.isadminLogged,adminController.userBlock)
+adminRoute.get('/blockUser/:userId',middleWare.isadminLogged,adminController.userunBlock)
 // product
 adminRoute.get('/productList',middleWare.isadminLogged,productController.productList);
 adminRoute.get('/productListLoad',middleWare.isadminLogged,productController.productListLoad);

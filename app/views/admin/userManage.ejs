@@ -10,23 +10,17 @@
         <header class="card-header">
             <div class="row gx-3">
                 <div class="col-lg-4 col-md-6 me-auto">
-                    <input type="text" placeholder="Search..." class="form-control" />
+                    <input type="text" placeholder="Search..." class="form-control" id="searchInput"/>
                 </div>
                 <div class="col-lg-2 col-md-3 col-6">
-                    <select class="form-select">
-                        <option>Status</option>
-                        <option>Active</option>
-                        <option>Disabled</option>
-                        <option>Show all</option>
+                    <select id="statusSelect" class="form-select">
+                        <option value="all">Show all</option>
+                        <option value=true>Listed</option>
+                        <option value=false>Unlisted</option>
                     </select>
                 </div>
-                <div class="col-lg-2 col-md-3 col-6">
-                    <select class="form-select">
-                        <option>Show 20</option>
-                        <option>Show 30</option>
-                        <option>Show 40</option>
-                    </select>
-                </div>
+                
+               
             </div>
         </header>
         <!-- card-header end// -->
@@ -35,41 +29,15 @@
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th>Seller</th>
+                    <th>user</th>
                     <th>Email</th>
                     <th>Status</th>
                     <th>Registered</th>
                     <th class="text-end">Action</th>
                 </tr>
             </thead>
-            <tbody>
-                <% userData.forEach(user => { %>
-                 
-              
-                <tr>
-                    <td width="40%">
-                        <a href="#" class="itemside">
-                            <div class="left">
-                                <img src="/assets/imgs/people/user.jpg" class="img-sm img-avatar" alt="Userpic" />
-                            </div>
-                            <div class="info pl-3">
-                                <h6 class="mb-0 title"><%=user.name%></h6>
-                                <small class="text-muted">ID:<%=user._id%></small>
-                            </div>
-                        </a>
-                    </td>
-                    <td><%=user.email%></td>
-                    <td><span class="badge rounded-pill alert-success"><%=user.isBlocked%></span></td>
-                    <td><%=user.date%></td>
-                    <td class="text-end">
-                        <% if(user.isBlocked===true ) { %>
-                            <a href="#"class="btn btn-sm btn-success rounded text-white font-sm mt-15 mr-5" onclick="showUnblockAlert('<%= user._id %>')">Unblock</a>
-                        <% } else { %>
-                                <a href="#" class="btn btn-sm btn-danger rounded font-sm fw-5 mt-15 mr-5"onclick="showBlockAlert('<%= user._id %>')">Block</a>
-                            <% } %>
-                    </td>
-                </tr>
-                <% }) %>
+            <tbody id="tableBody">
+                
             </tbody>
         </table>
         <!-- table-responsive.// -->
@@ -77,7 +45,135 @@
 </div>
 <!-- card-body end// -->
 </div>
+<!-- pagination -->
+<div class="pagination-area mt-30 mb-50" id="paginationContainer">
+    <!-- Pagination links will be added here dynamically -->
+</div>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+
+document.addEventListener('DOMContentLoaded', function() {
+    filter()
+})
+
+    const selectElement = document.getElementById('statusSelect');
+
+selectElement.addEventListener('change', function() {
+    const selectedValue = selectElement.value;
+    console.log('Selected value:', selectedValue);
+    filter(1)
+})
+
+const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', function(){
+        const selectedValue = document.getElementById('statusSelect').value;
+        const searchQuery = searchInput.value.trim();
+        if (searchQuery) {
+            console.log(searchQuery);
+            filter(1)
+        }
+    });
+
+
+
+function filter(pageNum){
+    const searchQuery = document.getElementById('searchInput').value;
+    const selectedValue = document.getElementById('statusSelect').value;
+console.log("hai",selectedValue);
+fetch( `/admin/userLoad?search=${searchQuery}&status=${selectedValue}&pageNum=${pageNum}`)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
+  .then(data => {
+    appendUserData(data.userData)
+    console.log(data);
+    generatePagination(data.pageCount)
+    console.log(data.pageCount);
+  })
+  .catch(error => {
+    console.error('There was a problem with the fetch operation:', error);
+  });
+}
+
+    function appendUserData(userData) {
+    const tableBody = document.getElementById('tableBody');
+    tableBody.innerHTML = ''; // Clear previous content
+
+    userData.forEach(user => {
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td width="40%">
+                <a href="#" class="itemside">
+                    <div class="left">
+                        <img src="/assets/imgs/people/user.jpg" class="img-sm img-avatar" alt="Userpic" />
+                    </div>
+                    <div class="info pl-3">
+                        <h6 class="mb-0 title">${user.name}</h6>
+                        <small class="text-muted">ID: ${user._id}</small>
+                    </div>
+                </a>
+            </td>
+            <td>${user.email}</td>
+            <td><span class="badge rounded-pill alert-success">${user.isBlocked}</span></td>
+            <td>${new Date(user.date).toLocaleDateString()}</td>
+            <td class="text-end">
+                ${user.isBlocked === true ? `
+                    <a href="#" class="btn btn-sm btn-success rounded text-white font-sm mt-15 mr-5" onclick="showUnblockAlert('${user._id}')">Unblock</a>
+                ` : `
+                    <a href="#" class="btn btn-sm btn-danger rounded font-sm fw-5 mt-15 mr-5" onclick="showBlockAlert('${user._id}')">Block</a>
+                `}
+            </td>
+        `;
+        tableBody.appendChild(newRow);
+    });
+}
+
+
+// Function to generate pagination links dynamically
+function generatePagination(totalPages) {
+    const paginationContainer = document.getElementById('paginationContainer');
+    paginationContainer.innerHTML = ''; 
+
+    const nav = document.createElement('nav');
+    nav.setAttribute('aria-label', 'Page navigation example');
+
+    const ul = document.createElement('ul');
+    ul.classList.add('pagination', 'justify-content-start');
+
+    for (let i = 1; i <= totalPages; i++) {
+        const li = document.createElement('li');
+        li.classList.add('page-item');
+        if (i === 1) {
+            li.classList.add('active');
+        }
+
+        const a = document.createElement('a');
+        a.classList.add('page-link');
+        a.href = `#page-${i}`;
+        a.textContent = i;
+
+        a.addEventListener('click', function(event) {
+            event.preventDefault();
+            const pageNumber = parseInt(a.href.split('-')[1]); 
+            filter(pageNumber)
+            console.log('Clicked page:', pageNumber);
+            
+        });
+
+        li.appendChild(a);
+        ul.appendChild(li);
+    }
+
+    nav.appendChild(ul);
+    paginationContainer.appendChild(nav);
+}
+
+
+
+</script>
 <script>
     async function showUnblockAlert(userId) {
         const result = await Swal.fire({
@@ -91,7 +187,25 @@
 
         if (result.isConfirmed) {
             // Handle the unblocking logic, e.g., make an AJAX request
-            window.location.href = "/admin/unblockUser/" + userId;
+            // window.location.href = "/admin/unblockUser/" + userId;
+
+fetch(`/admin/unblockUser/${userId}`)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
+  .then(data => {
+    filter()
+    console.log(data);
+  })
+  .catch(error => {
+    console.error('There was a problem with the fetch operation:', error);
+  });
+
+            
+
         }
     }
 
@@ -107,7 +221,21 @@
 
         if (result.isConfirmed) {
             // Handle the blocking logic, e.g., make an AJAX request
-            window.location.href = "/admin/blockUser/" + userId;
+            // window.location.href = "/admin/blockUser/" + userId;
+            fetch(`/admin/blockUser/${userId}`)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
+  .then(data => {
+    filter()
+    console.log(data);
+  })
+  .catch(error => {
+    console.error('There was a problem with the fetch operation:', error);
+  });
         }
     }
     </script>

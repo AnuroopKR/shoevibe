@@ -148,7 +148,9 @@
     </div>
 </section>
 <!--================End Order Details Area =================-->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 <script>
@@ -164,6 +166,19 @@ fetch(`/retryPayment?orderId=${orderId}`)
     return response.json();
   })
   .then(data => {
+    if (data.status) {
+            console.log("order id::",data.data.id);
+            const orderId=data.data.id
+            
+            order=data.order
+            console.log(order);
+            razorpayPayment(order,data.data)
+            //  window.location.href = '/orderPlaced/'+orderId;
+        } else {
+            const orderId=data.data.id
+            // window.location.href = '/orderPlaced/'+orderId;
+            window.location.reload()
+        }
     console.log(data);
   })
   .catch(error => {
@@ -171,6 +186,95 @@ fetch(`/retryPayment?orderId=${orderId}`)
   });
 
     }
+
+
+    // razorpay
+    function razorpayPayment(order,data){
+    const price=order.amount
+    console.log(price);
+    var options = {
+    "key": "rzp_test_evaSWL9QWQXINn", // Enter the Key ID generated from the Dashboard
+    "amount": price, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "currency": "INR",
+    "name": "Shoevibe",
+    "description": "Test Transaction",
+    "image": "https://example.com/your_logo",
+    "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "handler": function (response){
+        if(response){
+        // alert(response.razorpay_payment_id);
+        // alert(response.razorpay_order_id);
+        // alert(response.razorpay_signature)
+        verifyPayment(response,order)
+        }else{
+            Swal.fire({
+            icon: 'error',
+            title: 'Payment failed',
+            text: response.error.description || 'Payment failed. Please try again later.',
+            }) 
+        }
+    },
+    "prefill": {
+        "name": "Gaurav Kumar",
+        "email": "gaurav.kumar@example.com",
+        "contact": "9000090000"
+    },
+    "notes": {
+        "address": "Razorpay Corporate Office"
+    },
+    "theme": {
+        "color": "#3399cc"
+    }
+};
+var rzp1 = new Razorpay(options);
+rzp1.on('payment.failed', function (response) {
+       
+            console.log(response);
+            // const orderId = order.receipt;
+            verifyPayment(response,order,data)
+            // window.location = '/orderDetails/' + orderId;
+        });
+rzp1.open();
+}
+    
+
+function verifyPayment(payment,order,data){
+$.ajax({
+    url:'/verifyPayment',
+    data:{
+        payment,order,data
+    },
+    method:'post',
+    success: function(response) {
+        if(response.success){
+        console.log('Payment verification successful:', response);
+        const orderId=response.data
+        // window.location.href = '/orderPlaced/'+orderId;
+        Swal.fire({
+      icon: 'success',
+      title: 'Payment Successful!',
+      text: 'Thank you for your payment.',
+      confirmButtonText: 'OK'
+    }).then(()=>{
+        window.location.reload()
+    })
+        }else{
+            Swal.fire({
+            icon: 'error',
+            title: 'Payment failed',
+            text: response.error.description || 'Payment failed. Please try again later.',
+        }).then(() => {
+            window.location.href = '/orderPlaced/'+orderId;
+        })
+        }
+    },
+    error: function(xhr, status, error) {
+        console.error('Error verifying payment:', error);
+        // Handle error response here
+    }
+})
+}
+
 </script>
 
 <script>

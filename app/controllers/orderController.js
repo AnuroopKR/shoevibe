@@ -274,11 +274,23 @@ const orderController={
                       const data=req.body.data
                       const userId=req.session.userId;
                      const addressId=req.body.selectedAddressId
+                     const orderData=await orderdb.findOne({orderId:id})
+                    
                      let hmac=crypto.createHmac('sha256','7npRH8K1zAV8b3jk7WBf9Dtb')
                      hmac.update(payment.razorpay_order_id+'|'+payment.razorpay_payment_id)
                      hmac=hmac.digest('hex')
                      if(hmac==payment.razorpay_signature){
-                      const orderData=new orderdb(data)
+                      if(orderData){
+                        console.log("retry payment success")
+                        orderData.paymentIntent={
+                          type: 'Online payment',
+                          status:'success',
+                          paymentId:payment.razorpay_payment_id
+                         }
+                         orderData.orderStatus="Placed"
+                         await orderData.save()
+                      }else{
+                       orderData=new orderdb(data)
                       orderData.paymentIntent={
                        type: 'Online payment',
                        status:'success',
@@ -286,20 +298,28 @@ const orderController={
                       }
                       orderData.orderStatus="Placed"
                       await orderData.save()
+                    }
                       res.status(200).json({ message:'hiii',data:id,success:true});
  
                      }else{
-                      const orderData=new orderdb(data)
+                      if(orderData){
+                        orderData.paymentIntent={
+                          type: 'Online payment',
+                          status:'failed '
+                         }
+                         await orderData.save()
+                      }else
+                       orderData=new orderdb(data)
                       orderData.paymentIntent={
                         type: 'Online payment',
                         status:'failed '
                        }
                        await orderData.save()
                        console.log("failed")
+                      }
                        res.status(200).json({ message:'hiii',data:id,success:false});
 
                      }
-                    }
                      catch (error) {
                       console.log(error);
                       res.status(500)
@@ -319,9 +339,6 @@ const orderController={
                           .then(updatedOrder => {
                             if (updatedOrder) {
                               console.log("Order status updated successfully:", updatedOrder);
-                              
-                              
-                        
                               
                             } else {
                               console.log("Order not found");
@@ -396,22 +413,23 @@ const orderController={
                               console.error('Error generating sales report:', error);
                               res.status(500).send('Error generating sales report');
                           }
-                     
+                    
                       },
                       retryPayment: async(req,res)=>{
                         try{
-                         const orderId= req.query.orderid
-                         const orderData= await findOne({orderId:orderId})
+                         const orderId= req.query.orderId
+                         console.log(orderId)
+                         const orderData= await orderdb.findOne({orderId:orderId})
                           if(orderData){
-                          constorder=  generateRazorpay(orderData)  
+                          const order= await generateRazorpay(orderData)
+                          console.log(orderData,1111,order)  
                                res.status(200).json({ message:'hiii',data:orderData,status:true,order});
-
                           }
-                        }catch(erroe){
+                        }catch(error){
                           console.log(error)
                           res.status(500)
                         }
-                      },
+                      },  
                     // returnOrder: async (req, res) => {
                     //   try {
                     //       const orderId=req.params.orderId
