@@ -103,29 +103,6 @@ const orderController={
             res.status(200).json({ message:'hiii',data:id,status:true,order});
 
           } 
-           
-       
-        function generateRazorpay(id) {
-          return new Promise((resolve, reject) => {
-            var options = {
-              amount: id.totalPrice*100,   
-              currency: "INR",
-              receipt: id.orderId 
-            };
-        
-            instance.orders.create(options, function(err, order) {
-              if (err) {
-                console.error(err);
-                reject(err); 
-              } else {
-                resolve(order);
-              }
-            });
-          });
-        }
-             
-        
-      
           
           }
          catch (error) {
@@ -421,6 +398,20 @@ const orderController={
                           }
                      
                       },
+                      retryPayment: async(req,res)=>{
+                        try{
+                         const orderId= req.query.orderid
+                         const orderData= await findOne({orderId:orderId})
+                          if(orderData){
+                          constorder=  generateRazorpay(orderData)  
+                               res.status(200).json({ message:'hiii',data:orderData,status:true,order});
+
+                          }
+                        }catch(erroe){
+                          console.log(error)
+                          res.status(500)
+                        }
+                      },
                     // returnOrder: async (req, res) => {
                     //   try {
                     //       const orderId=req.params.orderId
@@ -486,13 +477,13 @@ const orderController={
                           const orderData=await orderdb.find().populate('products.productId').populate('userId').sort({ createdAt: -1 })
                           res.render("admin/orderList",{orderData});
                         } catch (error) {
-                          console.log(error.message);
+                          console.log(error.message); 
                         }
                       },
                       orderLoadFetch:  async (req, res) => {
                         try { 
-                          const searchQuery=req.query.search 
-                          const statusFilter=req.query.status
+                          const searchQuery=req.query.search  
+                          const statusFilter=req.query.status   
                           const pageNum=req.query.pageNum 
                           
                           const perPage=20 
@@ -626,5 +617,26 @@ const orderController={
                   
                 
 }
+
+
+ function generateRazorpay(id) {
+          return new Promise((resolve, reject) => {
+            var options = {
+              amount: id.totalPrice*100,   
+              currency: "INR",
+              receipt: id.orderId 
+            };
+        
+            instance.orders.create(options, function(err, order) {
+              if (err) {
+                console.error(err);
+                reject(err); 
+              } else {
+                resolve(order);
+              }
+            });
+          });
+        }
+
 
 module.exports = orderController;

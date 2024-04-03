@@ -26,15 +26,12 @@
 </style>
 
 <section class="content-main">
-    <form action=""  enctype="multipart/form-data" onsubmit="return validateForm()">
+    <form action=""  enctype="multipart/form-data" onsubmit="return validateForm()" id="myForm">
     <div class="row">
         <div class="col-9">
             <div class="content-header">
                 <h2 class="content-title">Add New Product</h2>
-                <div>
-                    <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
-                    <button class="btn btn-md rounded font-sm hover-up" type="button" onclick="addProduct()" id="submit">Publish</button>
-                </div>
+               
             </div>
         </div>
         <div class="col-lg-6">
@@ -118,33 +115,23 @@
                     <%})%>
                 </div>
             </div>
+            
             <!-- card end// -->
         </div>
     </div>
     <div id="imagePreviewContainer" class="col-3 "></div>
+
+    <div class="col-9">
+    <div style="text-align: end; justify-content: right;">
+        <!-- <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button> -->
+        <button class="btn btn-md rounded font-sm hover-up" type="button" onclick="addProduct()" id="submit">Publish</button>
+    </div>
+</div>
 </form>
 </section>
 <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.12/dist/cropper.min.js"></script>
 
 
-<script>
-    // document.getElementById('cropImageBtn').addEventListener('click',function(){
-    // Initialize Cropper.js on your image
-    // var image = document.getElementById('image');
-    // var cropper = new Cropper(image, {
-    //   aspectRatio: 16 / 9, // Set your desired aspect ratio
-    //   crop: function(event) {
-    //     console.log(event.detail.x);
-    //     console.log(event.detail.y);
-    //     console.log(event.detail.width);
-    //     console.log(event.detail.height);
-    //     console.log(event.detail.rotate);
-    //     console.log(event.detail.scaleX);
-    //     console.log(event.detail.scaleY);
-    //   }
-    // })
-    // });
-  </script>
 
 <script>
 
@@ -152,13 +139,13 @@
 
     
 
-    
+var croppedImages=[] 
 // Function to handle image selection, preview, and deletion
 function handleImage() {
     var input = document.getElementById('images');
     var realTimePreviewContainer = document.getElementById('imagePreviewContainer');
     var selectedImages = []; 
-
+    
     for (var i = 0; i < input.files.length; i++) {
         var reader = new FileReader();
 
@@ -173,7 +160,7 @@ function handleImage() {
                 div.appendChild(img);
                 
                 selectedImages.push(img.src);
-                
+                croppedImages.push(img.src)
                 var div2 = document.createElement('div');
                 div2.className = 'alline-btn';
                 
@@ -191,31 +178,37 @@ function handleImage() {
                     
                     if (index !== -1) {
                         selectedImages.splice(index, 1);
+                        croppedImages.splice(index,1)
                     }
                     
                     div.remove(); 
                 };
 
-                    var croppedImages=[]
+                    
                     var imageToCrop = div.querySelector('img'); // Select the image within the div
                     var cropper = new Cropper(imageToCrop, {
                         aspectRatio: 1 / 1,
-                        crop: function(event) {
-                            console.log(event.detail.x);
-                            console.log(event.detail.y);
-                            console.log(event.detail.width);
-                            console.log(event.detail.height);
-                            console.log(event.detail.rotate);
-                            console.log(event.detail.scaleX);
-                            console.log(event.detail.scaleY);
-                        }
+                        // crop: function(event) {
+                        //     console.log(event.detail.x);
+                        //     console.log(event.detail.y);
+                        //     console.log(event.detail.width);
+                        //     console.log(event.detail.height);
+                        //     console.log(event.detail.rotate);
+                        //     console.log(event.detail.scaleX);
+                        //     console.log(event.detail.scaleY);
+                        // }
+
                     });
 
 
 
 cropButton.onclick = async function () {
+    event.preventDefault()
     var cropedCanvas = cropper.getCroppedCanvas();
+    var cropedSrc = img.src;
+        var index = selectedImages.indexOf(cropedSrc);
     if (!cropedCanvas) {
+      
         console.error('Failed to get cropped canvas');
         return;
     }
@@ -231,10 +224,11 @@ cropButton.onclick = async function () {
         let filename = generateFilename(blob);
 
         // Check if the filename is already in the array
-        let index = findIndexByFilename(filename, croppedImages);
+        // let index = findIndexByFilename(filename, croppedImages);
         if (index !== -1) {
             // Replace the existing blob with the new one
-            croppedImages[index].blob = blob;
+            // croppedImages[i].blob = blob;
+            croppedImages.splice(index,1,blob)
             console.log('Image replaced:', filename);
         } else {
             // Add the new image to the array
@@ -244,6 +238,7 @@ cropButton.onclick = async function () {
     } catch (error) {
         console.error('Error converting canvas to blob:', error);
     }
+    console.log(croppedImages,i);
 };
 
 function generateFilename(blob) {
@@ -281,17 +276,17 @@ function addProduct() {
     event.preventDefault()
     const form = document.getElementById('myForm');
     const responseMessage = document.getElementById('responseMessage');
-    const croppedImagesContainer = document.getElementById('croppedImagesContainer');
+    // const croppedImagesContainer = document.getElementById('croppedImagesContainer');
 
     // Add event listener for form submission
-    form.addEventListener('submit', async function (event) {
-        event.preventDefault(); // Prevent default form submission
+    // form.addEventListener('submit', async function (event) {
+    //     event.preventDefault(); // Prevent default form submission
 
         // Collect form data including files
         const formData = new FormData(form);
 
         // Get all cropped images from the container
-        const croppedImages = croppedImagesContainer.querySelectorAll('img');
+        // const croppedImages = croppedImagesContainer.querySelectorAll('img');
         croppedImages.forEach((img, index) => {
             // Convert each cropped image to Blob and append to FormData
             img.toBlob((blob) => {
@@ -321,7 +316,7 @@ function addProduct() {
             console.error('There was a problem with your fetch operation:', error);
             responseMessage.textContent = 'Error submitting form. Please try again later.';
         });
-    });
+    
 };
 
 

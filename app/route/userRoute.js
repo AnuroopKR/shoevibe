@@ -62,6 +62,7 @@ route.get('/orderDetails/:orderId',middleWare.isLoged,orderController.userOrderD
 route.get('/cancelOrder/:orderId',middleWare.isLoged,orderController.cancelOrder)
 route.get('/returnOrder/:orderId',middleWare.isLoged,orderController.returnOrder)
 route.get('/download-invoice/:orderId',middleWare.isLoged,orderController.invoiceDownload)
+route.get('/retryPayment',middleWare.isLogedforFetch,orderController.retryPayment)
 
 route.get('/invoice/:orderId',middleWare.isLoged,orderController.invoice)
 
