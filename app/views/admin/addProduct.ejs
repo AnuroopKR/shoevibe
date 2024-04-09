@@ -199,18 +199,10 @@ async function handleImage() {
 
                 var imageToCrop = div.querySelector('img');
 var cropper = new Cropper(imageToCrop, {
-    aspectRatio: 800 / 800,
-    crop: function(event) {
-        // Increase the resolution of the cropped image by scaling up the crop box
-        var scaleX = event.detail.width / 800; // 800 is the desired width
-        var scaleY = event.detail.height / 800; // 800 is the desired height
-
-        // Apply the scaling to the crop box
-        cropper.setCropBoxData({
-            width: event.detail.width / scaleX,
-            height: event.detail.height / scaleY
-        });
-    }
+    aspectRatio: 1,
+    cropBoxAccpetRatio:9/9,
+  
+    
 });
 
 
@@ -230,7 +222,10 @@ var cropper = new Cropper(imageToCrop, {
         croppedDataArray = [];
 
         for (let cropper of croppers) {
-            let croppedCanvas = cropper.getCroppedCanvas();
+            let croppedCanvas = cropper.getCroppedCanvas({
+                width: 800,
+               height: 800,
+            });
 
             if (croppedCanvas) {
                 let blob = await new Promise((resolve) => {

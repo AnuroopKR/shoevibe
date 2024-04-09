@@ -1,6 +1,8 @@
   const offerdb=require('../model/offerModel')
   const productdb=require('../model/productModel')
   const categorydb=require('../model/categoryModel')
+  const mongoose = require('mongoose')
+  const { ObjectId } = mongoose.Types;
 
 
  const offerController={
@@ -43,7 +45,8 @@
       loadOfferProduct: async (req, res) => {
         try {
           const status=req.query.status
-          const id=req.query.id
+          const id=req.query.productId
+          console.log("productId",id);
           const offerData=await offerdb.find()
           res.render("admin/Offer",{offerData,id,status});
         } catch (error) {
@@ -52,15 +55,15 @@
       } ,
       applyOffer:  async (req, res) => {
         try {
-          const id=req.body.id
+          const id=(req.body.id)
+          console.log(666,req.body.offerId);
           const status=req.body.status
+          const offerId=new ObjectId(req.body.offerId);
           const offerData=await offerdb.find()
           if(status==="product"){
-          const result=await productdb.updateOne({_id:id},{$set:{offerId:req.body.offerId}})
+          const result=await productdb.updateOne({_id:id},{$set:{offerId:offerId}})
           }else if(status==="category"){
-            console.log(id)
-            const result=await categorydb.updateOne({_id:id},{$set:{offerId:req.body.offerId}})
-            console.log(result)
+            const result=await categorydb.updateOne({_id:id},{$set:{offerId:offerId}})
           }
           
           res.status(200).json({offerData,id});

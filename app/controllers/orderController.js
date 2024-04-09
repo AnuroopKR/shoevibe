@@ -261,11 +261,9 @@ const orderController={
                         console.log("Order status updated successfully:");
                         
                       const order=await orderdb.findOne({orderId:orderId})
-                      console.log(order.paymentIntent,order)
                       if(order.paymentIntent.type=="Online payment"||order.paymentIntent.type=="wallet-payment"){
                         if(order.status!="Not Processed"){
                         const wallet=await walletdb.findOne({userId:userId})
-                        console.log(wallet)
                         var randomNumber = Math.floor(Math.random() * Math.pow(10, 12));
                         var walletId = randomNumber.toString().padStart(12, '0');
                         wallet.balance= wallet.balance+(order.totalPrice)
@@ -304,7 +302,6 @@ const orderController={
                      const addressId=req.body.selectedAddressId
                      const orderData=await orderdb.findOne({orderId:id})
                      const cart=await cartdb.findOne({userId:userId})
-                    console.log(1111,orderData,data);
                      let hmac=crypto.createHmac('sha256','7npRH8K1zAV8b3jk7WBf9Dtb')
                      hmac.update(payment.razorpay_order_id+'|'+payment.razorpay_payment_id)
                      hmac=hmac.digest('hex')
@@ -318,7 +315,6 @@ const orderController={
                          }
                          orderData.orderStatus="Placed"
                          await orderData.save()
-                         console.log(2222,orderData);
                       }else{
                       const orderData=new orderdb(data)
                       orderData.paymentIntent={
@@ -545,23 +541,28 @@ const orderController={
                       },
                       orderLoadFetch:  async (req, res) => {
                         try { 
-                          const searchQuery=req.query.search  
+                          const searchQuery=req.query.search?req.query.search:"";  
                           const statusFilter=req.query.status   
                           const pageNum=req.query.pageNum 
                           
-                          const perPage=20 
+                          const perPage=10 
 
                           console.log(searchQuery,statusFilter,pageNum)
                           const orderList=await orderdb.find().populate('products.productId').populate('userId').sort({ createdAt: -1 })
                           // console.log("orderlist",orderList)
-                          const orderFilterData =orderList.filter((order) => {
-                            // Match order ID with search query (case-insensitive)
-                            const orderIdMatch = order.orderId.includes(searchQuery);
-                             
+                          const orderFilterData = orderList.filter((order) => {
                             // Match order status with status filter
                             const statusMatch = statusFilter === "all" || order.orderStatus === statusFilter;
-                            return orderIdMatch && statusMatch;
-                          });
+                        
+                            // Check if searchQuery is truthy before using includes
+                            if (searchQuery && order.orderId) {
+                                // Match order ID with search query (case-insensitive)
+                                const orderIdMatch = order.orderId.includes(searchQuery);
+                                return orderIdMatch && statusMatch;
+                            } else {
+                                return statusMatch; // If no search query, only consider statusMatch
+                            }
+                        });
                           const count=orderFilterData.length
                           const startIndex = (pageNum - 1) * perPage;
                           const endIndex = startIndex + perPage;
@@ -570,9 +571,12 @@ const orderController={
                           console.log(count,"aaaa")  
                           res.status(200).json({orderData,pages,pageNum});  
                         } catch (error) {
-                          console.log(error.message);
+                          console.log(error);
                         }
                       },
+
+
+
                       orderDetails: async (req, res) => {
                         try {
                           const orderId=req.params.orderId
