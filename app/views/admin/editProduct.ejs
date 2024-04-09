@@ -81,11 +81,20 @@
                     <h5 class="mb-3">Categories</h5>
                     
                     <%category.forEach(cat=>{%>
+                        <% console.log(1111,product.category.name,cat); %>
+
+                        <%if(cat.name===product.category.name){%>
+                            <% console.log(product.category.name); %>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="<%=cat._id%>" id="product-cat" name="category"/>
+                        <input class="form-check-input" type="checkbox" value="<%=cat._id%>" id="product-cat" name="category" checked/>
                         <label class="form-check-label" for="product-cat"> <%=cat.name%> </label>
                     </div>
-                    <%})%>
+                    <%}else{%>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="<%=cat._id%>" id="product-cat" name="category"/>
+                            <label class="form-check-label" for="product-cat"> <%=cat.name%> </label>
+                        </div>
+                    <%}})%>
                     </div>
                    
                 </div>

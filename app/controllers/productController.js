@@ -37,7 +37,6 @@ userProductList: async (req,res)=>{
     const status=req.query.status 
     const search=req.query.search 
     const pageNum=req.query.pageNum 
-console.log(price1,price2) 
     const perPage=3;
     // const count=await productdb.find().count()
    
@@ -123,14 +122,23 @@ productListLoad: async (req, res) => {
   try { 
     const status=req.query.status
     const category=req.query.category
+    const pageNum=req.query.pageNum
     let productlist
-
+    const perPage=2
+    let productData
+    let count
+    let pages
     if(!status){
-   productlist=await productdb.find()
+      productData=await productdb.find()
+      count=productData.length
+      pages=Math.ceil(count/perPage)
+      productlist=await productdb.find().skip((pageNum-1)*perPage).limit(perPage);
     }else{
-    productlist=await productdb.find({status:status})
+      productData=await productdb.find({status:status})
+      count=productData.length
+      pages=Math.ceil(count/perPage)
+    productlist=await productdb.find({status:status}).skip((pageNum-1)*perPage).limit(perPage);
     }
-    const pages=3
     res.status(200).json({productlist,category,pages})  
   } catch (error) { 
     console.log(error.message);
@@ -154,14 +162,14 @@ addProductDetails: async (req, res) => {
 
     try {
       const { productName, quantity, colour, size, brand, description, category, price, offer } = req.body;
-      
+      console.log(productName);
       // Use Sharp to process and save the images
       const sharpPromises = req.files.map(async (file, index) => {
         const filename = `image_${index + 1}_${Date.now()}.jpg`;
         const imagePath = path.join(__dirname, '..', '..','public', 'uploads', filename);
       
         await sharp(file.buffer)
-          .resize(300, 300, {
+          .resize(800, 800, {
             fit: "contain",
             withoutEnlargement: true,
             background: "white",
@@ -191,7 +199,7 @@ addProductDetails: async (req, res) => {
 
       // Save the product to the database
       await product.save();
-      res.redirect('/admin/addProduct');
+      res.status(200).json('hai');
     } catch (error) {
       console.error("Error creating product:", error);
       res.status(500).send("Error creating product.");
@@ -204,9 +212,9 @@ editProduct: async (req, res) => {
     
     const category=await categorydb.find()
     
-   const product=await productdb.findOne({_id:productId}) 
+   const product=await productdb.findOne({_id:productId}).populate('category')
     
-
+console.log(product);
     res.render("admin/editProduct",{product,category});
   } catch (error) {
     console.log(error.message);

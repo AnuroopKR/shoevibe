@@ -12,6 +12,7 @@ const crypto=require('crypto')
 const ejs = require('ejs');
 const path = require('path');
 const puppeteer = require('puppeteer'); 
+const { log } = require("console");
 
 var instance = new Razorpay({
   key_id: process.env.Razorpay_key_id,
@@ -60,12 +61,25 @@ const orderController={
 
           const productData=await cartdb.findOne({userId:userId})
           const paymentMethod=req.body.paymentMethod
+
           // cash on delivery
           if(paymentMethod==='cash_on_delivery'){
             const method="cash on delivery"
             let id=await saveOrder(productData,method,userId,cart,couponId)
             const orderData=new orderdb(id)
             await orderData.save()
+
+            const cartItems=cart.products;
+            await Promise.all(
+              cartItems.map(async (cartItem) => {
+                const product = await productdb.findById(cartItem.productId).exec();
+                if (product) {
+                  product.quantity -= cartItem.quantity;
+                  product.sold+=cartItem.quantity
+                  await product.save();
+                }
+              }))
+
             cart.products = []; 
             await cart.save();
             res.status(200).json({ message:'hiii',data:id,status:false});
@@ -81,6 +95,18 @@ const orderController={
               let id=await saveOrder(productData,method,userId,cart,couponId)
               const orderData=new orderdb(id)
             await orderData.save()
+
+            const cartItems=cart.products;
+            await Promise.all(
+              cartItems.map(async (cartItem) => {
+                const product = await productdb.findById(cartItem.productId).exec();
+                if (product) {
+                  product.quantity -= cartItem.quantity;
+                  product.sold+=cartItem.quantity
+                  await product.save();
+                }
+              }))
+
             cart.products = []; 
             await cart.save();
               wallet.balance= wallet.balance-(productData.totalPrice+50)
@@ -100,6 +126,7 @@ const orderController={
             const method="Online payment"
             let id=await saveOrder(productData,method,userId,cart,couponId)
             let order= await generateRazorpay(id)
+            console.log(7777,id);
             res.status(200).json({ message:'hiii',data:id,status:true,order});
 
           } 
@@ -130,16 +157,16 @@ const orderController={
               address:address,
               userId: userId
               };
-              const cartItems=cart.products;
-            await Promise.all(
-              cartItems.map(async (cartItem) => {
-                const product = await productdb.findById(cartItem.productId).exec();
-                if (product) {
-                  product.quantity -= cartItem.quantity;
-                  await product.save();
-                }
-              })
-            );
+            //   const cartItems=cart.products;
+            // await Promise.all(
+            //   cartItems.map(async (cartItem) => {
+            //     const product = await productdb.findById(cartItem.productId).exec();
+            //     if (product) {
+            //       product.quantity -= cartItem.quantity;
+            //       await product.save();
+            //     }
+            //   })
+            // );
           //   cart.products = []; 
           // await cart.save();
           console.log('All products deleted successfully',id);
@@ -186,7 +213,8 @@ const orderController={
           const userId=req.session.userId
           const orderData=await orderdb.findOne({orderId:orderId}).populate('products.productId')
         //  const orderData=await orderdb.findOne({orderId:orderId})
-          res.render("users/placedOrder",{userId:req.session.userId,orderData});
+        console.log(1234,orderData);
+          res.render("users/placedOrder",{userId,orderData});
         } catch (error) {
           console.log(error.message);
         }
@@ -275,7 +303,8 @@ const orderController={
                       const userId=req.session.userId;
                      const addressId=req.body.selectedAddressId
                      const orderData=await orderdb.findOne({orderId:id})
-                    
+                     const cart=await cartdb.findOne({userId:userId})
+                    console.log(1111,orderData,data);
                      let hmac=crypto.createHmac('sha256','7npRH8K1zAV8b3jk7WBf9Dtb')
                      hmac.update(payment.razorpay_order_id+'|'+payment.razorpay_payment_id)
                      hmac=hmac.digest('hex')
@@ -289,8 +318,9 @@ const orderController={
                          }
                          orderData.orderStatus="Placed"
                          await orderData.save()
+                         console.log(2222,orderData);
                       }else{
-                       orderData=new orderdb(data)
+                      const orderData=new orderdb(data)
                       orderData.paymentIntent={
                        type: 'Online payment',
                        status:'success',
@@ -298,6 +328,21 @@ const orderController={
                       }
                       orderData.orderStatus="Placed"
                       await orderData.save()
+
+                      const cartItems=cart.products;
+            await Promise.all(
+              cartItems.map(async (cartItem) => {
+                const product = await productdb.findById(cartItem.productId).exec();
+                if (product) {
+                  product.quantity -= cartItem.quantity;
+                  product.sold+=cartItem.quantity
+                  await product.save();
+                }
+              }))
+
+                        cart.products = []; 
+                        await cart.save();
+                      console.log(3333,orderData);
                     }
                       res.status(200).json({ message:'hiii',data:id,success:true});
  

@@ -74,6 +74,10 @@
                             <span class="error-message" id="password-error"style="color: red;"></span>
                         </div>
                         <div class="col-md-12 form-group">
+                            <input type="password" class="form-control" id="conform-password" name="conformPassword" placeholder="conform Password" required>
+                            <span class="error-message" id="conform-password-error"style="color: red;"></span>
+                        </div>
+                        <div class="col-md-12 form-group">
                             <button type="submit" class="primary-btn">Submit</button>
                         </div>
                         <div class="col-md-12 form-group">
@@ -95,11 +99,14 @@
     const emailInput = document.getElementById('email');
     const phoneInput = document.getElementById('phonenumber');
     const passwordInput = document.getElementById('password');
+    const conformPassword = document.getElementById('conform-password');
+
 
     const nameError = document.getElementById('name-error');
     const emailError = document.getElementById('email-error');
     const phoneError = document.getElementById('phonenumber-error');
     const passwordError = document.getElementById('password-error');
+    const conformPasswordError = document.getElementById('conform-password-error');
 
     let isValid = true;
 
@@ -133,10 +140,15 @@
     // Validate password
     const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+={};:?<>,.\/\-]).{8,}$/;
     if (!passwordPattern.test(passwordInput.value)) {
-        passwordError.textContent = 'Password must have at least one uppercase letter, one lowercase letter, one number, one special character, and be at least 8 characters long';
+        passwordError.textContent = 'invalied password format';
         isValid = false;
     } else {
         passwordError.textContent = '';
+    }
+    
+    if(passwordInput,value!==conformPassword.value){
+        conformPasswordError.textContent = 'password and conform password need same';
+        isValid = false;
     }
     if (!isValid) {
         event.preventDefault(); // Prevent form submission if validation fails

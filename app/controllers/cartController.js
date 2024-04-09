@@ -13,12 +13,12 @@ const cartController={
          
         } catch (error) { 
           console.log(error.message);
-        }
+        } 
       },
       addtoCart: async (req, res) => {
         try {
           // const userId="65ca2c92dd3a7e82dea485b2"
-          const userId=req.session.userId;
+          const userId=req.session.userId; 
           const productId=req.body.productId;  
           const quantity=req.body.quantity
           console.log("add to cart",req.body,productId)

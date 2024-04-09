@@ -1,6 +1,6 @@
 const mongoose=require("mongoose");
 // const dotenv=require('dotenv')
-mongoose.connect("mongodb://localhost:27017/shoevibe",{serverSelectionTimeoutMS:20000});
+mongoose.connect("mongodb://localhost:27017/shoevibe",{serverSelectionTimeoutMS:5000});
 const express=require("express");
 const app=express();
 const path=require("path");
@@ -13,12 +13,8 @@ const axios = require('axios');
 require('dotenv').config();
 
 
-
-
-
-app.use(bodyParser.urlencoded({ extended: true })); 
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
 
 //for user
 app.set('view engine','ejs');
@@ -28,7 +24,7 @@ app.use(express.static(path.join(__dirname,'/public')));
 app.use(express.urlencoded({extended:false}));
 app.use(cookieParser());
 
-app.use(morgan('tiny'))  
+// app.use(morgan('tiny'))  
 // session
 app.use(session({ 
     secret:"secret",
@@ -40,7 +36,10 @@ app.use(flash());
 
 
 
-
+app.use(function (err,req, res, next) {
+    res.status(500);
+    res.render("errorpage/404");
+  });  
 
 const userRoute=require('./app/route/userRoute');
 app.use('/',userRoute);

@@ -36,8 +36,8 @@
                           <h6 class="card-subtitle mb-2 text-muted"></h6>
                           <p class="card-text"><%= coupon.description %>.</p>
                           <h3>Rs <%= coupon.discount %> Discount</h3>
-                          <a href="#" class="card-link btn" onclick="coupenApply('<%=coupon._id%>')" id="apply-coupon<%= coupon._id %>" style="display: inline;">Apply coupon</a>
-                          <a href="#" class="card-link"  id="cancel-coupon<%= coupon._id %>" style="display: none;">Cancel Coupon</a>
+                          <a href="#" class="card-link btn btn-primary" onclick="coupenApply('<%=coupon._id%>')" id="apply-coupon<%= coupon._id %>" style="display: inline;" id="apply-coupon">Apply coupon</a>
+                          <a href="#" class="card-link btn btn-primary"  id="cancel-coupon<%= coupon._id %>" style="display: none;">Cancel Coupon</a>
                         </div>
                       </div>
                       <% }) %>
@@ -80,7 +80,7 @@
                 <div class="col-lg-4">
                     <div class="order_box">
                         <h2>Your Order</h2>
-                        <table class="list">
+                        <table class="col-12">
                             <thead>
                                 <tr>
                                     <th>Product</th>
@@ -257,7 +257,7 @@
         paymentMethod:paymentMethod,
         paymentId:paymentId,
         address:selectedAddressId
-    }
+    } 
     fetch('/razorPay', {
         method: 'POST', 
         headers: {
@@ -328,14 +328,17 @@ function coupenApply(id){
       total.innerHTML='Rs '+totalPrice
       const cancelButton = document.getElementById(`cancel-coupon${couponId}`);
       const applyButton = document.getElementById(`apply-coupon${couponId}`);
+    //   const element = document.getElementById('apply-coupon');
+// element.textContent = 'Cansel coupon!';
 
       applyButton.style.display = 'none';
       cancelButton.style.display = 'inline'; 
 
       cancelButton.addEventListener('click', function() {
         couponId=null
-            // cancelButton.style.display = 'none';
-            
+            cancelButton.style.display = 'none';
+            applyButton.style.display = 'inline';
+
             // const applyButton = document.getElementById(`apply-coupon${couponId}`);
     //   applyButton.style.display = 'inline';
         const totalPrice =document.getElementById('sub_total').textContent
@@ -409,11 +412,11 @@ function coupenApply(id){
             const orderId=data.data.id
             
             order=data.order
-            console.log(order);
+            console.log(order,"data",data.data);
             razorpayPayment(order,data.data)
             //  window.location.href = '/orderPlaced/'+orderId;
         } else {
-            const orderId=data.data.id
+            const orderId=data.data.orderId
             window.location.href = '/orderPlaced/'+orderId;
             console.error('Error:', response.status);
         }
@@ -426,7 +429,7 @@ function coupenApply(id){
 
 function razorpayPayment(order,data){
     const price=order.amount
-    console.log(price);
+    console.log(price,data);
     var options = {
     "key": "rzp_test_evaSWL9QWQXINn", // Enter the Key ID generated from the Dashboard
     "amount": price, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
@@ -440,7 +443,7 @@ function razorpayPayment(order,data){
         // alert(response.razorpay_payment_id);
         // alert(response.razorpay_order_id);
         // alert(response.razorpay_signature)
-        verifyPayment(response,order)
+        verifyPayment(response,order,data)
         }else{
             Swal.fire({
             icon: 'error',
@@ -466,7 +469,9 @@ rzp1.on('payment.failed', function (response) {
        
             console.log(response);
             // const orderId = order.receipt;
+            console.log(333,data);
             verifyPayment(response,order,data)
+            
             // window.location = '/orderDetails/' + orderId;
         });
 rzp1.open();
@@ -474,6 +479,7 @@ rzp1.open();
     
 
 function verifyPayment(payment,order,data){
+    console.log(4444,data);
 $.ajax({
     url:'/verifyPayment',
     data:{

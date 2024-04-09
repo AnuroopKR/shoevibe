@@ -27,7 +27,7 @@ const productSchema=new mongoose.Schema({
     },
     sold:{
         type:Number,
-        require:true 
+        default:0 
     },
     file:{
         type:[String],

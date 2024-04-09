@@ -175,10 +175,16 @@
         // Call loadProduct function with selected value
       });
 
-      function loadProduct() {
+
+      function pagination(pageNum){
+        loadProduct(pageNum)
+      }
+
+
+      function loadProduct(pageNum) {
         let status = document.getElementById("statusSelect").value;
         var category = document.getElementById("category-select").value;
-        fetch(`/admin/productListLoad?status=${status}&category=${category}`)
+        fetch(`/admin/productListLoad?status=${status}&category=${category}&pageNum=${pageNum}`)
           .then((response) => {
             // console.log('Response:', response);
             if (!response.ok) {

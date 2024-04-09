@@ -95,6 +95,19 @@
 </head>
 
 <body>
+    <section class="banner-area organic-breadcrumb">
+        <div class="container">
+            <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+                <div class="col-first">
+                    <h1>profile page</h1>
+                    <nav class="d-flex align-items-center">
+                        <a href="index.html">Home<span class="lnr lnr-arrow-right"></span></a>
+                        <a href="category.html">Login/Register</a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </section>
     <div class="container light-style flex-grow-1 container-p-y">
         <h4 class="font-weight-bold py-3 mb-4">
             Account settings
@@ -127,7 +140,7 @@
                     <div class="tab-content">
                         
                         <div class="tab-pane fade active show" id="account-general">
-                            <div class="card-body media align-items-center">
+                            <!-- <div class="card-body media align-items-center">
                                 <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt
                                     class="d-block ui-w-80">
                                 <div class="media-body ml-4">
@@ -138,7 +151,7 @@
                                     <button type="button" class="btn btn-default md-btn-flat">Reset</button>
                                     <div class="text-light small mt-1">Allowed JPG, GIF or PNG. Max size of 800K</div>
                                 </div>
-                            </div>
+                            </div> -->
                             <hr class="border-light m-0">
                             <form action="/userUpdate" method="post">
                             <div class="card-body">
@@ -157,22 +170,21 @@
                                 <div class="form-group">
                                     <label class="form-label">E-mail</label>
                                     <input type="text" class="form-control mb-1" value="<%=userData.email%>" name="email">
-                                    <div class="alert alert-warning mt-3">
-                                        Your email is not confirmed. Please check your inbox.<br>
-                                        <a href="javascript:void(0)">Resend confirmation</a>
-                                    </div>
+                                    
                                 </div>
                             
                             </div>
                             <div class="text-right mt-3">
-                                <button type="submit" class="btn btn-primary">Save changes</button>;
+                                <button type="submit" class="btn btn-primary">Save changes</button>
                                 <button type="button" class="btn btn-default">Cancel</button>
                             </div> 
+                            <br>
                         </form>
                         </div>
                     
                         <div class="tab-pane fade" id="account-change-password">
-                            <form action="/changePassword" method="post" onsubmit="return validateForm()">
+                            <form id="changePasswordForm"> 
+                            <!-- <form action="/changePassword" method="post" onsubmit="return validateForm()"> -->
                             <div class="card-body pb-2">
                                 <div class="form-group">
                                     <label class="form-label" for="password">Current password</label>
@@ -195,7 +207,7 @@
                                   </div>
                             </div>
                             <div class="text-right mt-3">
-                                <button type="submit" class="btn btn-primary" id="submitButton">Save changes</button>
+                                <button type="button" class="btn btn-primary" id="submitButton" onclick="changePassword()">Save changes</button>
                                 <button type="button" class="btn btn-default">Cancel</button>
                             </div>
                         </form>
@@ -328,26 +340,17 @@
                                       <p class="card-text" style="line-height: .2em;"  ><%= address.state %></p>
                                       <p class="card-text" style="line-height: .2em;"  > pin :  <%= address.pin %></p>
                                      
-                                      <!-- <% if (address.status) { %>
+                                      <% if (address.status) { %>
                                         <a href="/setDefault/<%=address._id%>" class="btn btn-info" style="background-color: rgb(0, 155, 39);" role="button">default</a>
                                       <% }else{ %>
                                       <a href="/setDefault/<%=address._id%>" class="btn btn-info" style="background-color: darkslategray;" role="button">set default</a>
-                                      <%}%> -->
-                                      <!-- <a href="#" class="btn btn-info ml-5" role="button" data-toggle="modal" data-target="#myModal-2">edit</a> -->
-                                      <!-- <a href="#" class="edit-address btn btn-info" data-address-id="<%= address._id %>">Edit</a>
+                                      <%}%> 
+                                      <a href="#" class="btn btn-info ml-5" role="button" data-toggle="modal" data-target="#myModal-2">edit</a>
+                                      <!-- <a href="#" class="edit-address btn btn-info" data-address-id="<%= address._id %>">Edit</a> -->
 
                                       <a href="/deleteAddress/<%=address._id%>" class="btn btn-info ml-5 bg-danger" role="button">delete</a>
-                                       -->
+                                      
 
-                                       <% if (address.status) { %>
-                                        <a href="/#" onclick="setDefault('<%=address._id%>')" class="btn btn-info" style="background-color: rgb(0, 155, 39);" role="button">default</a>
-                                      <% }else{ %>
-                                      <a href="#" onclick="setDefault('<%=address._id%>')"  class="btn btn-info" style="background-color: darkslategray;" role="button">set default</a>
-                                      <%}%>
-                                      <!-- <a href="#" class="btn btn-info ml-5" role="button" data-toggle="modal" data-target="#myModal-2">edit</a> -->
-                                      <a href="#"  class="edit-address btn btn-info" data-address-id="<%= address._id %>">Edit</a>
-
-                                      <a href="#" onclick="deleteAddress('<%=address._id%>')" class="btn btn-info ml-5 bg-danger" role="button">delete</a>
                                       
 
                                     </div>
@@ -365,6 +368,8 @@
             <button type="button" class="btn btn-default">Cancel</button>
         </div> -->
     </div>
+
+    <br><br>
 
 <!-- Bootstrap Modal -->
 <div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -387,7 +392,7 @@
                         <div class="col-md-6">
                             <label for="firstName" class="form-label">First Name</label>
                             <input type="text" class="form-control" name="firstName" id="firstName" onkeypress="checkEnter(event, 'lastName')">
-                            <i class="fa fa-eye" aria-hidden="true"></i>
+                            
                             <p id="firstNameError" style="color: red;"></p>
                         </div>
                         <div class="col-md-6">
@@ -420,14 +425,7 @@
                             <input type="text" class="form-control" name="pin" id="pin" onkeypress="checkEnter(event, 'lastName')">
                             <p id="pinError" style="color: red;"></p>
                         </div>
-                        <div class="col-12">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="gridCheck" >
-                                <label class="form-check-label" for="gridCheck">
-                                    Check me out
-                                </label>
-                            </div>
-                        </div>
+                       
                         <div class="col-12">
                             <button type="button" class="btn btn-primary" onclick="submitForm()">Submit</button>
                         </div>
@@ -498,22 +496,51 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
 <script>
-    const passwordField = document.getElementById("currentPassword");
-const eyeIcon = document.querySelector(".fa-eye");
 
-eyeIcon.addEventListener("click", function() {
-  if (passwordField.type === "password") {
-    passwordField.type = "text";
-    eyeIcon.classList.remove("fa-eye");
-    eyeIcon.classList.add("fa-eye-slash");
-  } else {
-    passwordField.type = "password";
-    eyeIcon.classList.remove("fa-eye-slash");
-    eyeIcon.classList.add("fa-eye");
-  }
-});
+function changePassword(){
+    event.preventDefault();
+    if(validateForm()){
+    const changePasswordForm = document.getElementById('changePasswordForm');
+
+    const formData = new FormData(changePasswordForm);
+
+    fetch('/changePassword', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Server response:', data);
+    })
+    .catch(error => {
+        console.error('There was a problem with the fetch operation:', error);
+    });
+};
+}
+// Optional: Add a client-side form validation function (validateForm)
+
+</script>
+<script>
+    // const passwordField = document.getElementById("currentPassword");
+// const eyeIcon = document.querySelector(".fa-eye");
+
+// eyeIcon.addEventListener("click", function() {
+//   if (passwordField.type === "password") {
+//     passwordField.type = "text";
+//     eyeIcon.classList.remove("fa-eye");
+//     eyeIcon.classList.add("fa-eye-slash");
+//   } else {
+//     passwordField.type = "password";
+//     eyeIcon.classList.remove("fa-eye-slash");
+//     eyeIcon.classList.add("fa-eye");
+//   }
+// });
 
 </script>
 
@@ -624,7 +651,7 @@ function validateForm() {
 
 
 
-
+ 
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
