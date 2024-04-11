@@ -17,7 +17,6 @@
       },
       addOffer: async (req, res) => {
         try {
-        //   const couponCode = generateCouponCode(12);
           const offer=new offerdb({
             title:req.body.offerName,
             description:req.body.description,

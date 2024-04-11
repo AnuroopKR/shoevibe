@@ -12,7 +12,6 @@ var instance = new Razorpay({
 const walletController={
     loadWallet: async (req, res) => {
         try {
-          // const userId='65ca2c92dd3a7e82dea485b2'
           const userId=req.session.userId
           const walletData=await walletdb.findOne({userId:userId})
           res.render("users/wallet",{walletData,userId});

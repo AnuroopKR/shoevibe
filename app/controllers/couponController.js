@@ -32,7 +32,7 @@ couponList: async (req, res) => {
   deleteCoupon: async (req, res) => {
     try {
       const couponId=req.body.couponId
-      const couponData=await coupondb.deleteOne({_id:couponId})
+      await coupondb.deleteOne({_id:couponId})
       res.status(200).json("success");
     } catch (error) {
       console.log(error.message);
@@ -41,8 +41,6 @@ couponList: async (req, res) => {
   checkCoupen:  async (req, res) => {
     try {
       const couponId=req.query.couponId
-    // const id=req.query.couponId
-    // const couponId = new ObjectId(id);
 
       const couponData=await coupondb.findOne({_id:couponId})
       res.status(200).json({couponData});

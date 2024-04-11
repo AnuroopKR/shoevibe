@@ -111,10 +111,5 @@ authenticateToken:(req, res, next)=>{
     }
   }
 }
-// create JWT tocken
-        // console.log(user)
-        // const token = jwt.sign({ userid }, secretKey, { expiresIn: '1h' });
-        // res.json({ token });
-        // res.cookie(accessToken,token);
 
 module.exports = middleWare;

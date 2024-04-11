@@ -366,8 +366,8 @@ updateCategory: async (req, res) => {
     }
     
     const result = await categorydb.updateOne(
-      { _id:categoryId }, // Match document with specified _id
-      { $set: updatedCategoryData } // Replace the entire document with new values
+      { _id:categoryId },
+      { $set: updatedCategoryData } 
     );
     
 

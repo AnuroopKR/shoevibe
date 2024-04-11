@@ -5,7 +5,6 @@ const productdb=require("../model/productModel");
 const cartController={
     loadCart: async (req, res) => {
         try {
-          // const userId = "65ca2c92dd3a7e82dea485b2"
           const userId=req.session.userId;
           const cartData=await cartdb.findOne({ userId: userId }).populate('products.productId')
          
@@ -17,7 +16,6 @@ const cartController={
       },
       addtoCart: async (req, res) => {
         try {
-          // const userId="65ca2c92dd3a7e82dea485b2"
           const userId=req.session.userId; 
           const productId=req.body.productId;  
           const quantity=req.body.quantity
@@ -35,22 +33,7 @@ const cartController={
           
           
           const userCart=await cartdb.findOne({userId:userId})
-        //   const CartData = await cartdb.findOne({ userId:userId}).populate({
-        //     path: 'products.productId',
-        //     populate: {
-        //         path: 'offerId',
-        //         model: 'Offer' 
-        //     }
-        // }).populate({
-        //     path: 'products.productId',
-        //     populate: {
-        //         path: 'category',
-        //         populate: {
-        //             path: 'offerId',
-        //             model: 'Offer' 
-        //         }
-        //     }
-        // });
+       
 
         let price
               if(productData.offerId){
@@ -158,7 +141,6 @@ const cartController={
         try {
             const {quantity,productId,total,id} = req.body;
             
-            // const userId="65ca2c92dd3a7e82dea485b2"
             const userId=req.session.userId;
             const userCart = await cartdb.findOne({ userId:userId})
 
@@ -221,7 +203,6 @@ const cartController={
       },
       deleteCart: async (req, res) => {
         try {
-          // const userId="65ca2c92dd3a7e82dea485b2";
           const userId=req.session.userId; 
           const productId=req.body.id
           
@@ -251,11 +232,3 @@ const cartController={
 
 module.exports = cartController;
 
-// let price
-//               if(productData.products.productId.offerId){
-//              price=productData.price-(productData.price*productData.products.productId.offerId.discount/100)
-//               }else if(productData.products.productId.offerId){
-//               price=productData.price-(productData.price*productData.products.productId.category.offerId.discount/100)
-//               }else{
-//                 price=productData.products.productId.price
-//               }

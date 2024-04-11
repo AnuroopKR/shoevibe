@@ -4,7 +4,6 @@ const wishlistdb=require("../model/wishListModel")
 const wishlistController={
     loadWishlist: async (req,res)=>{
         try{
-            // const userId="65ca2c92dd3a7e82dea485b2";
               const userId=req.session.userId; 
             const wishlist=await wishlistdb.findOne({userId:userId}).populate('products');
             console.log(wishlist)
@@ -17,7 +16,6 @@ const wishlistController={
     },
     addToWishlist:async (req,res)=>{ 
         try{
-            // const userId="65ca2c92dd3a7e82dea485b2";
               const userId=req.session.userId; 
             const productId=req.body.id
             console.log(1111,productId)
@@ -56,8 +54,7 @@ const wishlistController={
                   await wishlistData.save(); 
                   res.status(200).json({result:true})
             }
-            // res.redirect('/userCatagory')
-            // res.status(200).json("success")
+           
         }
         catch(error){ 
             console.log(error.message)
@@ -65,7 +62,6 @@ const wishlistController={
     },
     deleteWishlist: async(req,res)=>{
         try{
-            // const userId="65ca2c92dd3a7e82dea485b2";
               const userId=req.session.userId; 
             const productId=req.body.id
             

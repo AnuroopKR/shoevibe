@@ -365,9 +365,10 @@ const wishlist=await wishlistdb.findOne({userId:userId})
       const userId=req.session.userId;
       const addressData=await addressdb.updateMany({userId:userId,status:true},{$set:{status:false}})
       const result = await addressdb.updateOne({_id:addressId},{$set:{status:true}})
-      res.status(200).json('success')
+      // res.status(200).json('success')
+      res.redirect('/userProfile')
        } catch (error){
-      console.log(error.message);
+      console.log(error);
     }
     },
   deleteAddress:  async (req, res) => {

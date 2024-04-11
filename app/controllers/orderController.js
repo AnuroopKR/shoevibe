@@ -1,4 +1,3 @@
-const userdb = require("../model/userModel");
 const addressdb = require("../model/addressModel");
 const orderdb = require("../model/orderModel");
 const cartdb = require("../model/cartModel");
@@ -44,11 +43,9 @@ const orderController={
         }, 
         conformCheckout: async (req, res) => {
         try {
-          // const userId = "65ca2c92dd3a7e82dea485b2"
           const userId=req.session.userId;
          const addressId=req.body.selectedAddressId
          const couponId=req.body.couponId
-          // console.log(req.body);
           const coupon= await coupondb.findOne({_id:couponId}) 
           const cart = await cartdb.findOne({userId:userId});
           if (!cart) {
@@ -157,18 +154,7 @@ const orderController={
               address:address,
               userId: userId
               };
-            //   const cartItems=cart.products;
-            // await Promise.all(
-            //   cartItems.map(async (cartItem) => {
-            //     const product = await productdb.findById(cartItem.productId).exec();
-            //     if (product) {
-            //       product.quantity -= cartItem.quantity;
-            //       await product.save();
-            //     }
-            //   })
-            // );
-          //   cart.products = []; 
-          // await cart.save();
+           
           console.log('All products deleted successfully',id);
           return orders
         }
@@ -194,7 +180,6 @@ const orderController={
              
             await addres.save();
       
-            // Send a JSON response back to the client
             const responseData = {
               message: 'Form submitted successfully!',
               formData: formData,
@@ -212,7 +197,6 @@ const orderController={
             const orderId=req.params.orderId
           const userId=req.session.userId
           const orderData=await orderdb.findOne({orderId:orderId}).populate('products.productId')
-        //  const orderData=await orderdb.findOne({orderId:orderId})
         console.log(1234,orderData);
           res.render("users/placedOrder",{userId,orderData});
         } catch (error) {
@@ -248,7 +232,6 @@ const orderController={
                 try {
                     const orderId=req.params.orderId
                   const userId=req.session.userId
-                  const productData=await cartdb.findOne({userId:userId})
 
                  console.log(orderId)
                 const updatedOrder=await orderdb.findOneAndUpdate(
@@ -299,7 +282,6 @@ const orderController={
                       const payment=req.body.payment
                       const data=req.body.data
                       const userId=req.session.userId;
-                     const addressId=req.body.selectedAddressId
                      const orderData=await orderdb.findOne({orderId:id})
                      const cart=await cartdb.findOne({userId:userId})
                      let hmac=crypto.createHmac('sha256','7npRH8K1zAV8b3jk7WBf9Dtb')
@@ -388,11 +370,8 @@ const orderController={
                           })
                           .catch(error => {
                             console.error("Error updating order status:", error);
-                            // Handle errors
                           });
-                          console.log(1111)
                           const orderData=await orderdb.findOne({orderId:orderId}).populate('products.productId')
-                          console.log(2222,orderData)
                           res.status(200).json({userId,orderData});
                        
                        
@@ -417,7 +396,6 @@ const orderController={
                               const order = await orderdb.findOne({orderId:orderId})
                                   .populate("products.productId")
                                   
-                              console.log(order, "asdfghjkl");  
                       
                               const templatePath = path.join(__dirname, '../views/users/invoice.ejs');
                       
@@ -471,62 +449,7 @@ const orderController={
                           res.status(500)
                         }
                       },  
-                    // returnOrder: async (req, res) => {
-                    //   try {
-                    //       const orderId=req.params.orderId
-                    //     const userId=req.session.userId
-                    //     const order=await orderdb.findOne({orderId:orderId})
- 
-                       
-                    //  const updatedOrder=await orderdb.findOneAndUpdate(
-                    //       { orderId: orderId },
-                    //       { $set: { orderStatus: "Return request" } },
-                    //       { new: true } // Set to true to return the updated document
-                    //     )
-                          
-                    //         if (updatedOrder) {
-                    //           console.log("Order status updated successfully:");
-                              
-                    //           if(order.paymentIntent.type=="Online payment"||order.paymentIntent.type=="wallet-payment"){
-                    //             if(order.status!="Not Processed"){
-                                
-                    //             const wallet=await walletdb.findOne({userId:userId})
-                    //             console.log(wallet)
-                    //             var randomNumber = Math.floor(Math.random() * Math.pow(10, 12));
-                    //             var walletId = randomNumber.toString().padStart(12, '0');
-                    //             wallet.balance= wallet.balance+(order.totalPrice)
-                    //             wallet.transactions.push({
-                    //               type:'Credit',
-                    //               amount:order.totalPrice,
-                    //               transactionId:walletId, 
-                    //               transactionDate:new Date(),
-                    //               status:'Completed'
-                    //             })
-                    //             console.log(wallet)
-                    //             await wallet.save()
-                    //           }
-                    //           }else{
-                    //             console.log("COD")
-                    //           }
-                        
-                    //           // Handle any additional logic here
-                    //         } else {
-                    //           console.log("Order not found");
-                    //           // Handle if the order is not found
-                    //         }
-                          
-                    //       console.log(1111)
-                    //       const orderData=await orderdb.findOne({orderId:orderId}).populate('products.productId')
-                    //       console.log(2222,orderData)
-                    //       res.status(200).json({userId,orderData});
-                       
-                       
-                    //   } catch (error) {
-                    //     console.log(error.message);
-                    //   }
-                    //   } ,
-
-
+            
 
  // ================================for admin side =================================
 
@@ -549,18 +472,14 @@ const orderController={
 
                           console.log(searchQuery,statusFilter,pageNum)
                           const orderList=await orderdb.find().populate('products.productId').populate('userId').sort({ createdAt: -1 })
-                          // console.log("orderlist",orderList)
                           const orderFilterData = orderList.filter((order) => {
-                            // Match order status with status filter
                             const statusMatch = statusFilter === "all" || order.orderStatus === statusFilter;
                         
-                            // Check if searchQuery is truthy before using includes
                             if (searchQuery && order.orderId) {
-                                // Match order ID with search query (case-insensitive)
                                 const orderIdMatch = order.orderId.includes(searchQuery);
                                 return orderIdMatch && statusMatch;
                             } else {
-                                return statusMatch; // If no search query, only consider statusMatch
+                                return statusMatch; 
                             }
                         });
                           const count=orderFilterData.length
@@ -662,15 +581,11 @@ const orderController={
                                   console.log("COD")
                                 }
                           
-                                // Handle any additional logic here
                               } else {
                                 console.log("Order not found");
-                                // Handle if the order is not found
                               }
                             
-                            console.log(1111)
                             const orderData=await orderdb.findOne({orderId:orderId}).populate('products.productId')
-                            console.log(2222,orderData)
                             res.status(200).json({orderData});
   
                         } catch (error) { 
