@@ -7,6 +7,7 @@ const categorydb=require("../model/categoryModel");
  const storage = multer.memoryStorage()
 const path=require('path');
 const sharp = require("sharp");
+const { log } = require("console");
 const uploads = multer({ storage: storage }).array("image", 5);
 const upload = multer({ storage: storage }).single('productImage');
 
@@ -124,7 +125,7 @@ productListLoad: async (req, res) => {
     const category=req.query.category
     const pageNum=req.query.pageNum
     let productlist
-    const perPage=2
+    const perPage=10
     let productData
     let count
     let pages
@@ -169,7 +170,7 @@ addProductDetails: async (req, res) => {
         const imagePath = path.join(__dirname, '..', '..','public', 'uploads', filename);
       
         await sharp(file.buffer)
-          .resize(800, 800, {
+          .resize(1200, 1200, {
             fit: "contain",
             withoutEnlargement: true,
             background: "white",
@@ -321,7 +322,7 @@ category: async (req, res) => {
 },
 addCategory: async (req, res) => {
   try {
-    
+    console.log("hai");
     const{categoryName,description}=req.body;
     const slug=createSlug(categoryName)
     const categoryData=await categorydb.findOne({slug:slug})

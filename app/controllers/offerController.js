@@ -44,7 +44,7 @@
       loadOfferProduct: async (req, res) => {
         try {
           const status=req.query.status
-          const id=req.query.productId
+          const id=req.query.id
           console.log("productId",id);
           const offerData=await offerdb.find()
           res.render("admin/Offer",{offerData,id,status});
@@ -54,8 +54,8 @@
       } ,
       applyOffer:  async (req, res) => {
         try {
-          const id=(req.body.id)
-          console.log(666,req.body.offerId);
+          const id=new ObjectId(req.body.id);
+          console.log(666,typeof(id));
           const status=req.body.status
           const offerId=new ObjectId(req.body.offerId);
           const offerData=await offerdb.find()

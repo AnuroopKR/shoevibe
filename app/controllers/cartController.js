@@ -38,9 +38,9 @@ const cartController={
         let price
               if(productData.offerId){
 
-             price=productData.price-(productData.price*productData.offerId.discount/100)
+             price=Math.ceil(productData.price-(productData.price*productData.offerId.discount/100))
               }else if(productData.category.offerId){
-              price=productData.price-(productData.price*productData.category.offerId.discount/100)
+              price=Math.ceil(productData.price-(productData.price*productData.category.offerId.discount/100))
               }else{
                 price=productData.price
               }
@@ -156,18 +156,13 @@ const cartController={
                     model: 'Offer'  
                 }
             })
-            console.log(10,productData,productId)
 
               let price
               if(productData.offerId){
-                console.log(1)
-             price=productData.price-(productData.price*productData.offerId.discount/100)
+             price=Math.ceil(productData.price-(productData.price*productData.offerId.discount/100))
               }else if(productData.category.offerId){
-                console.log(2)
-
-              price=productData.price-(productData.price*productData.category.offerId.discount/100)
+              price=Math.ceil(productData.price-(productData.price*productData.category.offerId.discount/100))
               }else{
-                console.log(3)
 
                 price=productData.price
               }
@@ -186,7 +181,6 @@ const cartController={
             cartItem.quantity = quantity; 
             await userCart.save();
             const totalPrice = userCart.products.reduce((total, product) => {
-              
               return total + product.price;
           }, 0);
           

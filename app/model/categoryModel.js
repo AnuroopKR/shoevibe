@@ -17,6 +17,10 @@ const categorySchema=new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"Offer"
     },
+    sold:{
+        type:Number,
+        default:0
+    },
     slug:{
         type:String,
         require:true

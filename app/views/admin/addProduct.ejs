@@ -110,7 +110,7 @@
                     <% category.forEach(cat => { %>
                         <div class="form-check">
                             <input class="form-check-input" type="radio" value="<%= cat._id %>" id="product-cat-<%= cat._id %>" name="category"/>
-                            <label class="form-check-label" for=product-cat-<%= cat._id %>"> <%= cat.name %> </label>
+                            <label class="form-check-label" for="product-cat-<%= cat._id %>"> <%= cat.name %> </label>
                         </div>
                     <% }) %>
                 </div>
@@ -200,7 +200,7 @@ async function handleImage() {
                 var imageToCrop = div.querySelector('img');
 var cropper = new Cropper(imageToCrop, {
     aspectRatio: 1,
-    cropBoxAccpetRatio:9/9,
+    // cropBoxAccpetRatio:9/9,
   
     
 });
@@ -223,8 +223,8 @@ var cropper = new Cropper(imageToCrop, {
 
         for (let cropper of croppers) {
             let croppedCanvas = cropper.getCroppedCanvas({
-                width: 800,
-               height: 800,
+                width: 1200,
+               height: 1200,
             });
 
             if (croppedCanvas) {

@@ -57,9 +57,7 @@
 							<% let stock=(product.quantity >0) ? 'Instock' : 'Out of stock'; %>
 							<li><a href="#"><span>Availibility</span> : <%=stock%></a></li>
 						</ul>
-						<p>Mill Oil is an innovative oil filled radiator with the most modern technology. If you are looking for
-							something that can make your interior look awesome, and at the same time give you the pleasant warm feeling
-							during the winter.</p>
+						<p><%= product.description %></p>
 							<form action="#" method="post" id="add-cart">
 						<div class="product_count">
 							<label for="sst">Quantity:</label>

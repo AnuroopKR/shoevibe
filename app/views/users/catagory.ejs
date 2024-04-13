@@ -49,7 +49,7 @@
 		</div>
 	</section>
 	<!-- End Banner Area -->
-	<div class="container">
+	<div class="container" >
 		<div class="row">
 			<div class="col-xl-3 col-lg-4 col-md-5">
 				<div class="sidebar-categories">
@@ -218,13 +218,14 @@ function pagination(pageNum){
             html += `<div class="row">`;
             productData.forEach(product => {
 				let offer
+				console.log(product.offerId);
 				let offerPrice
 				if(product.offerId){
 					offer=product.offerId.discount
-					offerPrice=product.price-(product.price*offer/100)
+					offerPrice=Math.ceil(product.price-(product.price*offer/100))
 				}else if(product.category.offerId){
 					offer=product.category.offerId.discount 
-					offerPrice=product.price-(product.price*offer/100)
+					offerPrice=Math.ceil(product.price-(product.price*offer/100))
 				}else{
 					offerPrice=product.price
 				}
@@ -237,8 +238,11 @@ function pagination(pageNum){
                             <img class="img-fluid" src="${product.file[0]}" alt="">
                         </a>
                         <div class="product-details">
-                            <h6>${product.productName}</h6>
-                            <div class="price">
+                            <h6>${product.productName}</h6>`
+							if(offer){
+						html += `	<h5 style="color: red;">${offer} %offer<h5>`
+						}
+						html += `  <div class="price">
                                 <h6>Rs ${offerPrice}</h6>
                                 <h6 class="l-through">Rs ${product.price}</h6>
                             </div>
