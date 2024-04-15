@@ -16,24 +16,24 @@
                 <div class="col-md-3">
                     <form id="coupon">
                         <div class="mb-4">
-                            <label for="product_name" class="form-label">Name</label>
-                            <input type="text" placeholder="Type here" class="form-control" id="product_name" name="couponName" />
+                            <label for="coupon_name" class="form-label">Name</label>
+                            <input type="text" placeholder="Type here" class="form-control" id="coupon_name" name="couponName" />
+                            <span id="nameError" class="error text-danger"></span>
                         </div>
                         <div class="mb-4">
-                            <label for="product_slug" class="form-label">Discount</label>
-                            <input type="text" placeholder="Type here" class="form-control" id="product_slug" name="discount"/>
+                            <label for="coupon-discount" class="form-label">Discount</label>
+                            <input type="text" placeholder="Type here" class="form-control" id="coupon-discount" name="discount"/>
+                            <span id="discountError" class="error text-danger"></span>
                         </div>
                         <div class="mb-4">
-                            <label for="product_slug" class="form-label">Minimum rate</label>
-                            <input type="text" placeholder="Type here" class="form-control" id="product_slug" name="minimumRate"/>
+                            <label for="minimum_rate" class="form-label">Minimum rate</label>
+                            <input type="text" placeholder="Type here" class="form-control" id="minimum_rate" name="minimumRate"/>
+                            <span id="minimumRateError" class="error text-danger"></span>
                         </div>
                         <div class="mb-4">
-                            <label for="product_slug" class="form-label">expiry date</label>
-                            <input type="date" placeholder="Type here" class="form-control" id="product_slug" name="expiry"/>
-                        </div>
-                        <div class="mb-4">
-                            <label class="form-label">Description</label>
-                            <textarea placeholder="Type here" class="form-control" name="description"></textarea>
+                            <label for="expiry_date" class="form-label">Expiry date</label>
+                            <input type="date" class="form-control" id="expiry_date" name="expiry"/>
+                            <span id="expiryError" class="error text-danger"></span>
                         </div>
                         <div class="d-grid">
                             <button class="btn btn-primary" onclick="couponSubmit(event)">Create coupen</button>
@@ -111,7 +111,7 @@
 <script>
     function couponSubmit(event){
         event.preventDefault(); // Prevent form submission
-
+       if( formValidation(event)){
         // Retrieve form data
         const formData = new FormData(document.getElementById('coupon'));
 
@@ -143,7 +143,7 @@
             console.error('There was a problem with the form submission:', error);
         });
     }
-
+    }
     
 
     async function deleteCoupon(id){
@@ -188,7 +188,73 @@
     }
     
 </script>
+<script>
+    function formValidation(event) {
+        event.preventDefault();
 
+        // Validation logic
+        const nameInput = document.getElementById('coupon_name');
+        const discountInput = document.getElementById('coupon-discount');
+        const minimumRateInput = document.getElementById('minimum_rate');
+        const expiryInput = document.getElementById('expiry_date');
+
+        const nameError = document.getElementById('nameError');
+        const discountError = document.getElementById('discountError');
+        const minimumRateError = document.getElementById('minimumRateError');
+        const expiryError = document.getElementById('expiryError');
+
+        let isValid = true;
+
+        if (nameInput.value.trim() === '') {
+            nameError.textContent = 'Name is required';
+            isValid = false;
+        } else {
+            nameError.textContent = '';
+        }
+        const discountValue = parseFloat(discountInput.value);
+
+        if (discountInput.value.trim() === '') {
+            discountError.textContent = 'Discount is required';
+            isValid = false;
+        } else if (isNaN(discountValue) || discountValue < 0) {
+        discountError.textContent = 'Discount should be a non-negative number';
+        isValid = false;
+    } else {
+        discountError.textContent = '';
+    }
+    const minimumRateValue = parseFloat(minimumRateInput.value);
+
+        if (minimumRateInput.value.trim() === '') {
+            minimumRateError.textContent = 'Minimum rate is required';
+            isValid = false;
+        } else if (isNaN(minimumRateValue) || minimumRateValue < 0) {
+        minimumRateError.textContent = 'Minimum rate should be a non-negative number';
+        isValid = false;
+    } 
+    else if (minimumRateValue <= discountValue) {
+        minimumRateError.textContent = 'Minimum rate should be greater than the discount';
+        isValid = false;
+    }else {
+        minimumRateError.textContent = '';
+    }
+        const currentDate = new Date();
+    const selectedDate = new Date(expiryInput.value);
+    if (selectedDate <= currentDate) {
+        expiryError.textContent = 'Expiry date should be greater than the current date';
+        isValid = false;
+    } else if (expiryInput.value.trim() === '') {
+        expiryError.textContent = 'Expiry date is required';
+        isValid = false;
+    } else {
+        expiryError.textContent = '';
+    }
+
+        if (isValid) {
+            // Form submission logic here, e.g., submit the form
+            return true
+        }
+    }
+</script>
 
 <%-include("../layoutAdmin/footer.ejs")%>
 <!-- fetch('/admin/createCoupon', -->

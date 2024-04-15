@@ -90,8 +90,9 @@
 					</div>
 					<div class="mt-2">
 						<label for="price" class="color-whight">Rs   :</label>
-						<input  type="number" placeholder="Lower price" style="width: 100px;" id="lower-price">
-						<input type="number" placeholder="Higher price" style="width: 100Px;" id="higher-price">
+						<input type="number" placeholder="Lower price" style="width: 100px;" id="lower-price" min="0">
+						<input type="number" placeholder="Higher price" style="width: 100px;" id="higher-price" min="0">
+
 						
 						
 						<button class="btn btn-sm" onclick="priceFilter()">sort</button>
@@ -177,8 +178,16 @@
 	const price2=document.getElementById("higher-price").value;
 	const status=document.getElementById("sort_order").value;
 	const categoryId=$('#category-id').val()
+	if(price1>price2&&price2>0){
+		Swal.fire({
+      icon: 'warning',
+      title: 'Oops...',
+      text: 'Higher price must be greater than or equal to lower price.',
+    });
+	}else{
 	
 	loadProduct(1,categoryId)
+	}
 		}
 
 
