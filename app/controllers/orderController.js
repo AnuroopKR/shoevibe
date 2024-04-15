@@ -22,7 +22,6 @@ const orderController={
 
     loadCheckout: async (req, res) => { 
         try {
-          // const userId="65ca2c92dd3a7e82dea485b2"
           const userId=req.session.userId;
           const id = new mongoose.Types.ObjectId(userId); 
           const addressData=await addressdb.find({userId:userId}) 
@@ -30,7 +29,8 @@ const orderController={
           const wallet=await walletdb.findOne({userId:userId})
           const coupon = await coupondb.find({
             usersUsed: { $nin: [id] }, 
-            expiry: { $gte: new Date() } 
+            expiry: { $gte: new Date() },
+            minimumRate:{$lte:cartData.totalPrice}
         });
                   
          if (!cartData.products || cartData.products.length === 0) {
