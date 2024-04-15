@@ -25,12 +25,14 @@ const orderController={
           // const userId="65ca2c92dd3a7e82dea485b2"
           const userId=req.session.userId;
           const id = new mongoose.Types.ObjectId(userId); 
-
           const addressData=await addressdb.find({userId:userId}) 
           const cartData=await cartdb.findOne({ userId: userId }).populate('products.productId')
           const wallet=await walletdb.findOne({userId:userId})
-          const coupon=await coupondb.find({usersUsed:{$nin:id}})
-          
+          const coupon = await coupondb.find({
+            usersUsed: { $nin: [id] }, 
+            expiry: { $gte: new Date() } 
+        });
+                  
          if (!cartData.products || cartData.products.length === 0) {
           res.redirect('/cart');
       } 

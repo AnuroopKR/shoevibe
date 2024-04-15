@@ -50,8 +50,8 @@
 									<h1>Nike New <br>Collection!</h1>
 									<p>Find your perfect fit at our shoe haven, where every step is a statement. Elevate your style with comfort and flair, one pair at a time.</p>
 									<div class="add-bag d-flex align-items-center">
-										<a class="add-btn" href=""><span class="lnr lnr-cross"></span></a>
-										<span class="add-text text-uppercase">Add to Bag</span>
+										<a class="add-btn" href="/userCatagory"><span class="lnr lnr-cross"></span></a>
+										<span class="add-text text-uppercase">Go to shop</span>
 									</div>
 								</div>
 							</div>
@@ -68,8 +68,8 @@
 									<h1>Nike New <br>Collection!</h1>
 									<p>From classic elegance to trendy kicks, our shoes speak volumes about your style. Step up your fashion game with our curated collection.</p>
 									<div class="add-bag d-flex align-items-center">
-										<a class="add-btn" href=""><span class="lnr lnr-cross"></span></a>
-										<span class="add-text text-uppercase">Add to Bag</span>
+										<a class="add-btn" href="/userCatagory"><span class="lnr lnr-cross"></span></a>
+										<span class="add-text text-uppercase">Go to shop</span>
 									</div>
 								</div>
 							</div>
@@ -204,7 +204,7 @@
 	<!-- End category Area -->
 
 	<!-- start product Area -->
-	<section class="owl-carousel active-product-area section_gap">
+	<section class="owl-carousel  section_gap">
 		<!-- single product slide -->
 		<div class="single-product-slider">
 			<div class="container">
@@ -221,6 +221,18 @@
 				<div class="row">
 					<!-- single product -->
 					<% productData.forEach(product=>{%>
+						<%let offer
+						console.log(product.offerId);
+						let offerPrice
+						if(product.offerId){
+							offer=product.offerId.discount
+							offerPrice=Math.ceil(product.price-(product.price*offer/100))
+						}else if(product.category.offerId){
+							offer=product.category.offerId.discount 
+							offerPrice=Math.ceil(product.price-(product.price*offer/100))
+						}else{
+							offerPrice=product.price
+						}%>
 					<div class="col-lg-3 col-md-6 col-6">
 						<div class="single-product">
 							<a href="/userProduct/<%=product._id%>">
@@ -228,54 +240,10 @@
 							<div class="product-details">
 								<h6><%=product.productName%></h6>
 								<div class="price">
-									<h6>$150.00</h6>
-									<h6 class="l-through">$210.00</h6>
+									<h6>Rs <%=offerPrice%></h6>
+									<h6 class="l-through">Rs <%=product.price%></h6>
 								</div>
-								<div class="prd-bottom" id="wish_icon<%=product._id%>">
-
-									<a href="#" class="social-info">
-										<span class="ti-bag"></span>
-										<p class="hover-text">add to bag</p>
-									</a>
-									<%if(wishlist){%>
-										<%if(wishlist.products.includes(product._id)){%>
-									<a href="#" class="social-info" onclick="addWishlist('<%=product._id%>')">
-										<span class="lnr lnr-heart" style="color: red;"></span>
-										<p class="hover-text">remove</p>
-									</a>
-									<%}else{%>
-										<a href="#" class="social-info" onclick="addWishlist('<%=product._id%>')">
-											<span class="lnr lnr-heart" ></span>
-											<p class="hover-text">add wishlist</p>
-										</a>
-										<%}}else{%>
-											<a href="#" class="social-info" onclick="addWishlist('<%=product._id%>')">
-												<span class="lnr lnr-heart" ></span>
-												<p class="hover-text">add wishlist</p>
-											</a>
-											<%}%>
-									
-									<!-- <a href="" class="social-info" onclick="addWishlist('<%=product._id%>')" >
-										<%if(wishlist){%>
-											<%if(wishlist.products.includes(product._id)){%>
-												<span class="lnr lnr-heart"></span>
-											<%}else{%>
-												<span class="lnr lnr-heart" style="color: red;"></span>
-											<%}}else{%>
-												<span class="lnr lnr-heart" style="color: red;"></span>
-											<%}%>
-										
-										<p class="hover-text">Wishlist</p>
-									</a> -->
-									<a href="" class="social-info">
-										<span class="lnr lnr-sync"></span>
-										<p class="hover-text">compare</p>
-									</a>
-									<a href="" class="social-info">
-										<span class="lnr lnr-move"></span>
-										<p class="hover-text">view more</p>
-									</a>
-								</div>
+								
 							</div>
 						</div>
 					</div>
@@ -284,56 +252,7 @@
 			</div>
 		</div>
 		<!-- single product slide -->
-		<div class="single-product-slider">
-			<div class="container">
-				<div class="row justify-content-center">
-					<div class="col-lg-6 text-center">
-						<div class="section-title">
-							<h1>Coming Products</h1>
-							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-								dolore
-								magna aliqua.</p>
-						</div>
-					</div>
-				</div>
-				<div class="row">
-					<!-- single product -->
-					<div class="col-lg-3 col-md-6">
-						<div class="single-product">
-							<img class="img-fluid" src="img/product/p6.jpg" alt="">
-							<div class="product-details">
-								<h6>addidas New Hammer sole
-									for Sports person</h6>
-								<div class="price">
-									<h6>$150.00</h6>
-									<h6 class="l-through">$210.00</h6>
-								</div>
-								<div class="prd-bottom">
-
-									<a href="" class="social-info">
-										<span class="ti-bag"></span>
-										<p class="hover-text">add to bag</p>
-									</a>
-									<a href="" class="social-info">
-										<span class="lnr lnr-heart"></span>
-										<p class="hover-text">Wishlist</p>
-									</a>
-									<a href="" class="social-info">
-										<span class="lnr lnr-sync"></span>
-										<p class="hover-text">compare</p>
-									</a>
-									<a href="" class="social-info">
-										<span class="lnr lnr-move"></span>
-										<p class="hover-text">view more</p>
-									</a>
-								</div>
-							</div>
-						</div>
-					</div>
-				
-				</div>
-			</div>
-		</div>
+		
 	</section>
 	<!-- end product Area -->
 
@@ -368,7 +287,7 @@
 							</div>
 						</div>
 					</div>
-					<a href="" class="primary-btn">Shop Now</a>
+					<a href="/userCatagory" class="primary-btn">Shop Now</a>
 				</div>
 				<div class="col-lg-6 no-padding exclusive-right">
 					<div class="active-exclusive-product-slider">
@@ -436,10 +355,8 @@
 	<!-- End brand Area -->
 
 	
-		<!-- Include jQuery from CDN -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-<!-- JavaScript to Show/Hide Loader -->
 <script>
 	document.addEventListener('DOMContentLoaded', function() {
 	  const loader = document.getElementById('loader');
@@ -453,7 +370,7 @@
   
 
 	
-		<script>
+		<!-- <script>
 			function addWishlist(id){
 				event.preventDefault();
 				console.log(id);
@@ -487,6 +404,6 @@
 		
 			}
 		</script>
-
+ -->
 
 <%-include("../layouts/footer")%>

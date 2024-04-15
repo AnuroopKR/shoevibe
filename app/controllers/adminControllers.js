@@ -185,8 +185,7 @@ const adminControllers = {
 };
 
 function generateCouponCode(length) {
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const characters =process.env.coupon_code;
   let couponCode = "";
 
   for (let i = 0; i < length; i++) {

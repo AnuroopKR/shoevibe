@@ -156,7 +156,13 @@ const userControllers = {
       // const userId="65ca2c92dd3a7e82dea485b2"
       const userId=req.session.userId
      // if(req.session.isLogged){
-       const productData=await productdb.find() 
+       const productData=await productdb.find().populate('offerId').populate({
+        path: 'category',
+        populate: {
+            path: 'offerId',
+            model: 'Offer'  
+        }
+    })
 const wishlist=await wishlistdb.findOne({userId:userId})
 // console.log(9999,wishlist);
         res.render("users/home",{userId,productData,wishlist});

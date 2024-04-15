@@ -21,12 +21,11 @@
         
         <div class="cupon_area">
             <div class="check_title">
-                <h2>Have a coupon? <a href="#">Click here to enter your code</a></h2>
+                <h2>Have a coupon?</h2>
             </div>
             
 
-            <input type="text" placeholder="Enter coupon code">
-            <a class="tp_btn" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">Apply Coupon</a>
+            <a class="tp_btn" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">Show Coupon</a>
             <div class="collapse" id="collapseExample">
                 <div class="card card-body">
                     <%coupon.forEach(coupon=>{%>
@@ -350,7 +349,7 @@ function coupenApply(id){
 
     })
     .then(data=>{
-        $('#wallet-show').load(location.href + ' #wallet-show')
+        // $('#wallet-show').load(location.href + ' #wallet-show')
 
     })
     // .then(data={
@@ -363,19 +362,7 @@ function coupenApply(id){
     });
 
 }
-// function cancelCoupon(id){
-//     couponId=null
-//     const cancelButton = document.getElementById(`cancel-coupon${couponId}`);
-//     cancelButton.disabled = true;
-//       const totalPrice =document.getElementById('sub_total').textContent
-//       const total =document.getElementById('total')
 
-//       total.innerHTML=totalPrice
-     
-
-//     //   const price=Number(totalPrice.substring(3));
-//     //   const total =document.getElementById('total')
-// }
  
 
 

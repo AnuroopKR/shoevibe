@@ -350,6 +350,7 @@ addCategory: async (req, res) => {
 editCategory: async (req, res) => {
   try {
     const categoryId=req.params.categoryId;
+    console.log(8888,categoryId);
     const category=await categorydb.findOne({_id:categoryId})
     res.render("admin/editCategory",{category});
   } catch (error) {

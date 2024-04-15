@@ -68,11 +68,12 @@
                 <tbody>
                     <% if (walletData && walletData.transactions) { %>
                         <% walletData.transactions.forEach((wallet, index) => { %>
+                            <%const dateObject = new Date(wallet.transactionDate)%>
                             <tr><td><%=wallet.transactionId %></td>
                                 <td><%= wallet.type %></td>
                                 <td><%= wallet.amount %></td>
                                 <td><%= wallet.status %></td>
-                                <td><%= wallet.transactionDate %></td>
+                                <td><%= dateObject.toLocaleDateString() %></td>
                                 <!-- Add more columns as needed -->
                             </tr>
                         <% }) %>

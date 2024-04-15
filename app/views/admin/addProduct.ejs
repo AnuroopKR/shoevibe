@@ -142,6 +142,7 @@
 </form>
 </section>
 <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.12/dist/cropper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 
@@ -303,9 +304,14 @@ if(validateForm()){
         })
         .then(data => {
             console.log(data);
+            Swal.fire({
+            icon: 'success',
+            title: 'Product Saved!',
+            text: 'Your product has been saved successfully.',
+        }).then(()=>{
             window.location.reload() 
             // responseMessage.textContent = 'Form submitted successfully!';
-        })
+})})
         .catch(error => {
             console.error('There was a problem with your fetch operation:', error);
             responseMessage.textContent = 'Error submitting form. Please try again later.';
