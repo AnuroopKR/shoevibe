@@ -387,6 +387,16 @@ deleteCategory: async (req, res) => {
     console.log(error.message);
   }
 },
+leedingProductLoad: async (req, res) => {
+  try {
+    const product=await productdb.find().sort({sold:-1}).limit(10)
+    console.log(product);
+res.status(200).json({product})
+  } catch (error) {
+    console.log(error.message);
+    res.status(500)
+  }
+},
 
 }
 

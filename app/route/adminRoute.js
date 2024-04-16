@@ -31,7 +31,7 @@ adminRoute.get('/',middleWare.isadminLogged,adminController.adminHome)
 adminRoute.post('/login',adminController.adminLoginhome);     
 adminRoute.get('/user',middleWare.isadminLogged,adminController.userManage); 
 adminRoute.get('/userLoad',middleWare.isadminLogged,adminController.userLoad); 
-
+adminRoute.get('/leedingProductLoad',middleWare.isadminLogged,productController.leedingProductLoad)
 
 adminRoute.get('/logout',adminController.adminLogout)
 adminRoute.get('/unblockUser/:userId',middleWare.isadminLogged,adminController.userBlock)

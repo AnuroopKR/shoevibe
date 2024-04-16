@@ -1,5 +1,7 @@
 const userdb = require("../model/userModel");
 const orderdb = require("../model/orderModel");
+const categorydb=require("../model/categoryModel");
+
 const bcrypt = require("bcrypt");
 const multer = require("multer");
 const storage = multer.memoryStorage();
@@ -10,38 +12,38 @@ const { constants } = require("fs");
 const uploads = multer({ storage: storage }).array("image", 5);
 const upload = multer({ storage: storage }).single("productImage");
 const adminControllers = {
-  adminHome: async (req, res) => {
-    try {
-      const orderData = await orderdb.find();
-      const price = orderData.reduce((crr, acc) => crr + acc.totalPrice, 0);
+  // adminHome: async (req, res) => {
+  //   try {
+  //     const orderData = await orderdb.find();
+  //     const price = orderData.reduce((crr, acc) => crr + acc.totalPrice, 0);
 
-      const orders = await orderdb.find({});
+  //     const orders = await orderdb.find({});
 
-      const amountData = Array(12).fill(0);
-      const productCountData = Array(12).fill(0);
+  //     const amountData = Array(12).fill(0);
+  //     const productCountData = Array(12).fill(0);
 
-      orders.forEach((order) => {
-        const { createdAt, products } = order;
-        const month = new Date(createdAt).getMonth();
+  //     orders.forEach((order) => {
+  //       const { createdAt, products } = order;
+  //       const month = new Date(createdAt).getMonth();
 
-        products.forEach((product) => {
-          const { price, quantity } = product;
-          const totalPrice = price * quantity;
-          amountData[month] += totalPrice;
-          productCountData[month] += quantity;
-        });
-      });
-      console.log(amountData, productCountData);
-      res.render("admin/adminhome", {
-        orderData,
-        price,
-        amountData,
-        productCountData,
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  },
+  //       products.forEach((product) => {
+  //         const { price, quantity } = product;
+  //         const totalPrice = price * quantity;
+  //         amountData[month] += totalPrice;
+  //         productCountData[month] += quantity;
+  //       });
+  //     });
+  //     console.log(amountData, productCountData);
+  //     res.render("admin/adminhome", {
+  //       orderData,
+  //       price,
+  //       amountData,
+  //       productCountData,
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // },
   adminLogin: async (req, res) => {
     try {
       res.render("admin/adminLogin");
@@ -182,7 +184,61 @@ const adminControllers = {
       console.log(error.message);
     }
   },
+
+
+  adminHome: async (req, res) => {
+    try {
+      const orderData = await orderdb.find();
+      const categoryCount=await categorydb.find().count()
+          const price = orderData.reduce((crr, acc) => crr + acc.totalPrice, 0);
+      const currentYear = new Date().getFullYear();
+      const currentMonth = new Date().getMonth() + 1;
+          // Calculate start and end dates of the month
+          const startDate = new Date(currentYear, currentMonth - 1, 1);
+          const endDate = new Date(currentYear, currentMonth, 0, 23, 59, 59);
+      
+    
+              const result = await orderdb.aggregate([
+                  // Match orders within the specified month
+                  {
+                      $match: {
+                          createdAt: {
+                              $gte: startDate,
+                              $lte: endDate,
+                          },
+                      },
+                  },
+                  {
+                      $group: {
+                          _id: { $dayOfMonth: '$createdAt' },
+                          day: { $first: { $dayOfMonth: '$createdAt' } }, 
+                          totalPriceSum: { $sum: '$totalPrice' },
+                      },
+                  },
+                  { $sort: { day: 1 } },
+                  
+              ]);
+              const amountData = new Array(30).fill(0);
+      
+              result.forEach(dayTotal => {
+                amountData[dayTotal._id - 1] = dayTotal.totalPriceSum;
+            });
+      
+      res.render("admin/adminhome", {
+        amountData,
+        orderData,
+        price,
+        categoryCount
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };
+
+
+
+
 
 function generateCouponCode(length) {
   const characters =process.env.coupon_code;
