@@ -74,6 +74,8 @@ adminRoute.delete('/deleteOffer',middleWare.isadminLogged,offerController.delete
 adminRoute.get('/offerLoadProduct',middleWare.isadminLogged,offerController.loadOfferProduct) 
 adminRoute.put('/applyOffer',middleWare.isadminLogged,offerController.applyOffer)
 adminRoute.get('/removeOffer',middleWare.isadminLogged,offerController.removeOffer)
+adminRoute.get('/editOffer',middleWare.isadminLogged,offerController.editOfferLoad)
+adminRoute.post('/updateOffer',middleWare.isadminLogged,offerController.updateOffer)
 
 
  

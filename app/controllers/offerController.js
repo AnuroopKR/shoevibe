@@ -13,6 +13,8 @@
           res.render("admin/addOffer",{offerData});
         } catch (error) {
           console.log(error.message);
+          res.status(500)
+
         } 
       },
       addOffer: async (req, res) => {
@@ -30,6 +32,8 @@
           res.status(200).json("offer data")
         } catch (error) {
           console.log(error.message);
+          res.status(500)
+
         }
       },
       deleteOffer: async (req, res) => {
@@ -39,6 +43,8 @@
           res.status(200).json("success")
         } catch (error) {
           console.log(error.message);
+          res.status(500)
+
         } 
       },
       loadOfferProduct: async (req, res) => {
@@ -50,6 +56,8 @@
           res.render("admin/Offer",{offerData,id,status});
         } catch (error) {
           console.log(error.message);
+          res.status(500)
+
         } 
       } ,
       applyOffer:  async (req, res) => {
@@ -68,6 +76,8 @@
           res.status(200).json({offerData,id});
         } catch (error) { 
           console.log(error.message);
+          res.status(500)
+
         }   
       },
       removeOffer:  async (req, res) => {
@@ -84,8 +94,41 @@
           res.status(200).json({offerData,id});
         } catch (error) { 
           console.log(error.message);
+          res.status(500)
+
         }   
-      }  
+      } ,
+      editOfferLoad:  async (req, res) => {
+        try {
+          const offerId=req.query.offerId;
+        console.log(1111,offerId);
+          const offer=await offerdb.findOne({_id:offerId})
+          console.log(offer);
+          res.render("admin/editOffer",{offer})
+        } catch (error) {
+          console.log(error);
+          res.status(500)
+        }
+      },
+      updateOffer: async (req, res) => {
+        try {
+          const offer=await offerdb.findOne({_id:req.body.id})
+          if (offer) {
+          offer.title=req.body.offerName,
+          offer.description=req.body.description,
+          offer.expirationDate=req.body.expiryDate,
+          offer.discount=req.body.percentage,
+          offer.startingDate=req.body.startingDate
+
+          await offer.save();
+          console.log(9999);
+          res.status(200).json("offer data")
+          }
+        } catch (error) {
+          res.status(500)
+          console.log(error.message);
+        }
+      },
  }
 
  module.exports =offerController;
