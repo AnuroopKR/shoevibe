@@ -21,7 +21,6 @@ const walletController={
       }, 
       addToWallet:async (req, res) => {
         try {
-          // const userId='65ca2c92dd3a7e82dea485b2'
           const userId=req.session.userId
           amount=Number(req.body.amount)
           const walletData=await walletdb.findOne({userId:userId})

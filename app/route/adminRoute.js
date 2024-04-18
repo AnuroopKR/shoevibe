@@ -10,20 +10,7 @@ const offerController = require("../controllers/offerController");
 const orderController = require("../controllers/orderController");
 const couponController=require("../controllers/couponController")
 
-// Set up multer to handle multiple file uploads
- 
-  // const storage = multer.diskStorage({
-  //   destination: function (req, file, cb) {
-  //       cb(null, path.join(__dirname,"..",'public','uploads')); // Specify the upload directory
 
-  //   },
-  //   filename: function (req, file, cb) {
-
-  //     cb(null,  Date.now() + '-' + file.originalname)
-  //   }
-  // })
-  
-  // const upload = multer({ storage: storage })
 
 
 adminRoute.get('/home',middleWare.isadminLogged,adminController.adminHome);
