@@ -24,7 +24,7 @@ app.use(express.static(path.join(__dirname,'/public')));
 app.use(express.urlencoded({extended:false}));
 app.use(cookieParser());
 
-// app.use(morgan('tiny'))  
+app.use(morgan('tiny'))  
 // session
 app.use(session({ 
     secret:"secret",
@@ -34,7 +34,10 @@ app.use(session({
 })) 
 app.use(flash());
 
-
+app.use((req,res,next)=>{
+    res.set('Cache-control','no-store,no-cache')
+    next()
+})
 
 app.use(function (err,req, res, next) {
     res.status(500);

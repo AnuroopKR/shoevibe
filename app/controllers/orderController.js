@@ -40,7 +40,8 @@ const orderController={
           res.render("users/checkout",{userId,addressData,cartData,wallet,coupon});  
           } 
         } catch (error) {
-          console.log(error);  
+          console.log(error);
+          res.status(500)  
         }
         }, 
         conformCheckout: async (req, res) => {
@@ -228,6 +229,8 @@ const orderController={
               res.render("users/orderDetails",{userId,orderData});
             } catch (error) {
               console.log(error.message); 
+              res.status(500)
+
             }
             },
             cancelOrder: async (req, res) => {
@@ -276,6 +279,7 @@ const orderController={
                  
                 } catch (error) {
                   console.log(error.message);
+                  res.status(500)
                 }
                 } ,
              verifyPayment: async (req, res) => {
@@ -379,6 +383,7 @@ const orderController={
                        
                       } catch (error) {
                         console.log(error.message);
+                        res.status(500)
                       }
                       } ,
                       invoice: async (req,res)=>{
@@ -388,6 +393,7 @@ const orderController={
                           res.render ('users/invoice',{order})
                        }catch (error) {
                         console.log(error.message);
+                        res.status(500)
                       }
                       },
                       
@@ -462,6 +468,7 @@ const orderController={
                           res.render("admin/orderList",{orderData});
                         } catch (error) {
                           console.log(error.message); 
+                          res.status(500)
                         }
                       },
                       orderLoadFetch:  async (req, res) => {
@@ -493,6 +500,7 @@ const orderController={
                           res.status(200).json({orderData,pages,pageNum});  
                         } catch (error) {
                           console.log(error);
+                          res.status(500)
                         }
                       },
 
@@ -505,7 +513,8 @@ const orderController={
                           console.log(orderData)
                           res.render("admin/orderDetails",{orderData}); 
                         } catch (error) {
-                          console.log(error.message);  
+                          console.log(error.message); 
+                          res.status(500) 
                         } 
                       }, 
                       changeOrderStatus: async (req, res) => {
@@ -538,7 +547,7 @@ const orderController={
                           })
                           .catch(error => {
                             console.error("Error updating order status:", error);
-                            
+                            res.status(500)
                           });
                           res.status(200).json({ message: "Order status updated successfully"});
                         } catch (error) {

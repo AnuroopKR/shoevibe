@@ -13,10 +13,13 @@ const walletController={
     loadWallet: async (req, res) => {
         try {
           const userId=req.session.userId
+          console.log(userId);
           const walletData=await walletdb.findOne({userId:userId})
+          console.log(walletData);
           res.render("users/wallet",{walletData,userId});
         } catch (error) {
           console.log(error.message);
+          res.status(500)
         } 
       }, 
       addToWallet:async (req, res) => {
@@ -32,33 +35,41 @@ const walletController={
           res.status(200).json({message:'success',order}) 
         } catch (error) {
           console.log(error.message);
+          res.status(500)
         } 
       },
       verifyWalletPayment: async (req, res) => {
                   
         try {
-          const userId=req.body.userId
           const id=req.body.order.receipt
           const payment=req.body.payment
           const order=req.body.order
           const amount=Number(req.body.order.amount)*0.01
-
-          // const userId=req.session.userId;
+          const userId=req.session.userId;
 
          let hmac=crypto.createHmac('sha256','7npRH8K1zAV8b3jk7WBf9Dtb')
          hmac.update(payment.razorpay_order_id+'|'+payment.razorpay_payment_id)
          hmac=hmac.digest('hex')
          if(hmac==payment.razorpay_signature){
           const wallet=await walletdb.findOne({userId:userId})
-          wallet.balance+=amount
-          wallet.transactions.push({
+          if(!wallet){
+            const wallet= new walletdb({
+              userId:userId,
+              balance:0
+            })
+            await wallet.save()
+          }
+          const walletData=await walletdb.findOne({userId:userId})
+
+          walletData.balance+=amount
+          walletData.transactions.push({
             type:'Credit',
             amount:amount,
             transactionId:id, 
             transactionDate:new Date(),
             status:'Completed'
           })
-          await wallet.save()
+          await walletData.save()
           res.status(200).json({wallet,amount}) 
          }else{
          res.status(500).json("error") 
@@ -66,6 +77,7 @@ const walletController={
 
 }catch (error) {
   console.log(error);
+  res.status(500)
 } 
       }
     }

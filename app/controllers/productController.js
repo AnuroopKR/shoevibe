@@ -275,6 +275,15 @@ editImage:async (req, res) => {
 filenames.push(filename)
     
     const productData=await productdb.findOne({_id:productId})
+    const oldImage=productData.file[index]
+    console.log("old image",oldImage);
+    fs.unlink(oldImage, (err) => {
+      if (err) {
+        console.error('Error deleting file:', err);
+        return;
+      }
+      console.log('File deleted successfully');
+    })
     productData.file[index]=`/uploads/${filename}`
     const productimage=await productdb.updateOne({_id:productId},{$set:{file:productData.file}})
     const product=await productdb.findOne({_id:productId})
