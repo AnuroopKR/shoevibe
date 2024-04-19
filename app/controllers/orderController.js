@@ -126,7 +126,6 @@ const orderController={
             const method="Online payment"
             let id=await saveOrder(productData,method,userId,cart,couponId)
             let order= await generateRazorpay(id)
-            console.log(7777,id);
             res.status(200).json({ message:'hiii',data:id,status:true,order});
 
           } 

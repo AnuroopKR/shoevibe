@@ -19,7 +19,6 @@ const cartController={
           const userId=req.session.userId; 
           const productId=req.body.productId;  
           const quantity=req.body.quantity
-          console.log("add to cart",req.body,productId)
           const productData=await productdb.findOne({_id:productId})
           .populate('offerId')            
           .populate({
@@ -46,7 +45,6 @@ const cartController={
               }
               const total=price*quantity
 
-              console.log("add to cart",total)
           // already have a cart 
           if(userCart){
             const existingProduct = userCart.products.find((product) =>  

@@ -300,12 +300,12 @@ $('input[name="selectedAddress"]').change(function() {
     var selectedAddressId = $(this).val();
     console.log("Selected address ID:", selectedAddressId);
 });
-var coupenId
+var couponId
 // for coupen
 function coupenApply(id){
     couponId=id
 
-    console.log(couponId);
+    console.log(444,couponId);
 
     fetch(`/checkCoupon?couponId=${couponId}`)
     .then(response => {
@@ -369,12 +369,11 @@ function coupenApply(id){
 // checkout function
     function checkout(event) {
     event.preventDefault(); 
-    
+    console.log("coupon id",);
     const selectedAddressId = document.querySelector('input[name="selectedAddress"]:checked').value;
     const paymentMethod = document.querySelector('input[name="payment_selector"]:checked').value;
     const subTotal=document.getElementById('sub_total').value
-    let couponId
-    if(!coupenId){
+    if(!couponId){
        couponId=null
     }
     console.log(paymentMethod);
