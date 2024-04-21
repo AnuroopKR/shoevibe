@@ -3,7 +3,7 @@ const categorydb=require("../model/categoryModel");
  const wishlistdb=require("../model/wishListModel");
  const offerdb=require("../model/offerModel")
  const multer=require('multer')
-
+const fs = require('fs');
  const storage = multer.memoryStorage()
 const path=require('path');
 const sharp = require("sharp");
@@ -277,7 +277,7 @@ filenames.push(filename)
     const productData=await productdb.findOne({_id:productId})
     const oldImage=productData.file[index]
     console.log("old image",oldImage);
-    fs.unlink(oldImage, (err) => {
+    fs.unlink(path.join(__dirname, '..', '..','public',oldImage), (err) => {
       if (err) {
         console.error('Error deleting file:', err);
         return;
@@ -292,6 +292,7 @@ filenames.push(filename)
     
   } catch (error) {
     console.log(error.message); 
+    res.status(500)
   }
 })
 },

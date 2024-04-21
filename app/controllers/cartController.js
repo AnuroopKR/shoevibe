@@ -11,7 +11,8 @@ const cartController={
           res.render("users/cart",{userId, cartData});
          
         } catch (error) { 
-          console.log(error.message);
+          console.log(error);
+          res.status(500).send("error")
         } 
       },
       addtoCart: async (req, res) => {

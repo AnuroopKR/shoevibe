@@ -1,6 +1,9 @@
 const mongoose=require("mongoose");
 // const dotenv=require('dotenv')
-mongoose.connect("mongodb://localhost:27017/shoevibe",{serverSelectionTimeoutMS:5000});
+require('dotenv').config();
+mongoose.connect(process.env.mongodb_url, {
+  serverSelectionTimeoutMS: 5000 
+})
 const express=require("express");
 const app=express();
 const path=require("path");
@@ -11,6 +14,8 @@ const flash = require('express-flash');
 const bodyParser = require('body-parser');
 const axios = require('axios');
 require('dotenv').config();
+const uuid = require('uuid');
+
 
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -25,13 +30,16 @@ app.use(express.urlencoded({extended:false}));
 app.use(cookieParser());
 
 app.use(morgan('tiny'))  
-// session
-app.use(session({ 
-    secret:"secret",
+// session 
+app.use(session({
+    genid: () => {
+      return uuid.v4(); // Generate a unique session ID using UUID
+    },
+    secret: 'your_secret_key', // Change this to a secure secret key for production
     resave: false,
-    saveUninitialized: false ,
-    
-})) 
+    saveUninitialized: false
+}))
+
 app.use(flash());
 
 app.use((req,res,next)=>{

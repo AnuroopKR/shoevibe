@@ -20,14 +20,15 @@
     "razorpay": "^2.9.2",
     "Router": "^2.1.0",
     "sharp": "^0.33.2",
-    "speakeasy": "^2.0.0"
+    "speakeasy": "^2.0.0",
+    "uuid": "^9.0.1"
   },
   "name": "project",
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start":"nodemon app.js"
+    "start": "nodemon app.js"
   },
   "author": "",
   "license": "ISC",
