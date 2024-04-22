@@ -37,10 +37,11 @@
             <div class="col-md-3"></div>
             <div class="col-md-5 mt-5">
                 <div class="bg-white p-5 rounded-3 shadow-sm border">
+                    <div><img src="/img/logo1.png" alt=""></div>
                     <div>
                         <p class="text-center text-success" style="font-size: 5.5rem;"><i class="fa-solid fa-envelope-circle-check" style="color: orange"></i></p>
                         <p class="text-center text-center h5 ">Please check your email</p>
-                        <p class="text-muted text-center">We've sent a code to contact@curfcode.com</p>
+                        <p class="text-muted text-center">We've sent a code to <%=email%></p>
                         <form class="row login_form" action="/otp" method="post" id="contactForm" novalidate="novalidate">
                         <div class="row pt-4 pb-2">
                             <div class="col-3">
@@ -62,6 +63,7 @@
                                 <button class="btn btn-success w-100 btn-warning">Verify</button>
                             </div>
                         </div>
+                        <label for="error" class="color-warning"><%= message ? message : "" %></label>
                     </form>
                     <!-- <label style="position: static; color: red; font-size: small"> </label> -->
                     <p><div class="time" id="timer"></div></p>

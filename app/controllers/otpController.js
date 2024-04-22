@@ -85,7 +85,7 @@ console.log(`userotp:${userOtp}`);
 
 if(!userOtp){
     console.log('tva')
-    return res.render('/otp',{message:"Invalid Otp"})
+    return res.render('/otp',{message:"Invalid Otp",email})
 }
     if(entrOtp===userOtp.otp){
         const result=await userdb.updateOne({email:email},{$set:{is_varified:true}})
@@ -105,15 +105,16 @@ if(!userOtp){
     }
     else{
 console.log('else worked');
-        res.redirect('/otp')
-    }
+const message="invalied otp"
+res.render("users/otp",{log:"log",email,message});
+}
    },
    resendOtp:async (req, res) => {
     try {
         email=req.session.email
         const result = await userotp.deleteOne({ email:email });
         otpController.sendOtp(email);
-      return res.redirect("/otp"); 
+        res.render("users/otp",{log:"log",email,message:""});
     } catch (error) { 
       console.log(error.message);  
     } 

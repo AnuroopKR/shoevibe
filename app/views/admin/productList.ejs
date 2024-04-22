@@ -35,9 +35,7 @@
             class="form-control"
             placeholder="Search product"
           />
-          <span><button class="btn btn-light bg" type="button">
-            <i class="material-icons md-search"></i>
-          </button></span>
+          
         </div>
 
         <div class="col-md-4 col-6">
@@ -225,7 +223,7 @@
                             <span>${product.price}</span>
                         </div>
                         <div class="col-lg-1 col-sm-2 col-4 col-status">
-                            <span class="badge rounded-pill alert-success">${product.status}</span>
+                            <span class="badge rounded-pill ${product.status === 'listed' ? 'alert-success' : 'alert-warning'}">${product.status}</span>
                         </div>
                         <div class="col-lg-2 col-sm-2 col-4 col-date">
                             <span>${formattedDate}</span>

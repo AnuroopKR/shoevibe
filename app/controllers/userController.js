@@ -93,7 +93,7 @@ const userControllers = {
       otpController.sendOtp(email); 
 
       // res.render(`otp?email=${email}`,otpController.sendOtp)
-      res.redirect("/otp");
+      res.render("users/otp",{log:"log",email,message:""});
     
 
   

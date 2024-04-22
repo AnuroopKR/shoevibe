@@ -44,15 +44,25 @@ app.use((req,res,next)=>{
     next()
 })
 
-app.use(function (err,req, res, next) {
-    res.status(500);
+ 
+
+
+  app.use((err, req, res, next)=> {
+    res.status(404);
+
     res.render("errorpage/404");
-  });  
+});
+
 
 const userRoute=require('./app/route/userRoute');
 app.use('/',userRoute);
 const adminRoute=require('./app/route/adminRoute');
 app.use('/admin',adminRoute);
+
+app.use('*',(req,res)=>{
+  res.render("errorpage/404");
+
+})
 
 app.listen(3000,()=>{
     console.log("server is running..3000")

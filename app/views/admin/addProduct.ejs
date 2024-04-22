@@ -119,8 +119,8 @@
             <!-- card end// -->
         </div>
         <div class="card-body">
-            <div class="col-lg-6 ps-5">
-                <div  id="cropped-images" class="row"></div>
+            <div class="col-lg-6">
+                <div  id="cropped-images" class="row d-flex"></div>
             </div>
         </div>
     </div>
@@ -128,16 +128,19 @@
         <div id="imagePreviewContainer" >
         </div>
     <div class="card-body col-lg-6">
-        <button type="button" id="crop-button" class="btn btn-md rounded font-sm hover-up" disabled> Crop Images</button>
+        <button type="button" id="crop-button" class="btn btn-md rounded font-sm hover-up" disabled hidden> Crop Images</button>
     </div>
 </div>
 </div>
 
-    <div class="col-9">
+    <div class="col-9 mb-5 pb-5">
     <div style="text-align: end; justify-content: right;">
         <!-- <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button> -->
         <button class="btn btn-md rounded font-sm hover-up" type="button" onclick="addProduct()" id="submit">Publish</button>
     </div>
+</div>
+<div class="m-5">
+
 </div>
 </form>
 </section>
@@ -217,6 +220,7 @@ var cropper = new Cropper(imageToCrop, {
 
     let cropButton = document.getElementById("crop-button");
     cropButton.disabled = false;
+    cropButton.hidden=false;
 
     cropButton.addEventListener("click", async () => {
         croppedImagesContainer.innerHTML = '';
@@ -239,11 +243,11 @@ var cropper = new Cropper(imageToCrop, {
 
                 let img = document.createElement("img");
 img.src = URL.createObjectURL(blob);
-img.style.width = "100%"; // Set the width of the image to 100% of its container's width
+img.style.width =' 100 %'; // Set the width of the image to 100% of its container's width
 img.style.height = "auto"; // Maintain the aspect ratio by setting height to auto
 
 let previewCroppedImage = document.createElement("div");
-previewCroppedImage.classList.add("col-lg-6");
+previewCroppedImage.classList.add("col-lg-12");
 previewCroppedImage.appendChild(img);
 
 

@@ -86,7 +86,7 @@
 					</div> -->
 					
 					<div>
-						<input class="mt-2" type="text" id="searchInput" placeholder="Search by order ID" style="height: 45px;">
+						<input class="mt-2" type="text" id="searchInput" placeholder="Search here" style="height: 45px;">
 					</div>
 					<div class="mt-2">
 						<label for="price" class="color-whight">Rs   :</label>
@@ -301,9 +301,7 @@ function pagination(pageNum){
 			const page = document.getElementById('page-number');
             let pg = `<div id="page-number">`;
 
-            pg += `
-			<a href="#" class="prev-arrow"><i class="fa fa-long-arrow-left" aria-hidden="true"></i></a>`
-						for(i=1;i<=data.pages;i++){
+            						for(i=1;i<=data.pages;i++){
 							if(!data.pageNum){
 								pg +=	`<a href="#" class="active" id="current-page" onclick="pagination(${i})">${i}</a>`
 
@@ -314,7 +312,6 @@ function pagination(pageNum){
 								pg +=	`<a href="#" id="current-page" onclick="pagination(${i})">${i}</a>`
 
 						}}
-						pg +=`<a href="#" class="next-arrow"><i class="fa fa-long-arrow-right" aria-hidden="true"></i></a>`
 						page.innerHTML = pg;
 		})
 

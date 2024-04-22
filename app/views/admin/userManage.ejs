@@ -15,8 +15,8 @@
                 <div class="col-lg-2 col-md-3 col-6">
                     <select id="statusSelect" class="form-select">
                         <option value="all">Show all</option>
-                        <option value=true>Listed</option>
-                        <option value=false>Unlisted</option>
+                        <option value=true>Blocked</option>
+                        <option value=false>Unblocked</option>
                     </select>
                 </div>
                 
@@ -117,7 +117,7 @@ fetch( `/admin/userLoad?search=${searchQuery}&status=${selectedValue}&pageNum=${
                 </a>
             </td>
             <td>${user.email}</td>
-            <td><span class="badge rounded-pill alert-success">${user.isBlocked}</span></td>
+            <td><span class="badge rounded-pill ${user.isBlocked ? 'alert-warning' : 'alert-success'}">${user.isBlocked ?"blocked":"unblocked"}</span></td>
             <td>${new Date(user.date).toLocaleDateString()}</td>
             <td class="text-end">
                 ${user.isBlocked === true ? `

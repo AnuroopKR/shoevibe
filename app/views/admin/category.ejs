@@ -53,18 +53,10 @@
               <thead>
                 <tr>
                   <th class="text-center">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        value=""
-                      />
-                    </div>
                   </th>
                   <th>ID</th>
                   <th>Name</th>
                   <th>Description</th>
-                  <th>Order</th>
                   <th>offer</th>
                   <th class="text-end">Action</th>
                 </tr>
@@ -73,18 +65,10 @@
                 <%category.forEach((cat,index)=>{%>
                 <tr>
                   <td class="text-center">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        value=""
-                      />
-                    </div>
                   </td>
                   <td><%=index+1%></td>
                   <td><b><%=cat.name%></b></td>
                   <td><%=cat.description%></td>
-                  <td>1</td>
                   <td id="apply-offer">
                   <% if (cat.offerId) {%>
                     <a onclick="removeOffer('<%=cat._id%>')" class="btn btn-sm font-sm rounded btn-brand add-offer-btn" >

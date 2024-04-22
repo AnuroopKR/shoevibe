@@ -22,8 +22,9 @@
             <header class="card-header">
                 <div class="row align-items-center">
                     <div class="col-lg-6 col-md-6 mb-lg-0 mb-15">
-                        <span> <i class="material-icons md-calendar_today"></i> <b><%=orderData.createdAt%></b> </span> <br />
-                        <small class="text-muted">Order ID: 3453012</small>
+                        <%const date = new Date(orderData.createdAt);%>
+                        <span> <i class="material-icons md-calendar_today"></i> <b><%=date.toLocaleDateString()%></b> </span> <br />
+                        <!-- <small class="text-muted">Order ID: 3453012</small> -->
                     </div>
                     <div class="col-lg-6 col-md-6 ms-auto text-md-end">
                         <!-- <select id="orderStatusSelect" class="form-select d-inline-block mb-lg-0 mr-5 mw-200">

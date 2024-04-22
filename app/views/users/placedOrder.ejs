@@ -24,7 +24,7 @@
                     <h4>Order Info</h4>
                     <ul class="list">
                         <li><a href="#"><span>Order number</span> : <%=orderData.orderId%></a></li>
-                        <li><a href="#"><span>Date</span> : <%=orderData.createdAt%></a></li>
+                        <li><a href="#"><span>Date</span> : <%=orderData.createdAt.toLocaleDateString()%></a></li>
                         <li><a href="#"><span>Total</span> : Rs <%=orderData.totalPrice%></a></li>
                         <li><a href="#"><span>Payment method</span> :  <%=orderData.paymentIntent.type%></a></li>
                         <%if(orderData.paymentIntent.type=== 'Online payment'){%>
