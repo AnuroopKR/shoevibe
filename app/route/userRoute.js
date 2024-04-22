@@ -78,6 +78,7 @@ route.post('/verifywallet',middleWare.isLoged,walletController.verifyWalletPayme
 
 // coupon
 route.get('/checkCoupon',middleWare.isLoged,couponController.checkCoupen)
+route.get('/',userController.userHome)
 
 
 
