@@ -1,9 +1,6 @@
 const mongoose=require("mongoose");
-// const dotenv=require('dotenv')
 require('dotenv').config();
-mongoose.connect(process.env.mongodb_url, {
-  serverSelectionTimeoutMS: 5000 
-})
+mongoose.connect(process.env.mongodb_url)
 const express=require("express");
 const app=express();
 const path=require("path");
@@ -11,9 +8,9 @@ const session=require('express-session');
 const morgan=require('morgan')
 const cookieParser = require('cookie-parser');
 const flash = require('express-flash');
-const bodyParser = require('body-parser');
+const bodyParser = require('body-parser'); 
 const axios = require('axios');
-require('dotenv').config();
+require('dotenv').config(); 
 const uuid = require('uuid');
 
 
@@ -33,9 +30,9 @@ app.use(morgan('tiny'))
 // session 
 app.use(session({
     genid: () => {
-      return uuid.v4(); // Generate a unique session ID using UUID
+      return uuid.v4(); 
     },
-    secret: 'your_secret_key', // Change this to a secure secret key for production
+    secret: 'your_secret_key', 
     resave: false,
     saveUninitialized: false
 }))
