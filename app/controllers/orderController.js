@@ -248,7 +248,7 @@ const orderController={
                         console.log("Order status updated successfully:");
                         
                       const order=await orderdb.findOne({orderId:orderId})
-                      if(order.paymentIntent.type=="Online payment"||order.paymentIntent.type=="wallet-payment"){
+                      if(order.paymentIntent.type=="Online payment"||order.paymentIntent.type=="wallet payment"){
                         if(order.status!="Not Processed"){
                         const wallet=await walletdb.findOne({userId:userId})
                         var randomNumber = Math.floor(Math.random() * Math.pow(10, 12));
