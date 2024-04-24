@@ -1,4 +1,4 @@
-<%-include("../layouts/header")%>
+<%- include("../layouts/header") %>
 
     <link rel="stylesheet" href="/style.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -92,9 +92,9 @@
   </style>
   
 
-</head>
 
-<body>
+
+
     <section class="banner-area organic-breadcrumb">
         <div class="container">
             <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
@@ -122,8 +122,7 @@
                             href="#account-change-password">Change password</a>
                         <!-- <a class="list-group-item list-group-item-action" data-toggle="list"
                             href="#account-info">Info</a> -->
-                        <a class="list-group-item list-group-item-action" data-toggle="list"
-                            href="#account-notifications">Notifications</a>
+                        
                         <a class="list-group-item list-group-item-action" 
                             href="#" data-toggle="modal" data-target="#myModal">Add address</a>
                             <a class="list-group-item list-group-item-action" data-toggle="list"
@@ -140,24 +139,13 @@
                     <div class="tab-content">
                         
                         <div class="tab-pane fade active show" id="account-general">
-                            <!-- <div class="card-body media align-items-center">
-                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt
-                                    class="d-block ui-w-80">
-                                <div class="media-body ml-4">
-                                    <label class="btn btn-outline-primary">
-                                        Upload new photo
-                                        <input type="file" class="account-settings-fileinput">
-                                    </label> &nbsp;
-                                    <button type="button" class="btn btn-default md-btn-flat">Reset</button>
-                                    <div class="text-light small mt-1">Allowed JPG, GIF or PNG. Max size of 800K</div>
-                                </div>
-                            </div> -->
+                            
                             <hr class="border-light m-0">
                             <form action="/userUpdate" method="post">
                             <div class="card-body">
                                 <div class="form-group">
                                     <label class="form-label">Username</label>
-                                    <input type="text" class="form-control mb-1" value="<%=userData.name%>">
+                                    <input type="text" class="form-control mb-1" value="<%=userData.name%>" disabled>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Name</label>
@@ -169,7 +157,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">E-mail</label>
-                                    <input type="text" class="form-control mb-1" value="<%=userData.email%>" name="email">
+                                    <input type="text" class="form-control mb-1" value="<%= userData.email %>" name="email" disabled>
                                     
                                 </div>
                             
@@ -212,119 +200,7 @@
                             </div>
                         </form>
                         </div>
-                        <!-- <div class="tab-pane fade" id="account-info">
-                            <div class="card-body pb-2">
-                                <div class="form-group">
-                                    <label class="form-label">Bio</label>
-                                    <textarea class="form-control"
-                                        rows="5">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris nunc arcu, dignissim sit amet sollicitudin iaculis, vehicula id urna. Sed luctus urna nunc. Donec fermentum, magna sit amet rutrum pretium, turpis dolor molestie diam, ut lacinia diam risus eleifend sapien. Curabitur ac nibh nulla. Maecenas nec augue placerat, viverra tellus non, pulvinar risus.</textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Birthday</label>
-                                    <input type="text" class="form-control" value="May 3, 1995">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Country</label>
-                                    <select class="custom-select">
-                                        <option>USA</option>
-                                        <option selected>Canada</option>
-                                        <option>UK</option>
-                                        <option>Germany</option>
-                                        <option>France</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <hr class="border-light m-0">
-                            <div class="card-body pb-2">
-                                <h6 class="mb-4">Contacts</h6>
-                                <div class="form-group">
-                                    <label class="form-label">Phone</label>
-                                    <input type="text" class="form-control" value="+0 (123) 456 7891">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Website</label>
-                                    <input type="text" class="form-control" value>
-                                </div>
-                            </div>
-                            <div class="text-right mt-3">
-                                <button type="submit" class="btn btn-primary">Save changes</button>&nbsp;
-                                <button type="button" class="btn btn-default">Cancel</button>
-                            </div>
-                        </div> -->
-                        <div class="tab-pane fade" id="account-notifications">
-                            <div class="card-body pb-2">
-                                <h6 class="mb-4">Activity</h6>
-                                <div class="form-group">
-                                    <label class="switcher">
-                                        <input type="checkbox" class="switcher-input" checked>
-                                        <span class="switcher-indicator">
-                                            <span class="switcher-yes"></span>
-                                            <span class="switcher-no"></span>
-                                        </span>
-                                        <span class="switcher-label">Email me when someone comments on my article</span>
-                                    </label>
-                                </div>
-                                <div class="form-group">
-                                    <label class="switcher">
-                                        <input type="checkbox" class="switcher-input" checked>
-                                        <span class="switcher-indicator">
-                                            <span class="switcher-yes"></span>
-                                            <span class="switcher-no"></span>
-                                        </span>
-                                        <span class="switcher-label">Email me when someone answers on my forum
-                                            thread</span>
-                                    </label>
-                                </div>
-                                <div class="form-group">
-                                    <label class="switcher">
-                                        <input type="checkbox" class="switcher-input">
-                                        <span class="switcher-indicator">
-                                            <span class="switcher-yes"></span>
-                                            <span class="switcher-no"></span>
-                                        </span>
-                                        <span class="switcher-label">Email me when someone follows me</span>
-                                    </label>
-                                </div>
-                            </div>
-                            <hr class="border-light m-0">
-                            <div class="card-body pb-2">
-                                <h6 class="mb-4">Application</h6>
-                                <div class="form-group">
-                                    <label class="switcher">
-                                        <input type="checkbox" class="switcher-input" checked>
-                                        <span class="switcher-indicator">
-                                            <span class="switcher-yes"></span>
-                                            <span class="switcher-no"></span>
-                                        </span>
-                                        <span class="switcher-label">News and announcements</span>
-                                    </label>
-                                </div>
-                                <div class="form-group">
-                                    <label class="switcher">
-                                        <input type="checkbox" class="switcher-input">
-                                        <span class="switcher-indicator">
-                                            <span class="switcher-yes"></span>
-                                            <span class="switcher-no"></span>
-                                        </span>
-                                        <span class="switcher-label">Weekly product updates</span>
-                                    </label>
-                                </div>
-                                <div class="form-group">
-                                    <label class="switcher">
-                                        <input type="checkbox" class="switcher-input" checked>
-                                        <span class="switcher-indicator">
-                                            <span class="switcher-yes"></span>
-                                            <span class="switcher-no"></span>
-                                        </span>
-                                        <span class="switcher-label">Weekly blog digest</span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="text-right mt-3">
-                                <button type="button" class="btn btn-warning">Save changes</button>&nbsp;
-                                <button type="button" class="btn btn-default">Cancel</button>
-                            </div>
-                        </div>
+                      
                         <div id="addressload" class="tab-pane fade" >
                             <div class="row d-flex" >
                             <%addressData.forEach(address=>{%>
@@ -345,8 +221,8 @@
                                       <% }else{ %>
                                       <a href="/setDefault/<%=address._id%>" class="btn btn-info" style="background-color: darkslategray;" role="button">set default</a>
                                       <%}%> 
-                                      <a href="#" class="btn btn-info ml-5" role="button" data-toggle="modal" data-target="#myModal-2">edit</a>
-                                      <!-- <a href="#" class="edit-address btn btn-info" data-address-id="<%= address._id %>">Edit</a> -->
+                                      <!-- <a href="#" class="btn btn-info ml-5" role="button" data-toggle="modal" data-target="#myModal-2">edit</a> -->
+                                      <a href="#" class="edit-address btn btn-info" data-address-id="<%= address._id %>">Edit</a>
 
                                       <a href="/deleteAddress/<%=address._id%>" class="btn btn-info ml-5 bg-danger" role="button">delete</a>
                                       
@@ -422,7 +298,7 @@
                         </div>
                         <div class="col-md-2">
                             <label for="pin" class="form-label">Zip</label>
-                            <input type="text" class="form-control" name="pin" id="pin" onkeypress="checkEnter(event, 'lastName')">
+                            <input type="text" class="form-control" name="pin" id="pin" onkeypress="checkEnter(event)">
                             <p id="pinError" style="color: red;"></p>
                         </div>
                        
@@ -526,44 +402,7 @@ function changePassword(){
 // Optional: Add a client-side form validation function (validateForm)
 
 </script>
-<script>
-    // const passwordField = document.getElementById("currentPassword");
-// const eyeIcon = document.querySelector(".fa-eye");
 
-// eyeIcon.addEventListener("click", function() {
-//   if (passwordField.type === "password") {
-//     passwordField.type = "text";
-//     eyeIcon.classList.remove("fa-eye");
-//     eyeIcon.classList.add("fa-eye-slash");
-//   } else {
-//     passwordField.type = "password";
-//     eyeIcon.classList.remove("fa-eye-slash");
-//     eyeIcon.classList.add("fa-eye");
-//   }
-// });
-
-</script>
-
-<!-- <script> 
-const modal = document.getElementById('addressModal');
-
-const btn = document.getElementById('openModalBtn');
-
-const span = document.getElementsByClassName('close')[0];
-
-btn.onclick = function() {
-modal.style.display = 'block';
-}
-
-span.onclick = function() {
-modal.style.display = 'none';
-}
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = 'none';
-  }
-}
-</script> -->
 
 
 <script>
@@ -674,29 +513,24 @@ function validateForm() {
    if( validateAddress()){
 
     // Make a POST request using Axios
+   // Assuming this code is inside a function or an event handler
+// Make sure the link with href="#addressload" exists in your HTML
+
     axios.post('/addAddress', formObject)
         .then(response => {
             console.log(response.data);
             $('#myModal').modal('hide');
-            // window.location.reload()
-            console.log('Before load function');
-            $('#addressload').load(location.href + ' #addressload', function() {
-    console.log('After load function');
-});
-
-
+            $('[href="#addressload"]').click();
+            console.log('After load function');
         })
         .catch(error => {
             // Handle the error response
             console.error(error);
         });
-    } else {
-            // If validation fails, do not proceed with form submission
-            console.log('Form validation failed. Please correct the errors.');
-        }
+} else {
+    console.log('Form validation failed. Please correct the errors.');
 }
-       
-
+   }
 
 
 
@@ -733,8 +567,8 @@ function validateForm() {
         const pin = document.getElementById('pin').value.trim();
 
         // Validate each input field
-        if (!validateInput(firstName, 'First Name', 'firstNameError')) return false;
-        if (!validateInput(lastName, 'Last Name', 'lastNameError')) return false;
+        if (!validateName(firstName, 'First Name', 'firstNameError')) return false;
+        if (!validateName(lastName, 'Last Name', 'lastNameError')) return false;
         if (!validateInput(address, 'Address', 'addressError')) return false;
         if (!validateInput(landmark, 'Landmark', 'landmarkError')) return false;
         if (!validateInput(city, 'City', 'cityError')) return false;
@@ -749,11 +583,33 @@ function validateForm() {
 
     // Function to validate individual input fields
     function validateInput(value, fieldName, errorId) {
-        if (!value) {
-            document.getElementById(errorId).textContent = `${fieldName} is required.`;
-            return false;
-        }
-        return true;
+    if (!value) {
+        document.getElementById(errorId).textContent = `${fieldName} is required.`;
+        return false;
+    }
+
+    if (value.length < 3) {
+        document.getElementById(errorId).textContent = `${fieldName} must have at least three letters.`;
+        return false;
+    }
+
+    return true;
+}
+
+
+    function validateName(value, fieldName, errorId){
+        const lettersOnlyRegex = /^[A-Za-z]+$/;
+
+    if (!value) {
+        document.getElementById(errorId).textContent = `${fieldName} is required.`;
+        return false;
+    } else if (!lettersOnlyRegex.test(value)) {
+        document.getElementById(errorId).textContent = `${fieldName} should contain only letters without spaces.`;
+        return false;
+    }
+
+    return true;
+
     }
 
     function validatePin(pin) {

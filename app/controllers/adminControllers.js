@@ -140,7 +140,7 @@ const adminControllers = {
       req.session.isadminLogged = null;
       res.render("admin/adminLogin");
     } catch (error) {
-      console.log(9999, error);
+      console.log( error);
       res.status(500).send(error);
     }
   },
@@ -177,7 +177,7 @@ const adminControllers = {
           })
           .populate("products.productId")
           .populate("userId");
-        console.log(orderData);
+        
         res.status(200).json({ orderData });
       }
     } catch (error) {

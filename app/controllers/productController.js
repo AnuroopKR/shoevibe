@@ -215,7 +215,6 @@ editProduct: async (req, res) => {
     
    const product=await productdb.findOne({_id:productId}).populate('category')
     
-console.log(product);
     res.render("admin/editProduct",{product,category});
   } catch (error) {
     console.log(error.message);
@@ -400,7 +399,6 @@ deleteCategory: async (req, res) => {
 leedingProductLoad: async (req, res) => {
   try {
     const product=await productdb.find().sort({sold:-1}).limit(10)
-    console.log(product);
 res.status(200).json({product})
   } catch (error) {
     console.log(error.message);

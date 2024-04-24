@@ -54,6 +54,7 @@ adminRoute.delete('/deleteCoupon',middleWare.isadminLogged,couponController.dele
 // sales report
 adminRoute.get('/salesReport',middleWare.isadminLogged,adminController.salesReport)  
 adminRoute.post('/salesReportLoad',middleWare.isadminLogged,adminController.salesReportLoad)
+adminRoute.get('/downloadSalesReport',middleWare.isadminLogged,orderController.downloadSalesReport)
 // offer
 adminRoute.get('/offerLoad',middleWare.isadminLogged,offerController.loadOfferPage) 
 adminRoute.post('/addOffer',middleWare.isadminLogged,offerController.addOffer)

@@ -199,7 +199,6 @@ const orderController={
             const orderId=req.params.orderId
           const userId=req.session.userId
           const orderData=await orderdb.findOne({orderId:orderId}).populate('products.productId')
-        console.log(1234,orderData);
           res.render("users/placedOrder",{userId,orderData});
         } catch (error) {
           console.log(error.message);
@@ -237,7 +236,6 @@ const orderController={
                     const orderId=req.params.orderId
                   const userId=req.session.userId
 
-                 console.log(orderId)
                 const updatedOrder=await orderdb.findOneAndUpdate(
                     { orderId: orderId },
                     { $set: { orderStatus: "Cancelled" } },
@@ -325,7 +323,6 @@ const orderController={
 
                         cart.products = []; 
                         await cart.save();
-                      console.log(3333,orderData);
                     }
                       res.status(200).json({ message:'hiii',data:id,success:true});
  
@@ -557,7 +554,6 @@ const orderController={
                       returnAccept: async (req, res) => {
                         try {
                           const orderId=req.params.orderId
-                          console.log(orderId)
                            const order=await orderdb.findOne({orderId:orderId}) 
                           const updatedOrder=await orderdb.findOneAndUpdate(
                             { orderId: orderId },
@@ -571,9 +567,7 @@ const orderController={
                                 if(order.paymentIntent.type=="Online payment"||order.paymentIntent.type=="wallet-payment"){
                                   if(order.status!="Not Processed"){
                                   const userId=order.userId
-                                  console.log(userId)
                                   const wallet=await walletdb.findOne({userId:userId})
-                                  console.log(wallet)
                                   var randomNumber = Math.floor(Math.random() * Math.pow(10, 12));
                                   var walletId = randomNumber.toString().padStart(12, '0');
                                   wallet.balance= wallet.balance+(order.totalPrice)
@@ -604,11 +598,71 @@ const orderController={
                         }
                       },
  
+                      downloadSalesReport: async (req, res) => {
+                        try {
+                          console.log("hai");
+                          // const orderData=await orderdb.find().populate('products.productId').populate('userId').sort({ createdAt: -1 }).limit(2)
+
+                          const startDate = new Date(req.query.startDate);
+                          const endDate = new Date(req.query.endDate);
+                   console.log("date",startDate,endDate)
+                          if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+                            console.error("Invalid date format");
+                          } else {
+                            const orderData = await orderdb
+                              .find({
+                                orderStatus: "Delivered",
+                                createdAt: {
+                                  $gte: startDate,
+                                  $lte: endDate,
+                                },
+                              })
+                              .populate("products.productId")
+                              .populate("userId");
+
+
+                          const templatePath = path.join(__dirname, '../views/admin/salesreportDownload.ejs');
                       
+                      
+                          const renderTemplate = async () => {
+                              try {
+                                  return await ejs.renderFile(templatePath, {orderData});
+                              } catch (err) {
+                                  console.error('Error rendering EJS template:', err);
+                                  res.status(500).send('Error rendering sales report');
+                              }
+                          };
+                  
+                          const htmlContent = await renderTemplate();
+                          if (!htmlContent) {
+                              return;
+                          }
+                  
+                          const browser = await puppeteer.launch();
+
+                          const page = await browser.newPage();
+                          await page.setViewport({ width: 1280, height: 800 });
+                          await page.setContent(htmlContent);
+                          const pdfBuffer = await page.pdf({ format: "A4" });
+                          res.set({
+                              "Content-Type": "application/pdf",
+                              "Content-Length": pdfBuffer.length,
+                          });
+                          res.send(pdfBuffer); 
+                  
+                          await browser.close();
+                        }
+                      } catch (error) {
+                          console.error('Error generating sales report:', error);
+                          res.status(500).send('Error generating sales report');
+                      }
+                        
+                        
+                      },   
                       
                   
                 
-}
+} 
 
 
  function generateRazorpay(id) {
