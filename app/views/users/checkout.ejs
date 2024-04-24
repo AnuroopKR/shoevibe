@@ -551,8 +551,8 @@ function checkEnter(event, nextInputId) {
         const pin = document.getElementById('pin').value.trim();
 
         // Validate each input field
-        if (!validateInput(firstName, 'First Name', 'firstNameError')) return false;
-        if (!validateInput(lastName, 'Last Name', 'lastNameError')) return false;
+        if (!validateName(firstName, 'First Name', 'firstNameError')) return false;
+        if (!validateName(lastName, 'Last Name', 'lastNameError')) return false;
         if (!validateInput(address, 'Address', 'addressError')) return false;
         if (!validateInput(landmark, 'Landmark', 'landmarkError')) return false;
         if (!validateInput(city, 'City', 'cityError')) return false;
@@ -571,7 +571,26 @@ function checkEnter(event, nextInputId) {
             document.getElementById(errorId).textContent = `${fieldName} is required.`;
             return false;
         }
+        if (value.length < 3) {
+        document.getElementById(errorId).textContent = `${fieldName} must have at least three letters.`;
+        return false;
+    }
+
         return true;
+    }
+    function validateName(value, fieldName, errorId){
+        const lettersOnlyRegex = /^[A-Za-z]+$/;
+
+    if (!value) {
+        document.getElementById(errorId).textContent = `${fieldName} is required.`;
+        return false;
+    } else if (!lettersOnlyRegex.test(value)) {
+        document.getElementById(errorId).textContent = `${fieldName} should contain only letters without spaces.`;
+        return false;
+    }
+
+    return true;
+
     }
 
     function validatePin(pin) {
