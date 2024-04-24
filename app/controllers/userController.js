@@ -77,22 +77,14 @@ const userControllers = {
         email,
         mobile,
         password: hashedPassword,
-        isAdmin:true 
+        isAdmin:false 
       });
       console.log(user);
       await user.save();
-    //   setTimeout(async () => {
-    //     const userData=userdb.findOne({email:email}) 
-        
-    //       if (userData && !userData.is_varified){
-    //         console.log('kayari')
-    //         await userdb.deleteOne({ email:email});
-    //       }
-    // }, 180000);
+   
 
       otpController.sendOtp(email); 
 
-      // res.render(`otp?email=${email}`,otpController.sendOtp)
       res.render("users/otp",{log:"log",email,message:" "});
     
 
@@ -125,7 +117,6 @@ const userControllers = {
       console.log(userExists,email);
       if (!userExists) {
         console.log("user not exist")
-        // req.flash("message","This user doesnt exist");
         return res.render("users/login", { message: "This user doesnt exist",userId: req.session.userId});
       } 
       if(userExists.isBlocked){
@@ -166,10 +157,7 @@ const userControllers = {
 const wishlist=await wishlistdb.findOne({userId:userId})
 // console.log(9999,wishlist);
         res.render("users/home",{userId,productData,wishlist});
-    // }
-    // else{
-    //   res.render("users/home",{log:"Login"});
-    // }
+    
       
     } catch (error) {
       console.log(error.message); 

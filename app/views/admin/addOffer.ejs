@@ -242,7 +242,7 @@ fetch('/admin/deleteOffer', {
         }
 
         // Percentage validation
-        if (percentage === "" || isNaN(percentage) || parseFloat(percentage) < 0 || parseFloat(percentage) > 100) {
+        if (percentage === "" || isNaN(percentage) || parseFloat(percentage) <= 0 || parseFloat(percentage) >= 100) {
             document.getElementById("percentageError").textContent = "Please enter a valid offer percentage between 0 and 100";
             isValid = false;
         }

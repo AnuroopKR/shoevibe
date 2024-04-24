@@ -47,7 +47,7 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>Name</th>
-                                    <th>Description</th>
+                                    <th>discount</th>
                                     <th>expiry</th>
                                     <!-- <th>Order</th> -->
                                     <th class="text-end">Action</th>
@@ -70,7 +70,7 @@
                                    
                                     <td><%= coupon.couponCode %></td>
                                     <td><b><%= coupon.name %></b></td>
-                                    <td><%= coupon.description %></td>
+                                    <td><%= coupon.discount %></td>
                                     <td><%= formattedDate%></td>
                                     
                                     <td class="text-end">
@@ -207,7 +207,7 @@
         if (discountInput.value.trim() === '') {
             discountError.textContent = 'Discount is required';
             isValid = false;
-        } else if (isNaN(discountValue) || discountValue < 0) {
+        } else if (isNaN(discountValue) || discountValue <= 0) {
         discountError.textContent = 'Discount should be a non-negative number';
         isValid = false;
     } else {
