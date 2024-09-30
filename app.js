@@ -1,6 +1,6 @@
 const mongoose=require("mongoose");
 require('dotenv').config();
-mongoose.connect(process.env.mongodb_url)
+mongoose.connect("mongodb+srv://shoevibz:NasvHduPbRMffhD6@shoevibz.6q2ferj.mongodb.net/Shoevibz")
 const express=require("express");
 const app=express();
 const path=require("path");
@@ -11,8 +11,9 @@ const flash = require('express-flash');
 const bodyParser = require('body-parser'); 
 const axios = require('axios');
 require('dotenv').config(); 
-const uuid = require('uuid');
+const uuid = require('uuid'); 
 
+console.log(process.env.mongodb_url);
 
 
 app.use(bodyParser.urlencoded({ extended: true }));

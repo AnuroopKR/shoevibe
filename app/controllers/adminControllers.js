@@ -59,7 +59,7 @@ const adminControllers = {
 
       if (!userExists) {
         return res.status(500).json({ message: "This user doesnt exist" });
-      } else if (
+      } else if ( 
         (await bcrypt.compare(password, userExists.password)) &&
         userExists.isAdmin === true
       ) {
