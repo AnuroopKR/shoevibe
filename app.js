@@ -13,7 +13,7 @@ const axios = require('axios');
 require('dotenv').config(); 
 const uuid = require('uuid'); 
 
-console.log(process.env.mongodb_url);
+// console.log(process.env.MONGODB_URL);
 
 
 app.use(bodyParser.urlencoded({ extended: true }));

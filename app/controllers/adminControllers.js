@@ -241,7 +241,7 @@ const adminControllers = {
 
 
 function generateCouponCode(length) {
-  const characters =process.env.coupon_code;
+  const characters =process.env.COUPON_CODE  ;
   let couponCode = "";
 
   for (let i = 0; i < length; i++) {
