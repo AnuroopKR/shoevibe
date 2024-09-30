@@ -202,7 +202,7 @@ function sendEmail(email, otp) {
     }); 
 
     // Construct the URL for the link (replace 'yourwebsite.com' with your actual website domain)
-    const resetPasswordLink = `https//shoevibz-mohy1uu0.b4a.run/loadPassword?email=${email}&otp=${otp}`;
+    const resetPasswordLink = `https://shoevibz-mohy1uu0.b4a.run/loadPassword?email=${email}&otp=${otp}`;
 
     const mailDetails = { 
         from: 'shoevibein@gmail.com',
